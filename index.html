@@ -3,63 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zephyr | Portfolio</title>
+    <title>Spidey | Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-        
+
         body {
-            background-color: #020202;
+            background-color: #030305;
             font-family: 'Outfit', sans-serif;
             color: #e4e4e7;
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* --- BACKGROUND FX --- */
-        .cyber-grid {
+        /* --- STARK TECH SPIDER MESH --- */
+        .spider-grid {
             position: fixed;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(0, 149, 246, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 149, 246, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(to right, rgba(226, 54, 54, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(226, 54, 54, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
             z-index: -2;
-            mask-image: radial-gradient(circle at 50% 0%, black 40%, transparent 100%);
+            mask-image: radial-gradient(circle at 50% 30%, black 40%, transparent 100%);
         }
 
-        .ambient-glow {
+        .ambient-glow-red {
             position: fixed;
-            top: -20%; left: 50%; transform: translateX(-50%);
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(0, 149, 246, 0.15) 0%, transparent 70%);
-            filter: blur(80px);
+            top: -15%; left: 15%;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(226, 54, 54, 0.18) 0%, transparent 60%);
+            filter: blur(100px);
             z-index: -1;
             pointer-events: none;
         }
 
-        /* --- GLASS COMPONENTS --- */
+        .ambient-glow-gold {
+            position: fixed;
+            bottom: 5%; right: 15%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255, 191, 0, 0.12) 0%, transparent 60%);
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- GLASS & STARK TECH COMPONENTS --- */
         .glass {
-            background: rgba(15, 15, 15, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 12, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 54, 54, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- SPIDER-SENSE ANIMATION --- */
+        @keyframes spider-sense {
+            0% { box-shadow: 0 0 0 0 rgba(226, 54, 54, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(226, 54, 54, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(226, 54, 54, 0); }
         }
 
         .glass-card-hover {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .glass-card-hover:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(0, 149, 246, 0.3);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px -10px rgba(0, 149, 246, 0.15);
+            background: rgba(226, 54, 54, 0.05);
+            border-color: rgba(226, 54, 54, 0.6);
+            transform: translateY(-8px) scale(1.02);
+            animation: spider-sense 1.5s infinite;
         }
 
         /* --- 3D TILT HERO --- */
         .tilt-card {
             transform-style: preserve-3d;
-            perspective: 1000px;
+            perspective: 1200px;
         }
         .tilt-inner {
             transition: transform 0.1s ease-out;
@@ -68,93 +86,98 @@
 
         /* --- BADGES --- */
         .skill-tag {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(226, 54, 54, 0.05);
+            border: 1px solid rgba(226, 54, 54, 0.2);
             transition: all 0.3s;
         }
         .skill-tag:hover {
-            background: rgba(0, 149, 246, 0.1);
-            border-color: #0095f6;
-            color: white;
+            background: rgba(255, 191, 0, 0.15);
+            border-color: #ffbf00;
+            color: #ffbf00;
+            box-shadow: 0 0 15px rgba(255, 191, 0, 0.3);
+            transform: translateY(-2px);
         }
 
-        .verified-badge { color: #0095f6; }
+        .verified-badge { color: #ffbf00; }
+        .text-stark-gold { color: #ffbf00; }
     </style>
 </head>
-<body class="selection:bg-blue-500 selection:text-white">
+<body class="selection:bg-red-600 selection:text-white">
 
-    <div class="cyber-grid"></div>
-    <div class="ambient-glow"></div>
+    <div class="spider-grid"></div>
+    <div class="ambient-glow-red"></div>
+    <div class="ambient-glow-gold"></div>
 
     <main class="max-w-6xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center">
 
         <div class="w-full max-w-4xl grid md:grid-cols-2 gap-12 items-center mb-24">
-            
+
             <div class="space-y-6 order-2 md:order-1 text-center md:text-left">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest animate-pulse">
-                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> Open to Work
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-widest">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> Iron Spider Tech Active
                 </div>
-                
-                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-tight">
-                    Zephyr 
-                    <svg class="verified-badge w-8 h-8 inline-block -mt-4 ml-1" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 12.5c0-1.58-.88-2.95-2.18-3.66.54-1.53.2-3.28-.97-4.45s-2.92-1.51-4.45-.97c-.71-1.3-2.08-2.18-3.66-2.18s-2.95.88-3.66 2.18c-1.53-.54-3.28-.2-4.45.97s-1.51 2.92-.97 4.45c-1.3.71-2.18 2.08-2.18 3.66s.88 2.95 2.18 3.66c-.54 1.53-.2 3.28.97 4.45s2.92 1.51 4.45.97c.71 1.3 2.08 2.18 3.66 2.18s2.95-.88 3.66-2.18c1.53.54 3.28.2 4.45-.97s1.51-2.92.97-4.45c1.3-.71 2.18-2.08 2.18-3.66zM10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path></svg>
+
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-tight drop-shadow-[0_0_15px_rgba(226,54,54,0.3)]">
+                    Spidey
+                    <svg class="verified-badge w-8 h-8 inline-block -mt-4 ml-1 drop-shadow-[0_0_10px_rgba(255,191,0,0.5)]" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 12.5c0-1.58-.88-2.95-2.18-3.66.54-1.53.2-3.28-.97-4.45s-2.92-1.51-4.45-.97c-.71-1.3-2.08-2.18-3.66-2.18s-2.95.88-3.66 2.18c-1.53-.54-3.28-.2-4.45.97s-1.51 2.92-.97 4.45c-1.3.71-2.18 2.08-2.18 3.66s.88 2.95 2.18 3.66c-.54 1.53-.2 3.28.97 4.45s2.92 1.51 4.45.97c.71 1.3 2.08 2.18 3.66 2.18s2.95-.88 3.66-2.18c1.53.54 3.28.2 4.45-.97s1.51-2.92.97-4.45c1.3-.71 2.18-2.08 2.18-3.66zM10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path></svg>
                 </h1>
-                
-                <p class="text-xl text-gray-400 font-light">
+
+                <p class="text-xl text-gray-300 font-light border-l-4 border-[#e23636] pl-4">
                     Software Engineer | Web Developer | Ethical Hacker | Creative Designer
                 </p>
 
-                <p class="text-sm text-gray-500 leading-relaxed max-w-md mx-auto md:mx-0">
-                    23 years old software engineer with <span class="text-white">3+ years of experience</span>. I craft elegant solutions for complex problems, combining web development expertise with creative design and security knowledge.
+                <p class="text-sm text-gray-400 leading-relaxed max-w-md mx-auto md:mx-0">
+                    23 years old software engineer with <span class="text-white font-bold">3+ years of experience</span>. I craft elegant solutions for complex problems, combining advanced web architecture with creative design and impenetrable security.
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
                     <a href="https://portfoliofahadmalik.netlify.app" target="_blank" 
-                       class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-blue-500 hover:text-white transition-all shadow-lg hover:shadow-blue-500/25">
-                        View My Work
+                       class="px-8 py-3 bg-gradient-to-r from-[#e23636] to-[#991b1b] text-white font-bold rounded-xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(226,54,54,0.4)]">
+                        Initialize Web-Shooters
                     </a>
-                    <a href="#about" class="px-8 py-3 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all">
-                        Learn More
+                    <a href="#about" class="px-8 py-3 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all border-[#e23636]/30 hover:border-[#e23636]">
+                        Scan Profile
                     </a>
                 </div>
             </div>
 
             <div class="tilt-card relative order-1 md:order-2 flex justify-center">
-                <div id="card-inner" class="tilt-inner glass w-[320px] rounded-[30px] p-1 shadow-2xl overflow-hidden relative group">
-                    
-                    <div class="h-32 bg-gradient-to-tr from-blue-900 to-black rounded-t-[26px] relative overflow-hidden">
-                        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div id="card-inner" class="tilt-inner glass w-[320px] rounded-[30px] p-1 shadow-2xl overflow-hidden relative group border-[#e23636]/40">
+
+                    <div class="h-32 bg-gradient-to-tr from-[#6b0f0f] via-[#1a0505] to-[#b38600] rounded-t-[26px] relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-50 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"></div>
                     </div>
 
                     <div class="px-6 pb-6 relative z-10">
                         <div class="flex justify-between items-end -mt-14 mb-4">
                             <div class="relative">
                                 <img id="u-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" 
-                                     class="w-24 h-24 rounded-[24px] border-[6px] border-[#0a0a0a] bg-black shadow-xl">
-                                <div id="u-status" class="absolute bottom-1 right-1 w-6 h-6 rounded-full border-[4px] border-[#0a0a0a] bg-gray-500"></div>
+                                     class="w-24 h-24 rounded-[24px] border-[4px] border-[#030305] bg-black shadow-[0_0_15px_rgba(226,54,54,0.5)]">
+                                <div id="u-status" class="absolute bottom-1 right-1 w-6 h-6 rounded-full border-[4px] border-[#030305] bg-gray-500"></div>
                             </div>
-                            
+
                             <a href="https://discord.com/users/1329835276020748321" target="_blank" 
-                               class="bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-lg hover:bg-blue-500/20 transition cursor-pointer group/icon">
-                                <i class="fa-brands fa-discord text-blue-400 text-xl group-hover/icon:text-white transition"></i>
+                               class="bg-red-900/20 border border-red-500/30 px-3 py-1 rounded-lg hover:bg-red-600/40 hover:border-red-400 transition cursor-pointer group/icon shadow-[0_0_10px_rgba(226,54,54,0.2)]">
+                                <i class="fa-brands fa-discord text-red-400 text-xl group-hover/icon:text-white transition"></i>
                             </a>
                         </div>
 
-                        <h2 class="text-2xl font-bold text-white">@zephyr.dev</h2>
-                        <div class="flex justify-between items-center text-xs text-gray-500 mb-4 font-mono">
-                            <span>Tokyo, JP</span>
-                            <span>Mem. since Jan 17, 2025</span>
+                        <h2 class="text-2xl font-bold text-white drop-shadow-md">@spidey.dev</h2>
+                        <div class="flex justify-between items-center text-xs text-gray-400 mb-4 font-mono">
+                            <span><i class="fa-solid fa-location-dot text-[#e23636] mr-1"></i> Tokyo, JP</span>
+                            <span>System Active</span>
                         </div>
 
-                        <div class="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center gap-3">
-                            <div id="act-img" class="w-10 h-10 rounded-lg bg-black flex items-center justify-center overflow-hidden">
-                                <i class="fa-solid fa-ghost text-gray-600"></i>
+                        <div class="bg-black/40 border border-[#e23636]/20 rounded-xl p-3 flex items-center gap-3 backdrop-blur-sm">
+                            <div id="act-img" class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e23636] to-[#7a0000] flex items-center justify-center overflow-hidden shadow-inner">
+                                <i class="fa-solid fa-spider text-white text-lg drop-shadow-md"></i>
                             </div>
                             <div class="flex-1 overflow-hidden">
-                                <p id="act-name" class="font-bold text-xs text-white truncate">Chilling</p>
-                                <p id="act-detail" class="text-[10px] text-gray-500 truncate">No active session</p>
+                                <p id="act-name" class="font-bold text-xs text-white truncate">Monitoring Grid</p>
+                                <p id="act-detail" class="text-[10px] text-gray-400 truncate">Awaiting protocols...</p>
                             </div>
-                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                            <div class="w-2 h-2 rounded-full bg-[#ffbf00] animate-pulse shadow-[0_0_8px_#ffbf00]"></div>
                         </div>
                     </div>
                 </div>
@@ -162,115 +185,116 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mb-24">
-            <div class="glass p-6 rounded-2xl text-center hover:bg-white/5 transition duration-500">
-                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">3+</h3>
-                <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Years Exp.</p>
+            <div class="glass p-6 rounded-2xl text-center hover:bg-red-900/10 transition duration-500 border-[#e23636]/10">
+                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#ffbf00] to-[#e23636]">3+</h3>
+                <p class="text-sm text-gray-400 uppercase tracking-widest font-bold mt-2">Years Exp.</p>
             </div>
-            <div class="glass p-6 rounded-2xl text-center hover:bg-white/5 transition duration-500">
-                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">10+</h3>
-                <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Projects</p>
+            <div class="glass p-6 rounded-2xl text-center hover:bg-red-900/10 transition duration-500 border-[#e23636]/10">
+                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#ffbf00] to-[#e23636]">10+</h3>
+                <p class="text-sm text-gray-400 uppercase tracking-widest font-bold mt-2">Projects</p>
             </div>
-            <div class="glass p-6 rounded-2xl text-center hover:bg-white/5 transition duration-500">
-                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">91%</h3>
-                <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Satisfaction</p>
-            </div>
-        </div>
-
-        <div class="w-full max-w-4xl mb-24">
-            <h2 class="text-3xl font-bold text-white mb-8 text-center md:text-left">Experience Highlights</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="glass-card-hover glass p-8 rounded-3xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[60px] group-hover:bg-blue-500/20 transition"></div>
-                    <span class="text-blue-400 font-bold text-sm tracking-wide">2022 - Present</span>
-                    <h3 class="text-2xl font-bold text-white mt-2">Software Engineer</h3>
-                    <p class="text-gray-500 mb-4 font-mono text-sm">Freelance</p>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        Delivered 10+ projects with 91% client satisfaction. Specialized in web development and creative solutions.
-                    </p>
-                </div>
-
-                <div class="glass-card-hover glass p-8 rounded-3xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[60px] group-hover:bg-purple-500/20 transition"></div>
-                    <span class="text-blue-400 font-bold text-sm tracking-wide">2023 - Present</span>
-                    <h3 class="text-2xl font-bold text-white mt-2">Full Stack Developer</h3>
-                    <p class="text-gray-500 mb-4 font-mono text-sm">Various Startups</p>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        Built production-ready applications with focus on performance and user experience.
-                    </p>
-                </div>
+            <div class="glass p-6 rounded-2xl text-center hover:bg-red-900/10 transition duration-500 border-[#e23636]/10">
+                <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#ffbf00] to-[#e23636]">91%</h3>
+                <p class="text-sm text-gray-400 uppercase tracking-widest font-bold mt-2">Satisfaction</p>
             </div>
         </div>
 
-        <div id="about" class="w-full max-w-4xl mb-20">
-            <div class="glass rounded-3xl p-8 md:p-12 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-                
-                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-user-astronaut text-blue-500"></i> About Me
+        <div id="about" class="w-full max-w-4xl mb-24">
+            <div class="glass rounded-3xl p-8 md:p-12 relative overflow-hidden border-[#e23636]/30 shadow-[0_0_30px_rgba(226,54,54,0.1)]">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-[#ffbf00]/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <h2 class="text-3xl font-extrabold text-white mb-8 flex items-center gap-3 border-b border-[#e23636]/20 pb-4">
+                    <i class="fa-solid fa-microchip text-[#e23636]"></i> Neural Network Profile
                 </h2>
-                <div class="space-y-4 text-gray-400 leading-relaxed">
-                    <p class="text-lg text-white font-medium">
-                        Hello, Im Zephyr & i code stuff.
+                
+                <div class="space-y-6 text-gray-300 leading-relaxed text-lg">
+                    <p class="text-xl text-white font-bold tracking-wide">
+                        "With great power comes great code." 🕸️
                     </p>
                     <p>
-                        Founder & CEO of <span class="text-blue-400 font-bold">BuildCore</span> / Vertex Creative / WebLooM inc. 🌐
+                        I'm <span class="text-white font-bold">Spidey</span>, a 23-year-old software engineer, ethical hacker, and creative architect operating out of Tokyo, JP. I swing seamlessly between crafting pixel-perfect front-end experiences and fortifying complex backend systems.
                     </p>
-                    <p class="text-sm pt-2 italic text-gray-500">
-                        Feel Free to dm me
+                    <div class="p-6 bg-black/40 rounded-2xl border border-red-500/20 shadow-inner">
+                        <p class="mb-3"><i class="fa-solid fa-bolt text-[#ffbf00] mr-2"></i> Founder & CEO of <span class="text-[#e23636] font-bold">WebLooM inc.</span> and <span class="text-[#e23636] font-bold">VertexCreative</span></p>
+                        <p class="mb-3"><i class="fa-solid fa-chart-line text-[#ffbf00] mr-2"></i> Co-Founder & CFO of <span class="text-[#e23636] font-bold">NyX Dev</span></p>
+                        <p><i class="fa-solid fa-code-branch text-[#ffbf00] mr-2"></i> Founder of <span class="text-[#e23636] font-bold">BuildCore</span></p>
+                    </div>
+                    <p>
+                        Currently engineering massive, web-slinging tech ecosystems, including:
                     </p>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <li class="glass p-4 rounded-xl border-[#e23636]/20">
+                            <span class="text-white font-bold block mb-1">VertexOS</span>
+                            <span class="text-sm text-gray-400">A revolutionary web-based operating system.</span>
+                        </li>
+                        <li class="glass p-4 rounded-xl border-[#e23636]/20">
+                            <span class="text-white font-bold block mb-1">Scope</span>
+                            <span class="text-sm text-gray-400">The next-generation social media platform for developers.</span>
+                        </li>
+                        <li class="glass p-4 rounded-xl border-[#e23636]/20">
+                            <span class="text-white font-bold block mb-1">Kodo</span>
+                            <span class="text-sm text-gray-400">A massive, robust learning architecture.</span>
+                        </li>
+                        <li class="glass p-4 rounded-xl border-[#e23636]/20">
+                            <span class="text-white font-bold block mb-1">WindOn</span>
+                            <span class="text-sm text-gray-400">An advanced web development learning platform.</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <div class="w-full max-w-4xl mb-24">
-            <h2 class="text-2xl font-bold text-white mb-8 text-center md:text-left">Skills & Expertise</h2>
-            
+            <h2 class="text-2xl font-bold text-white mb-8 text-center md:text-left flex items-center gap-3">
+                <i class="fa-solid fa-layer-group text-[#ffbf00]"></i> Suit Capabilities
+            </h2>
+
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="glass-card-hover glass rounded-2xl p-6">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Web Development</h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-globe text-[#e23636]"></i> Web Architecture</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">React</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Next.js</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">TypeScript</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Tailwind CSS</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Node.js</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">React</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Next.js</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">C++</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Tailwind CSS</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Node.js</span>
                     </div>
                 </div>
 
                 <div class="glass-card-hover glass rounded-2xl p-6">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Design & UI/UX</h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-nib text-[#e23636]"></i> Interface Design</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Figma</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Prototyping</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Design Systems</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Creative Design</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Figma</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Prototyping</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Design Systems</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">UI/UX</span>
                     </div>
                 </div>
 
                 <div class="glass-card-hover glass rounded-2xl p-6">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Cybersecurity</h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-shield-halved text-[#e23636]"></i> Security Protocols</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Ethical Hacking</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Penetration Testing</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Network Security</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Ethical Hacking</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Penetration Testing</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Network Sec.</span>
                     </div>
                 </div>
 
                 <div class="glass-card-hover glass rounded-2xl p-6">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Tools & Platforms</h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-server text-[#e23636]"></i> System Tools</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Git</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">Docker</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">AWS</span>
-                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-300">REST APIs</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Git</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">Docker</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">AWS</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-sm text-gray-200 font-medium">REST APIs</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <footer class="text-center text-gray-600 text-sm pb-10">
-            <p>&copy; 2026 Zephyr. All Rights Reserved.</p>
+        <footer class="text-center text-gray-500 text-sm pb-10 border-t border-white/5 pt-8 w-full">
+            <p>&copy; 2026 Spidey. Stark Tech Protocols Online.</p>
         </footer>
 
     </main>
@@ -286,12 +310,12 @@
             const rect = cardContainer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
+
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            
-            const rotateX = ((y - centerY) / centerY) * -15; // Max 15deg
-            const rotateY = ((x - centerX) / centerX) * 15;
+
+            const rotateX = ((y - centerY) / centerY) * -12; 
+            const rotateY = ((x - centerX) / centerX) * 12;
 
             cardInner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
@@ -314,7 +338,7 @@
                 }
 
                 // Status
-                const colors = { online: '#22c55e', idle: '#facc15', dnd: '#ef4444', offline: '#3f3f46' };
+                const colors = { online: '#22c55e', idle: '#ffbf00', dnd: '#e23636', offline: '#3f3f46' };
                 document.getElementById('u-status').style.backgroundColor = colors[data.discord_status];
 
                 // Activity
@@ -323,7 +347,7 @@
                 const img = document.getElementById('act-img');
 
                 if (data.listening_to_spotify) {
-                    img.innerHTML = `<img src="${data.spotify.album_art_url}" class="w-full h-full object-cover">`;
+                    img.innerHTML = `<img src="${data.spotify.album_art_url}" class="w-full h-full object-cover shadow-inner">`;
                     name.innerText = data.spotify.song;
                     detail.innerText = data.spotify.artist;
                 } else if (data.activities.length > 0) {
