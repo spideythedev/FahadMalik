@@ -330,10 +330,12 @@
             btn.disabled = true;
 
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // --- UPDATED ALERT SYSTEM FOR DEBUGGING ---
             const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
 
             if (error) {
-                alert("Error: Could not publish. Please try again.");
+                alert("Supabase Error: " + error.message + "\n\nDetails: " + error.details);
                 console.error(error);
                 btn.innerText = originalText;
                 btn.disabled = false;
@@ -529,11 +531,8 @@
                 return sprite;
             }
 
-            // --- FIXED: Staggered Spiral Pattern to prevent overlapping text ---
             techStack.forEach((tech, i) => {
-                // Alternate between outer rings (rings 6, 7, 8)
                 const ringLevel = rings - (i % 3); 
-                // Space them evenly across the 16 spokes, shifting slightly per ring
                 const radialPos = (i * 3) % radials; 
                 
                 const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
