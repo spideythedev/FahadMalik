@@ -218,17 +218,17 @@
         </div>
     </div>
 
-    <div id="admin-modal" class="fixed inset-0 z-[100] bg-gray-50 hidden flex-col">
-        <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm">
-            <div class="font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Welcome, Fahad - Blog Publisher</div>
-            <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 hover:text-black">Close Menu</button>
+    <div id="admin-modal" class="fixed inset-0 z-[100] bg-gray-50 hidden flex-col overflow-y-auto">
+        <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-10">
+            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Welcome, Fahad</div>
+            <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 hover:text-black">Close</button>
         </div>
         <div class="flex-grow p-4 md:p-6 max-w-5xl mx-auto w-full flex flex-col gap-4">
-            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-3xl md:text-4xl font-extrabold text-black bg-transparent border-none focus:outline-none placeholder-gray-300">
+            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-2xl md:text-4xl font-extrabold text-black bg-transparent border-none focus:outline-none placeholder-gray-300">
             <div class="text-xs text-gray-400 font-mono tracking-wide border-b border-gray-200 pb-2">HTML FORMATTING ENABLED</div>
-            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full flex-grow bg-white border border-gray-200 rounded-xl p-6 font-mono text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none shadow-inner leading-relaxed"></textarea>
-            <div class="flex justify-end">
-                <button onclick="publishPost()" id="publish-btn" class="bg-brand-dark text-white px-8 py-3.5 rounded-lg font-bold shadow-lg hover:bg-black transition">Publish Post</button>
+            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[300px] flex-grow bg-white border border-gray-200 rounded-xl p-4 md:p-6 font-mono text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none shadow-inner leading-relaxed"></textarea>
+            <div class="flex justify-end pb-10">
+                <button onclick="publishPost()" id="publish-btn" class="w-full md:w-auto bg-brand-dark text-white px-8 py-3.5 rounded-lg font-bold shadow-lg hover:bg-black transition active:scale-95">Publish Post</button>
             </div>
         </div>
     </div>
@@ -301,56 +301,72 @@
             supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             fetchBlogs();
         } else {
-            console.error("Supabase failed to load.");
+            alert("Warning: Supabase SDK did not load. Are you connected to the internet?");
             document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Database connection failed. Please refresh.</p>';
         }
 
         async function fetchBlogs() {
             if(!supabase) return;
-            const { data, error } = await supabase.from('blogs').select('*').order('id', { ascending: false });
-            if (data) { 
-                blogs = data; 
-                renderBlogFeed(); 
-            } else if (error) { 
-                console.error("DB Fetch Error:", error); 
-                document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Error reading from database.</p>';
+            try {
+                const { data, error } = await supabase.from('blogs').select('*').order('id', { ascending: false });
+                if (data) { 
+                    blogs = data; 
+                    renderBlogFeed(); 
+                } else if (error) { 
+                    document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Error reading database.</p>';
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
 
+        // --- AGGRESSIVE MOBILE DEBUGGER FOR PUBLISHING ---
         async function publishPost() {
-            if(!supabase) return alert("Database not connected.");
-            
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-html').value;
-            if(!title || !content) return alert("Error: You must write a title and content.");
+            try {
+                alert("Step 1: Button clicked! Checking connection...");
+                
+                if(!supabase) return alert("Step 1 FAILED: Supabase is not connected.");
+                
+                const title = document.getElementById('post-title').value;
+                const content = document.getElementById('post-html').value;
+                
+                if(!title || !content) return alert("Step 1 FAILED: You must type a title and some HTML.");
 
-            const btn = document.getElementById('publish-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "Publishing to Website...";
-            btn.disabled = true;
+                const btn = document.getElementById('publish-btn');
+                const originalText = btn.innerText;
+                btn.innerText = "Publishing...";
+                btn.disabled = true;
 
-            const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            
-            // --- UPDATED ALERT SYSTEM FOR DEBUGGING ---
-            const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
+                const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                
+                alert("Step 2: Connection is good. Trying to send to database right now...");
+                
+                const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
 
-            if (error) {
-                alert("Supabase Error: " + error.message + "\n\nDetails: " + error.details);
-                console.error(error);
+                if (error) {
+                    alert("Step 3 FAILED! Supabase rejected it. \n\nReason: " + error.message + "\nDetails: " + error.details);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                
+                alert("Step 3 SUCCESS! Your post has been saved to the database!");
+                
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-html').value = '';
                 btn.innerText = originalText;
                 btn.disabled = false;
-                return;
+                
+                closeAdminModal();
+                switchView('blog'); 
+                document.getElementById('blog-list').innerHTML = '<p class="text-emerald-500 font-mono text-sm animate-pulse">Loading new post...</p>';
+                await fetchBlogs();
+
+            } catch (err) {
+                alert("CRITICAL JAVASCRIPT CRASH: " + err.message);
+                document.getElementById('publish-btn').innerText = "Publish Post";
+                document.getElementById('publish-btn').disabled = false;
             }
-            
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-html').value = '';
-            btn.innerText = originalText;
-            btn.disabled = false;
-            
-            closeAdminModal();
-            switchView('blog'); 
-            document.getElementById('blog-list').innerHTML = '<p class="text-emerald-500 font-mono text-sm animate-pulse">Loading new post...</p>';
-            await fetchBlogs();
         }
 
         function renderBlogFeed() {
