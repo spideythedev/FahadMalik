@@ -228,10 +228,12 @@
             <div class="text-xs text-gray-400 font-mono tracking-wide border-b border-gray-200 pb-2">HTML FORMATTING ENABLED</div>
             <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[250px] flex-grow bg-white border border-gray-200 rounded-xl p-4 md:p-6 font-mono text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none shadow-inner leading-relaxed"></textarea>
             
-            <div id="debug-logger" class="w-full bg-black text-green-400 font-mono text-xs p-3 rounded-lg h-24 overflow-y-auto hidden border border-gray-700"></div>
+            <div id="debug-logger" class="w-full bg-black text-green-400 font-mono text-xs p-3 rounded-lg h-32 overflow-y-auto border border-gray-700">
+                > System ready. Waiting for input...
+            </div>
 
             <div class="flex justify-end pb-10 mt-2">
-                <button onclick="publishPost()" id="publish-btn" class="w-full md:w-auto bg-brand-dark text-white px-8 py-4 rounded-lg font-bold shadow-lg hover:bg-gray-800 hover:shadow-2xl focus:ring-4 focus:ring-gray-300 transform transition-all duration-200 active:scale-95 active:bg-black">
+                <button type="button" onclick="publishPost()" id="publish-btn" class="w-full md:w-auto bg-brand-dark text-white px-8 py-4 rounded-lg font-bold shadow-lg hover:bg-gray-800 hover:shadow-2xl focus:ring-4 focus:ring-gray-300 transform transition-all duration-200 active:scale-95 active:bg-black">
                     Publish Post
                 </button>
             </div>
@@ -284,8 +286,7 @@
         function openAdminModal() { 
             document.getElementById('admin-modal').classList.remove('hidden'); 
             document.getElementById('admin-modal').classList.add('flex'); 
-            document.getElementById('debug-logger').classList.add('hidden');
-            document.getElementById('debug-logger').innerHTML = '';
+            document.getElementById('debug-logger').innerHTML = '> System ready. Waiting for input...';
         }
         function closeAdminModal() { 
             document.getElementById('admin-modal').classList.add('hidden'); 
@@ -308,8 +309,7 @@
             supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             fetchBlogs();
         } else {
-            console.error("Supabase failed to load.");
-            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Database connection failed. Please refresh.</p>';
+            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Database connection failed. Are you using a preview app without internet access?</p>';
         }
 
         async function fetchBlogs() {
@@ -320,7 +320,6 @@
                     blogs = data; 
                     renderBlogFeed(); 
                 } else if (error) { 
-                    console.error("DB Fetch Error:", error); 
                     document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Error reading database.</p>';
                 }
             } catch (err) {
@@ -328,30 +327,32 @@
             }
         }
 
-        // --- NEW VISUAL DEBUGGER FUNCTION ---
         function logStatus(message, isError = false) {
             const logger = document.getElementById('debug-logger');
-            logger.classList.remove('hidden'); // Show the box
             const color = isError ? "text-red-500 font-bold" : "text-green-400";
             logger.innerHTML += `<div class="${color}">> ${message}</div>`;
-            logger.scrollTop = logger.scrollHeight; // Scroll to bottom
+            logger.scrollTop = logger.scrollHeight;
         }
 
-        // --- THE CORRECTED PUBLISH FUNCTION ---
+        // --- 100% POP-UP FREE PUBLISH FUNCTION ---
         async function publishPost() {
-            logStatus("Button physically clicked!");
+            logStatus("Button physically clicked! Starting process...");
             
             try {
-                if(!supabase) return logStatus("ERROR: Supabase is not connected to the internet.", true);
+                if(!supabase) {
+                    logStatus("ERROR: Supabase library failed to load.", true);
+                    return;
+                }
                 
                 const title = document.getElementById('post-title').value;
                 const content = document.getElementById('post-html').value;
                 
                 if(!title || !content) {
-                    return logStatus("ERROR: You must type a Title and HTML content.", true);
+                    logStatus("ERROR: You must type a Title and HTML content.", true);
+                    return;
                 }
 
-                logStatus("Data prepared. Securing connection to database...");
+                logStatus("Data prepared. Attempting to contact database...");
                 
                 const btn = document.getElementById('publish-btn');
                 const originalText = btn.innerText;
@@ -360,14 +361,13 @@
 
                 const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 
-                logStatus("Sending to Supabase: " + title);
+                logStatus("Sending: " + title);
                 
                 const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
 
                 if (error) {
                     logStatus("DATABASE REJECTED POST!", true);
-                    logStatus("Reason: " + error.message, true);
-                    logStatus("Details: " + error.details, true);
+                    logStatus("Error details: " + JSON.stringify(error), true);
                     btn.innerText = originalText;
                     btn.disabled = false;
                     return;
@@ -377,18 +377,19 @@
                 
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-html').value = '';
-                btn.innerText = originalText;
-                btn.disabled = false;
+                btn.innerText = "Done!";
                 
                 setTimeout(() => {
                     closeAdminModal();
                     switchView('blog'); 
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                     document.getElementById('blog-list').innerHTML = '<p class="text-emerald-500 font-mono text-sm animate-pulse">Loading new post...</p>';
                     fetchBlogs();
-                }, 1500); // Wait 1.5 seconds so you can see the success message
+                }, 2000); 
 
             } catch (err) {
-                logStatus("CRITICAL JAVASCRIPT CRASH: " + err.message, true);
+                logStatus("JAVASCRIPT CRASH: " + err.message, true);
                 document.getElementById('publish-btn').innerText = "Publish Post";
                 document.getElementById('publish-btn').disabled = false;
             }
@@ -520,7 +521,6 @@
 
             const mainGroup = new THREE.Group();
             
-            // Particles
             const particleGeo = new THREE.BufferGeometry();
             const posArray = new Float32Array(600 * 3);
             for(let i=0; i<600*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
@@ -528,7 +528,6 @@
             const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
             mainGroup.add(particles);
 
-            // Web structure
             const webGeo = new THREE.BufferGeometry();
             const linePoints = [];
             const nodes = [new THREE.Vector3(0, 0, 0)];
@@ -557,7 +556,6 @@
             webGeo.setFromPoints(linePoints);
             mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.9 })));
 
-            // Tech Labels
             const techStack = ['React', 'Next.js', 'Node.js', 'C++', 'Tailwind', 'Docker', 'AWS', 'Figma', 'TypeScript', 'Git', 'VertexOS', 'Security', 'PostgreSQL', 'GraphQL', 'Vercel', 'Linux', 'Redis', 'WebLooM', 'BuildCore', 'Kubernetes'];
 
             function createTextSprite(text) {
@@ -575,7 +573,6 @@
             techStack.forEach((tech, i) => {
                 const ringLevel = rings - (i % 3); 
                 const radialPos = (i * 3) % radials; 
-                
                 const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
                 const pos = nodes[nodeIndex];
                 
