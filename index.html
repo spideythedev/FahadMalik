@@ -215,7 +215,7 @@
             <div class="bg-[#050505] border border-white/5 p-5 rounded-2xl mb-6">
                 <div id="user-info" class="hidden flex justify-between items-center">
                     <div class="flex items-center gap-4">
-                        <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-blue-500">
+                        <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
                         <div>
                             <p class="text-white font-bold text-sm" id="user-name">Player</p>
                             <p class="text-emerald-400 font-mono text-[10px] tracking-widest uppercase">Logged in</p>
@@ -295,23 +295,30 @@
     <div id="admin-modal" class="fixed inset-0 z-[9999] bg-[#030303] hidden flex-col overflow-y-auto w-full h-full">
         <div class="bg-[#0a0a0a] border-b border-brand-border px-6 py-5 flex justify-between items-center sticky top-0 z-10 shadow-2xl">
             <div class="font-bold flex items-center gap-3 text-white text-sm md:text-base tracking-wide">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span> Write Post
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span> Command Center
             </div>
             <button onclick="closeAdminModal()" class="text-xs font-mono text-gray-400 hover:text-white px-4 py-2 border border-white/10 rounded-lg bg-[#111]">CLOSE</button>
         </div>
-        <div class="flex-grow p-4 md:p-8 w-full flex flex-col gap-6 max-w-5xl mx-auto mb-20">
+        
+        <div class="flex-grow p-4 md:p-8 w-full flex flex-col gap-4 max-w-5xl mx-auto mb-20">
             <input type="text" id="post-title" placeholder="Title" class="w-full text-3xl md:text-5xl font-extrabold bg-transparent border-b border-white/10 text-white focus:outline-none focus:border-blue-500 pb-4 placeholder-gray-700">
             
-            <div class="text-xs text-blue-500 font-mono tracking-widest uppercase">HTML Content</div>
-            <textarea id="post-html" placeholder="<p>Write your HTML here...</p>" class="w-full min-h-[350px] flex-grow bg-[#0a0a0a] border border-brand-border text-gray-300 rounded-2xl p-6 font-mono text-sm focus:outline-none focus:border-blue-500 shadow-inner"></textarea>
-            
-            <div id="debug-logger" class="w-full bg-[#050505] text-emerald-400 font-mono text-xs p-4 rounded-xl h-32 overflow-y-auto border border-white/5 shadow-inner">
-                > Ready to post.
+            <div class="text-xs text-blue-500 font-mono tracking-widest uppercase mt-4">HTML Content</div>
+            <textarea id="post-html" placeholder="<p>Write your HTML here...</p>" class="w-full min-h-[300px] flex-grow bg-[#0a0a0a] border border-brand-border text-gray-300 rounded-2xl p-6 font-mono text-sm focus:outline-none focus:border-blue-500 shadow-inner"></textarea>
+
+            <div class="flex gap-4 w-full mt-2">
+                <button id="cancel-edit-btn" type="button" onclick="cancelEdit()" class="hidden w-1/3 bg-[#111] border border-white/10 text-white font-bold py-4 rounded-2xl hover:bg-white/5 transition-all">Cancel</button>
+                <button id="publish-btn" type="button" class="w-full bg-blue-600 text-white font-extrabold text-lg py-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] active:scale-[0.98] transition-all uppercase tracking-widest" style="touch-action: manipulation;">
+                    Publish Post
+                </button>
             </div>
 
-            <button id="publish-btn" type="button" class="w-full bg-blue-600 text-white font-extrabold text-lg py-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] active:scale-[0.98] transition-all mt-2 uppercase tracking-widest" style="touch-action: manipulation;">
-                Publish Post
-            </button>
+            <div class="mt-12 border-t border-brand-border pt-8">
+                <h3 class="text-white font-bold mb-4 text-xl tracking-tight">Manage Posts</h3>
+                <div id="admin-post-list" class="space-y-3">
+                    <p class="text-gray-500 font-mono text-sm">Loading posts...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -340,7 +347,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -355,6 +362,7 @@
 
         let db, auth, provider, currentUser = null;
         window.globalBlogs = []; 
+        window.currentEditId = null; // Keeps track if we are editing a post
 
         try {
             const app = initializeApp(firebaseConfig);
@@ -393,16 +401,14 @@
         
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-        // --- LIVE TERMINAL LOGIC ---
+        // --- TERMINAL SCORE UPDATE ---
         window.updateTerminalLog = function(scores) {
             const terminal = document.getElementById('terminal-output');
             if(!terminal) return;
-            
             if(scores.length === 0) {
                 terminal.innerHTML = `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>`;
                 return;
             }
-
             terminal.innerHTML = '';
             const top5 = scores.slice(0, 5);
             top5.forEach((s) => {
@@ -427,7 +433,6 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     scoresData.push(data);
-
                     if(rank === 1) {
                         document.getElementById('hof-name').innerText = data.displayName;
                         document.getElementById('hof-score').innerText = data.score;
@@ -446,9 +451,7 @@
                     }
                     rank++;
                 });
-
                 window.updateTerminalLog(scoresData);
-
                 if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Loading logs...</p>';
             } catch (error) { console.error("Leaderboard Error:", error); }
         }
@@ -461,16 +464,7 @@
             } catch (error) { console.error("Score Error", error); }
         }
 
-        // --- BLOG SYSTEM ---
-        function logAdminStatus(message, isError = false) {
-            const logger = document.getElementById('debug-logger');
-            if(logger) {
-                const color = isError ? "text-red-500 font-bold" : "text-emerald-400";
-                logger.innerHTML += `<div class="${color}">> ${message}</div>`;
-                logger.scrollTop = logger.scrollHeight; 
-            }
-        }
-
+        // --- BLOG SYSTEM (EDIT & DELETE INCLUDED) ---
         window.fetchBlogs = async function() {
             if(!db) return;
             try {
@@ -484,11 +478,13 @@
                     return tB - tA; 
                 });
                 
+                // Public list
                 const list = document.getElementById('blog-list');
                 list.innerHTML = '';
                 
                 if(window.globalBlogs.length === 0) {
                     list.innerHTML = '<div class="bg-[#0a0a0a] p-10 rounded-2xl border border-white/5 text-center"><p class="text-gray-500 font-mono text-sm">No posts yet.</p></div>';
+                    window.renderAdminBlogs();
                     return;
                 }
                 
@@ -509,36 +505,112 @@
                     `;
                     list.appendChild(card);
                 });
+
+                // Update the Admin Management List too
+                window.renderAdminBlogs();
+
             } catch (err) { console.error(err); }
+        }
+
+        window.renderAdminBlogs = function() {
+            const adminList = document.getElementById('admin-post-list');
+            if(!adminList) return;
+            adminList.innerHTML = '';
+            
+            if(window.globalBlogs.length === 0) {
+                adminList.innerHTML = '<p class="text-gray-500 font-mono text-sm">No posts available to manage.</p>';
+                return;
+            }
+
+            window.globalBlogs.forEach(blog => {
+                adminList.innerHTML += `
+                    <div class="bg-[#111] border border-white/5 p-4 rounded-xl flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between sm:items-center">
+                        <p class="text-gray-300 font-bold truncate pr-4">${blog.title}</p>
+                        <div class="flex gap-2 flex-shrink-0">
+                            <button onclick="loadEditPost('${blog.id}')" class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition">Edit</button>
+                            <button onclick="deletePost('${blog.id}')" class="bg-red-500/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-600 hover:text-white transition">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.loadEditPost = function(id) {
+            const blog = window.globalBlogs.find(b => b.id === id);
+            if(!blog) return;
+            
+            document.getElementById('post-title').value = blog.title;
+            document.getElementById('post-html').value = blog.content;
+            window.currentEditId = id; // Lock in the ID we are editing
+            
+            document.getElementById('publish-btn').innerText = "UPDATE POST";
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            
+            // Scroll up to editor
+            document.getElementById('admin-modal').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.cancelEdit = function() {
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-html').value = '';
+            window.currentEditId = null;
+            
+            document.getElementById('publish-btn').innerText = "PUBLISH POST";
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        }
+
+        window.deletePost = async function(id) {
+            if(!confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+            try {
+                await deleteDoc(doc(db, "blogs", id));
+                window.fetchBlogs(); // Reload lists
+            } catch (err) {
+                alert("Error deleting post: " + err.message);
+            }
         }
 
         window.publishPost = async function() {
             const btn = document.getElementById('publish-btn');
             if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
-            logAdminStatus("Saving post...");
             
-            if(!db) { logAdminStatus("ERROR: Database disconnected.", true); btn.innerText = "FAILED"; return; }
+            if(!db) { alert("Database disconnected."); btn.innerText = "FAILED"; return; }
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
-            if(!title || !content) { logAdminStatus("ERROR: Payload empty.", true); btn.style.backgroundColor = "#ef4444"; btn.innerText = "ABORT"; setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Publish Post"; }, 2000); return; }
+            if(!title || !content) { 
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "MISSING INFO"; 
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "PUBLISH POST"; }, 2000); 
+                return; 
+            }
 
-            const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            
             try {
-                await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
-                logAdminStatus("SUCCESS: Post saved.");
-                btn.style.backgroundColor = "#10b981"; btn.innerText = "PUBLISHED!";
-                document.getElementById('post-title').value = ''; document.getElementById('post-html').value = '';
+                if(window.currentEditId) {
+                    // Update existing post
+                    await updateDoc(doc(db, "blogs", window.currentEditId), { 
+                        title: title, 
+                        content: content 
+                        // Intentionally not updating the timestamp so it keeps its original spot
+                    });
+                } else {
+                    // Create new post
+                    const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                    await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
+                }
+                
+                btn.style.backgroundColor = "#10b981"; btn.innerText = "SUCCESS!";
+                window.cancelEdit(); // Reset form
+                
                 setTimeout(() => {
-                    closeAdminModal(); switchView('blog'); window.fetchBlogs();
-                    btn.style.backgroundColor = ""; btn.innerText = "Publish Post";
+                    closeAdminModal(); 
+                    switchView('blog'); 
+                    window.fetchBlogs();
+                    btn.style.backgroundColor = ""; 
+                    btn.innerText = "PUBLISH POST";
                 }, 1500);
             } catch (err) {
-                logAdminStatus("ERROR: " + err.message, true);
-                btn.style.backgroundColor = "#ef4444"; btn.innerText = "SYSTEM ERROR";
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Publish Post"; }, 3000);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "ERROR";
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "PUBLISH POST"; }, 3000);
             }
         }
         
@@ -547,7 +619,7 @@
 
         window.openPost = function(id) {
             const blog = window.globalBlogs.find(b => b.id === id);
-            if(!blog) { alert("File missing."); return; }
+            if(!blog) return;
             document.getElementById('blog-feed-container').style.display = 'none';
             document.getElementById('single-post-container').style.display = 'block';
             document.getElementById('read-date').innerText = blog.date;
@@ -662,107 +734,109 @@
     </script>
 
     <script>
-        // Use normal script to prevent mobile module crashes
-        const container = document.getElementById('canvas-container');
-        if (container && window.THREE) {
-            const scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x0a0a0a, 8, 35); 
+        // Wrapping inside load event to ensure Three.js is loaded from CDN
+        window.addEventListener('load', () => {
+            const container = document.getElementById('canvas-container');
+            if (container && window.THREE) {
+                const scene = new THREE.Scene();
+                scene.fog = new THREE.Fog(0x0a0a0a, 8, 35); 
 
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, -12, 18); 
+                const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+                camera.position.set(0, -12, 18); 
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
-            container.appendChild(renderer.domElement);
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
+                container.appendChild(renderer.domElement);
 
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true; controls.dampingFactor = 0.05;
-            controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
-            controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true; controls.dampingFactor = 0.05;
+                controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
+                controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
 
-            const mainGroup = new THREE.Group();
-            
-            const particleGeo = new THREE.BufferGeometry();
-            const posArray = new Float32Array(200 * 3);
-            for(let i=0; i<200*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
-            particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            let particlesMesh = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x3b82f6, transparent: true, opacity: 0.5 }));
-            mainGroup.add(particlesMesh);
+                const mainGroup = new THREE.Group();
+                
+                const particleGeo = new THREE.BufferGeometry();
+                const posArray = new Float32Array(200 * 3);
+                for(let i=0; i<200*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
+                particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                let particlesMesh = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x3b82f6, transparent: true, opacity: 0.5 }));
+                mainGroup.add(particlesMesh);
 
-            const webGeo = new THREE.BufferGeometry();
-            const linePoints = [];
-            const nodes = [new THREE.Vector3(0, 0, 0)];
-            const radials = 12, rings = 6, maxRadius = 9;
-            
-            for (let r = 1; r <= rings; r++) {
-                const radius = (r / rings) * maxRadius;
+                const webGeo = new THREE.BufferGeometry();
+                const linePoints = [];
+                const nodes = [new THREE.Vector3(0, 0, 0)];
+                const radials = 12, rings = 6, maxRadius = 9;
+                
+                for (let r = 1; r <= rings; r++) {
+                    const radius = (r / rings) * maxRadius;
+                    for (let i = 0; i < radials; i++) {
+                        const angle = (i / radials) * Math.PI * 2;
+                        const z = Math.pow(r / rings, 2) * 3 - 2 + (Math.sin(angle * 4) * 0.4);
+                        nodes.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, z));
+                    }
+                }
+
                 for (let i = 0; i < radials; i++) {
-                    const angle = (i / radials) * Math.PI * 2;
-                    const z = Math.pow(r / rings, 2) * 3 - 2 + (Math.sin(angle * 4) * 0.4);
-                    nodes.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, z));
+                    for (let r = 0; r < rings; r++) { linePoints.push(nodes[r===0?0:1+(r-1)*radials+i], nodes[1+r*radials+i]); }
                 }
-            }
-
-            for (let i = 0; i < radials; i++) {
-                for (let r = 0; r < rings; r++) { linePoints.push(nodes[r===0?0:1+(r-1)*radials+i], nodes[1+r*radials+i]); }
-            }
-            for (let r = 1; r <= rings; r++) {
-                for (let i = 0; i < radials; i++) { linePoints.push(nodes[1+(r-1)*radials+i], nodes[1+(r-1)*radials+((i+1)%radials)]); }
-            }
-
-            webGeo.setFromPoints(linePoints);
-            mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.8 })));
-
-            const techStack = ['React', 'Next.js', 'Node.js', 'Python', 'Tailwind', 'Docker', 'AWS', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase'];
-
-            function createTextSprite(text) {
-                const canvas = document.createElement('canvas');
-                canvas.width = 512; canvas.height = 128;
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, 512, 128);
-                ctx.font = 'bold 42px Inter, sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(text, 256, 64);
-                const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
-                sprite.scale.set(5.5, 1.375, 1);
-                return sprite;
-            }
-
-            techStack.forEach((tech, i) => {
-                const ringLevel = rings - (i % 3); 
-                const radialPos = (i * 3) % radials; 
-                const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
-                const pos = nodes[nodeIndex];
-                
-                const dot = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3b82f6 }));
-                dot.position.copy(pos); 
-                mainGroup.add(dot);
-                
-                const sprite = createTextSprite(tech);
-                sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
-                mainGroup.add(sprite);
-            });
-
-            mainGroup.rotation.x = Math.PI / 4.5;
-            scene.add(mainGroup);
-
-            window.addEventListener('resize', () => {
-                if(container.clientWidth > 0 && container.clientHeight > 0) { 
-                    renderer.setSize(container.clientWidth, container.clientHeight);
-                    camera.aspect = container.clientWidth / container.clientHeight;
-                    camera.updateProjectionMatrix();
+                for (let r = 1; r <= rings; r++) {
+                    for (let i = 0; i < radials; i++) { linePoints.push(nodes[1+(r-1)*radials+i], nodes[1+(r-1)*radials+((i+1)%radials)]); }
                 }
-            });
 
-            function animate() {
-                requestAnimationFrame(animate);
-                controls.update(); 
-                particlesMesh.rotation.y -= 0.0005; 
-                particlesMesh.rotation.z += 0.0002;
-                renderer.render(scene, camera);
+                webGeo.setFromPoints(linePoints);
+                mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.8 })));
+
+                const techStack = ['React', 'Next.js', 'Node.js', 'Python', 'Tailwind', 'Docker', 'AWS', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase'];
+
+                function createTextSprite(text) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512; canvas.height = 128;
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 512, 128);
+                    ctx.font = 'bold 42px Inter, sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText(text, 256, 64);
+                    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
+                    sprite.scale.set(5.5, 1.375, 1);
+                    return sprite;
+                }
+
+                techStack.forEach((tech, i) => {
+                    const ringLevel = rings - (i % 3); 
+                    const radialPos = (i * 3) % radials; 
+                    const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
+                    const pos = nodes[nodeIndex];
+                    
+                    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3b82f6 }));
+                    dot.position.copy(pos); 
+                    mainGroup.add(dot);
+                    
+                    const sprite = createTextSprite(tech);
+                    sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
+                    mainGroup.add(sprite);
+                });
+
+                mainGroup.rotation.x = Math.PI / 4.5;
+                scene.add(mainGroup);
+
+                window.addEventListener('resize', () => {
+                    if(container.clientWidth > 0 && container.clientHeight > 0) { 
+                        renderer.setSize(container.clientWidth, container.clientHeight);
+                        camera.aspect = container.clientWidth / container.clientHeight;
+                        camera.updateProjectionMatrix();
+                    }
+                });
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update(); 
+                    particlesMesh.rotation.y -= 0.0005; 
+                    particlesMesh.rotation.z += 0.0002;
+                    renderer.render(scene, camera);
+                }
+                animate();
             }
-            animate();
-        }
+        });
     </script>
 </body>
 </html>
