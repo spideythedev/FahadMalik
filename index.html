@@ -46,6 +46,10 @@
 </head>
 <body class="selection:bg-gray-300 selection:text-black flex flex-col min-h-screen relative">
 
+    <div class="w-full bg-red-600 text-white text-center py-1.5 font-mono text-xs font-bold tracking-widest uppercase z-[9999] relative">
+        System Version 2.0 - Live Vercel Sync
+    </div>
+
     <nav class="bg-white px-6 py-3 sticky top-0 z-50 border-b border-gray-100 flex-none shadow-sm">
         <div class="max-w-6xl mx-auto grid grid-cols-3 items-center">
             <div class="flex items-center justify-start">
@@ -64,7 +68,7 @@
             <div class="flex justify-end items-center gap-4 z-10">
                 <div class="flex items-center gap-2 text-sm font-medium text-gray-500">
                     <span id="status-dot" class="w-2 h-2 rounded-full bg-gray-300"></span> 
-                    <span class="hidden sm:inline" id="status-text">Connecting...</span>
+                    <span class="hidden sm:inline" id="status-text">Online</span>
                 </div>
             </div>
         </div>
@@ -137,7 +141,7 @@
 
     <div id="admin-modal" class="fixed inset-0 z-[999] bg-gray-50 hidden flex-col overflow-y-auto">
         <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-10">
-            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Admin</div>
+            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Admin V2</div>
             <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 hover:text-black p-2 border border-gray-200 rounded-md">Close Menu</button>
         </div>
         <div class="flex-grow p-4 md:p-6 max-w-5xl mx-auto w-full flex flex-col gap-4">
@@ -151,12 +155,7 @@
             <div class="flex justify-end pb-10 mt-2 relative z-50">
                 <button 
                     id="publish-btn" 
-                    onclick="
-                        this.innerText='SYSTEM TRIGGERED!'; 
-                        this.style.backgroundColor='#ef4444'; 
-                        try { publishPost(); } 
-                        catch(e) { document.getElementById('debug-logger').innerHTML += '<div class=\'text-red-500\'>CRASH: ' + e.message + '</div>'; }
-                    " 
+                    onclick="publishPost()" 
                     class="w-full md:w-auto bg-brand-dark text-white px-8 py-5 rounded-lg font-bold shadow-2xl active:scale-95 active:bg-black transition-transform"
                     style="touch-action: manipulation;">
                     TAP TO PUBLISH
@@ -166,7 +165,7 @@
     </div>
 
     <script>
-        // 1. UI LOGIC
+        // UI Navigation
         function switchView(view) {
             document.getElementById('view-main').style.display = view === 'main' ? 'block' : 'none';
             document.getElementById('view-blog').style.display = view === 'blog' ? 'block' : 'none';
@@ -183,6 +182,7 @@
             }
         }
 
+        // PIN Modal
         function openPinModal() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-modal').classList.add('flex'); }
         function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
         function verifyPin() {
@@ -192,7 +192,7 @@
         }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
 
-        // 2. SUPABASE LOGIC
+        // Supabase Init
         const supabaseUrl = 'https://teflsosnadhtsxzmdpyc.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZmxzb3NuYWRodHN4em1kcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5OTczMTQsImV4cCI6MjA5MTU3MzMxNH0.WjRFnWSsTIqLLCCjQw74NPBCU0uZ2WvlrUK-kVvfoT4';
         let supabase; let blogs = [];
@@ -201,7 +201,7 @@
             supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             fetchBlogs();
         } else {
-            document.getElementById('blog-list').innerHTML = '<p class="text-red-500">Supabase failed to load.</p>';
+            document.getElementById('blog-list').innerHTML = '<p class="text-red-500">Supabase script completely failed to load.</p>';
         }
 
         async function fetchBlogs() {
@@ -210,46 +210,62 @@
             if (data) { blogs = data; renderBlogFeed(); }
         }
 
-        function logStatus(msg, err=false) {
+        function logStatus(msg, isError=false) {
             const logger = document.getElementById('debug-logger');
-            logger.innerHTML += `<div class="${err ? 'text-red-500 font-bold' : 'text-green-400'}">> ${msg}</div>`;
+            logger.innerHTML += `<div class="${isError ? 'text-red-500 font-bold' : 'text-green-400'}">> ${msg}</div>`;
             logger.scrollTop = logger.scrollHeight;
         }
 
+        // --- BULLETPROOF PUBLISH LOGIC ---
         async function publishPost() {
-            logStatus("JavaScript function triggered! Connecting to database...");
+            const btn = document.getElementById('publish-btn');
+            btn.style.backgroundColor = "#2563eb"; // Turns Blue immediately
+            btn.innerText = "PROCESSING...";
+            logStatus("Button tapped successfully! Code is running...");
             
-            if(!supabase) return logStatus("ERROR: No database connection.", true);
+            if(!supabase) {
+                logStatus("CRITICAL ERROR: No database connection found.", true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "FAILED";
+                return;
+            }
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
             
-            if(!title || !content) return logStatus("ERROR: Title or HTML is empty.", true);
+            if(!title || !content) {
+                logStatus("ERROR: You left the title or content blank.", true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "FAILED";
+                return;
+            }
 
-            logStatus("Sending data to cloud...");
+            logStatus("Validating inputs. Sending to Supabase Cloud...");
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             
-            const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
+            try {
+                const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
 
-            const btn = document.getElementById('publish-btn');
-            if (error) {
-                logStatus("DATABASE REJECTED IT: " + error.message, true);
-                btn.innerText = "FAILED - TRY AGAIN";
-                btn.style.backgroundColor = "#0a0a0a";
-            } else {
-                logStatus("SUCCESS! Saved to cloud.");
-                btn.innerText = "PUBLISHED!";
-                btn.style.backgroundColor = "#10b981"; // green
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-html').value = '';
-                
-                setTimeout(() => {
-                    closeAdminModal();
-                    switchView('blog');
-                    fetchBlogs();
-                    btn.innerText = "TAP TO PUBLISH";
-                    btn.style.backgroundColor = "#0a0a0a";
-                }, 1500);
+                if (error) {
+                    logStatus("DATABASE REJECTED POST!", true);
+                    logStatus("Reason: " + error.message, true);
+                    btn.style.backgroundColor = "#ef4444"; btn.innerText = "DATABASE ERROR";
+                } else {
+                    logStatus("SUCCESS! Post safely deployed to cloud.");
+                    btn.style.backgroundColor = "#10b981"; // Turns Green
+                    btn.innerText = "PUBLISHED!";
+                    document.getElementById('post-title').value = '';
+                    document.getElementById('post-html').value = '';
+                    
+                    setTimeout(() => {
+                        closeAdminModal();
+                        switchView('blog');
+                        fetchBlogs();
+                        btn.style.backgroundColor = "#0a0a0a";
+                        btn.innerText = "TAP TO PUBLISH";
+                    }, 1500);
+                }
+            } catch (err) {
+                logStatus("JAVASCRIPT CRASH: " + err.message, true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "CODE CRASH";
             }
         }
 
@@ -283,7 +299,7 @@
             window.scrollTo({top: 0});
         }
 
-        // 3. DISCORD & TERMINAL
+        // Terminal & Lanyard
         fetch(`https://api.lanyard.rest/v1/users/1329835276020748321`).then(r=>r.json()).then(res => {
             if(res.data) {
                 if(res.data.discord_user.avatar) document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/1329835276020748321/${res.data.discord_user.avatar}.png?size=128`;
@@ -291,7 +307,7 @@
                 document.getElementById('status-dot').style.backgroundColor = c[res.data.discord_status] || c.offline;
                 document.getElementById('status-text').innerText = res.data.discord_status.toUpperCase();
             }
-        });
+        }).catch(()=>{});
 
         let logIdx = 0; const termLogs = ["System logged in...", "Checking VertexOS...", "Testing code...", "Tokyo servers active."];
         setInterval(() => {
@@ -317,10 +333,12 @@
             controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
 
             const mainGroup = new THREE.Group();
-            const particles = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(1800).map(()=>(Math.random()-0.5)*40), 3)), new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
+            
+            // OPTIMIZED: Reduced particles to prevent mobile freezing
+            const particles = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(300 * 3).map(()=>(Math.random()-0.5)*40), 3)), new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
             mainGroup.add(particles);
 
-            const nodes = [new THREE.Vector3(0,0,0)]; const radials = 16, rings = 8;
+            const nodes = [new THREE.Vector3(0,0,0)]; const radials = 12, rings = 6;
             for (let r = 1; r <= rings; r++) {
                 for (let i = 0; i < radials; i++) {
                     const angle = (i / radials) * Math.PI * 2;
