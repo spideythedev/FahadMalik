@@ -46,6 +46,10 @@
 </head>
 <body class="selection:bg-gray-300 selection:text-black flex flex-col min-h-screen relative">
 
+    <div class="w-full bg-red-600 text-white text-center py-1.5 font-mono text-xs font-bold tracking-widest uppercase z-[9999] relative">
+        System Version 3.0 - Mobile Fix Live
+    </div>
+
     <nav class="bg-white px-6 py-3 sticky top-0 z-50 border-b border-gray-100 flex-none shadow-sm">
         <div class="max-w-6xl mx-auto grid grid-cols-3 items-center">
             <div class="flex items-center justify-start">
@@ -64,7 +68,7 @@
             <div class="flex justify-end items-center gap-4 z-10">
                 <div class="flex items-center gap-2 text-sm font-medium text-gray-500">
                     <span id="status-dot" class="w-2 h-2 rounded-full bg-gray-300"></span> 
-                    <span class="hidden sm:inline" id="status-text">Connecting...</span>
+                    <span class="hidden sm:inline" id="status-text">Online</span>
                 </div>
             </div>
         </div>
@@ -123,7 +127,7 @@
         </div>
     </div>
 
-    <div id="pin-modal" class="fixed inset-0 z-[999] bg-black/80 backdrop-blur-md hidden flex-col justify-center items-center p-4">
+    <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-brand-dark border border-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
             <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-4">Admin Login Required</h3>
             <input type="password" id="pin-input" placeholder="Enter PIN Code..." class="w-full bg-black border border-gray-700 text-white font-mono p-3 rounded-lg focus:outline-none focus:border-white mb-4">
@@ -135,33 +139,22 @@
         </div>
     </div>
 
-    <div id="admin-modal" class="fixed inset-0 z-[999] bg-gray-50 hidden flex-col overflow-y-auto">
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-gray-50 hidden flex-col overflow-y-auto w-full h-full">
         <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-10">
-            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Admin</div>
-            <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 hover:text-black p-2 border border-gray-200 rounded-md">Close Menu</button>
+            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Admin V3</div>
+            <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 p-2 border border-gray-200 rounded-md">Close Menu</button>
         </div>
-        <div class="flex-grow p-4 md:p-6 max-w-5xl mx-auto w-full flex flex-col gap-4">
-            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-2xl md:text-4xl font-extrabold text-black bg-transparent border-none focus:outline-none placeholder-gray-300">
-            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[250px] flex-grow bg-white border border-gray-200 rounded-xl p-4 md:p-6 font-mono text-sm text-gray-800 focus:outline-none resize-none shadow-inner"></textarea>
+        <div class="flex-grow p-4 md:p-6 w-full flex flex-col gap-4 max-w-5xl mx-auto mb-20">
+            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-2xl font-extrabold bg-transparent border-b border-gray-200 focus:outline-none pb-2">
+            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[250px] flex-grow bg-white border border-gray-200 rounded-xl p-4 font-mono text-sm focus:outline-none shadow-inner"></textarea>
             
             <div id="debug-logger" class="w-full bg-black text-green-400 font-mono text-xs p-3 rounded-lg h-32 overflow-y-auto border border-gray-700">
                 > System ready. Waiting for button tap...
             </div>
 
-            <div class="flex justify-end pb-10 mt-2 relative z-50">
-                <button 
-                    id="publish-btn" 
-                    onclick="
-                        this.innerText='SYSTEM TRIGGERED!'; 
-                        this.style.backgroundColor='#ef4444'; 
-                        try { publishPost(); } 
-                        catch(e) { document.getElementById('debug-logger').innerHTML += '<div class=\'text-red-500\'>CRASH: ' + e.message + '</div>'; }
-                    " 
-                    class="w-full md:w-auto bg-brand-dark text-white px-8 py-5 rounded-lg font-bold shadow-2xl active:scale-95 active:bg-black transition-transform"
-                    style="touch-action: manipulation;">
-                    TAP TO PUBLISH
-                </button>
-            </div>
+            <button id="publish-btn" type="button" class="w-full bg-blue-600 text-white font-extrabold text-lg py-5 rounded-xl shadow-lg active:scale-95 transition-transform mt-4" style="touch-action: manipulation;">
+                🚀 PUBLISH TO CLOUD
+            </button>
         </div>
     </div>
 
@@ -201,7 +194,7 @@
             supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             fetchBlogs();
         } else {
-            document.getElementById('blog-list').innerHTML = '<p class="text-red-500">Supabase failed to load.</p>';
+            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold">Supabase failed to load from cloud.</p>';
         }
 
         async function fetchBlogs() {
@@ -216,42 +209,69 @@
             logger.scrollTop = logger.scrollHeight;
         }
 
+        // THE PUBLISHING CORE
         async function publishPost() {
-            logStatus("JavaScript function triggered! Connecting to database...");
+            const btn = document.getElementById('publish-btn');
+            if (btn.innerText === "PROCESSING...") return; // Prevent double taps
+
+            btn.innerText = "PROCESSING...";
+            logStatus("Mobile Tap Registered! Function started.");
             
-            if(!supabase) return logStatus("ERROR: No database connection.", true);
+            if(!supabase) {
+                logStatus("ERROR: No database connection available.", true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "SYSTEM FAILED";
+                return;
+            }
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
             
-            if(!title || !content) return logStatus("ERROR: Title or HTML is empty.", true);
+            if(!title || !content) {
+                logStatus("ERROR: Title or HTML is empty.", true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "FAILED - EMPTY TEXT";
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO CLOUD"; }, 2000);
+                return;
+            }
 
-            logStatus("Sending data to cloud...");
+            logStatus("Deploying safely to Supabase Cloud...");
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             
-            const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
+            try {
+                const { error } = await supabase.from('blogs').insert([{ title: title, content: content, date: dateStr }]);
 
-            const btn = document.getElementById('publish-btn');
-            if (error) {
-                logStatus("DATABASE REJECTED IT: " + error.message, true);
-                btn.innerText = "FAILED - TRY AGAIN";
-                btn.style.backgroundColor = "#0a0a0a";
-            } else {
-                logStatus("SUCCESS! Saved to cloud.");
-                btn.innerText = "PUBLISHED!";
-                btn.style.backgroundColor = "#10b981"; // green
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-html').value = '';
-                
-                setTimeout(() => {
-                    closeAdminModal();
-                    switchView('blog');
-                    fetchBlogs();
-                    btn.innerText = "TAP TO PUBLISH";
-                    btn.style.backgroundColor = "#0a0a0a";
-                }, 1500);
+                if (error) {
+                    logStatus("DATABASE REJECTED IT: " + error.message, true);
+                    btn.style.backgroundColor = "#ef4444"; btn.innerText = "DATABASE ERROR";
+                    setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO CLOUD"; }, 3000);
+                } else {
+                    logStatus("SUCCESS! Saved to cloud.");
+                    btn.style.backgroundColor = "#10b981"; // turns green
+                    btn.innerText = "PUBLISHED SUCCESSFULLY!";
+                    document.getElementById('post-title').value = '';
+                    document.getElementById('post-html').value = '';
+                    
+                    setTimeout(() => {
+                        closeAdminModal();
+                        switchView('blog');
+                        fetchBlogs();
+                        btn.style.backgroundColor = "";
+                        btn.innerText = "🚀 PUBLISH TO CLOUD";
+                    }, 1500);
+                }
+            } catch (err) {
+                logStatus("JAVASCRIPT CRASH: " + err.message, true);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "CODE CRASH";
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO CLOUD"; }, 3000);
             }
         }
+
+        // --- THE MOBILE FIX ---
+        const pubBtn = document.getElementById('publish-btn');
+        // This forces the tap to register BEFORE the mobile keyboard tries to close
+        pubBtn.addEventListener('pointerdown', function(e) {
+            e.preventDefault(); 
+            publishPost();
+        });
 
         function renderBlogFeed() {
             const list = document.getElementById('blog-list');
@@ -291,7 +311,7 @@
                 document.getElementById('status-dot').style.backgroundColor = c[res.data.discord_status] || c.offline;
                 document.getElementById('status-text').innerText = res.data.discord_status.toUpperCase();
             }
-        });
+        }).catch(()=>{});
 
         let logIdx = 0; const termLogs = ["System logged in...", "Checking VertexOS...", "Testing code...", "Tokyo servers active."];
         setInterval(() => {
@@ -317,10 +337,11 @@
             controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
 
             const mainGroup = new THREE.Group();
-            const particles = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(1800).map(()=>(Math.random()-0.5)*40), 3)), new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
+            
+            const particles = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(300 * 3).map(()=>(Math.random()-0.5)*40), 3)), new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
             mainGroup.add(particles);
 
-            const nodes = [new THREE.Vector3(0,0,0)]; const radials = 16, rings = 8;
+            const nodes = [new THREE.Vector3(0,0,0)]; const radials = 12, rings = 6;
             for (let r = 1; r <= rings; r++) {
                 for (let i = 0; i < radials; i++) {
                     const angle = (i / radials) * Math.PI * 2;
