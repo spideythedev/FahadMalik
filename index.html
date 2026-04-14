@@ -69,7 +69,8 @@
                     <button onclick="switchView('main')" id="tab-main" class="px-6 py-2 text-sm font-semibold rounded-lg bg-[#1f1f22] text-white shadow-sm transition-all border border-white/5">Home</button>
                     <button onclick="switchView('blog')" id="tab-blog" class="px-6 py-2 text-sm font-semibold rounded-lg text-gray-400 hover:text-white transition-all bg-transparent shadow-none">Blog</button>
                     <button onclick="openGameModal()" class="px-6 py-2 text-sm font-semibold rounded-lg text-blue-400 hover:text-blue-300 transition-all bg-transparent flex items-center gap-2">
-                        🎮 Play Game
+                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
+                        Network Hub
                     </button>
                 </div>
             </div>
@@ -118,7 +119,10 @@
                             <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Game_Logs</span>
                         </div>
                         <div class="font-mono text-sm text-gray-300 space-y-2 h-32 overflow-y-auto hide-scrollbar flex flex-col justify-end" id="terminal-output">
-                            <div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                                <span class="text-blue-400">Loading logs...</span>
+                            </div>
                         </div>
                     </div>
 
@@ -128,6 +132,9 @@
                 </div>
                 
                 <div class="relative flex justify-center items-center h-[500px] w-full bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+                    <div class="absolute top-6 left-6 z-10 flex items-center gap-3 text-xs font-mono text-blue-400 tracking-widest uppercase bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
+                        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Live Node Map
+                    </div>
                     <div class="absolute bottom-6 right-6 z-10 text-xs font-mono text-gray-500 bg-black/50 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
                         Drag to rotate
                     </div>
@@ -185,7 +192,13 @@
             <p class="text-lg text-gray-400 mb-12 border-b border-brand-border pb-8">Just my thoughts and code.</p>
             
             <div id="blog-list" class="space-y-6">
-                <div class="text-center py-20"><p class="text-blue-400 font-mono text-sm animate-pulse">Loading Posts...</p></div>
+                <div class="flex flex-col items-center justify-center py-20 gap-4">
+                    <div class="relative w-12 h-12">
+                        <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-blue-400 font-mono text-sm animate-pulse">Syncing logs...</p>
+                </div>
             </div>
         </div>
 
@@ -218,41 +231,43 @@
                         <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
                         <div>
                             <p class="text-white font-bold text-sm" id="user-name">Player</p>
-                            <p class="text-emerald-400 font-mono text-[10px] tracking-widest uppercase">Logged in</p>
+                            <p class="text-emerald-400 font-mono text-[10px] tracking-widest uppercase">Authenticated</p>
                         </div>
                     </div>
                     <button id="logout-btn" class="text-gray-500 hover:text-white font-mono text-xs border border-white/10 px-3 py-1 rounded bg-[#111]">Logout</button>
                 </div>
                 <div id="login-prompt" class="flex flex-col w-full">
-                    <p class="text-gray-400 font-mono text-xs mb-4 text-center">Login to save your score</p>
+                    <p class="text-gray-400 font-mono text-xs mb-4 text-center">Authentication Required</p>
                     <button id="google-login-btn" class="w-full bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition-all text-sm">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Sign in with Google
                     </button>
                 </div>
             </div>
 
-            <h3 class="text-yellow-500 font-extrabold text-xs tracking-widest uppercase mb-3 flex items-center gap-2">👑 Top Player</h3>
+            <h3 class="text-yellow-500 font-extrabold text-xs tracking-widest uppercase mb-3 flex items-center gap-2">👑 Top Operative</h3>
             <div class="bg-gradient-to-r from-yellow-900/20 to-black border border-yellow-700/30 p-5 rounded-2xl mb-6 flex items-center justify-between shadow-inner">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-yellow-600/10 border border-yellow-500/50 flex justify-center items-center text-2xl" id="hof-pfp">🏆</div>
                     <div>
-                        <p class="text-white font-bold text-lg" id="hof-name">Waiting...</p>
-                        <p class="text-yellow-500 font-mono text-[10px] tracking-widest uppercase">Rank #1</p>
+                        <p class="text-white font-bold text-lg" id="hof-name">Awaiting Data...</p>
+                        <p class="text-yellow-500 font-mono text-[10px] tracking-widest uppercase">Global Rank #1</p>
                     </div>
                 </div>
                 <div class="text-3xl font-black text-yellow-500" id="hof-score">0</div>
             </div>
 
-            <h3 class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-3">Live Scores</h3>
+            <h3 class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-3">Live Network Scores</h3>
             <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
-                <p class="text-gray-500 font-mono text-xs text-center mt-8">Loading logs...</p>
+                <div class="flex justify-center items-center h-20">
+                    <div class="w-6 h-6 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+                </div>
             </div>
         </div>
 
         <div class="bg-[#0a0a0a] border border-brand-border p-2 sm:p-4 rounded-[2.5rem] shadow-2xl flex flex-col items-center relative order-1 xl:order-2 w-full sm:w-auto">
             <div class="w-full flex justify-between items-center mb-4 px-4 pt-2">
                 <h3 class="text-white font-mono text-sm tracking-widest uppercase font-bold flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> Firewall Runner
+                    <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> Terminal Breach
                 </h3>
                 <button onclick="closeGameModal()" class="text-gray-500 hover:text-white font-bold text-2xl leading-none">&times;</button>
             </div>
@@ -262,16 +277,16 @@
                 
                 <div id="game-start-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-black/70 backdrop-blur-sm z-10 pointer-events-none">
                     <div class="bg-[#0a0a0a] border border-white/10 px-8 py-6 rounded-2xl flex flex-col items-center shadow-2xl">
-                        <p class="text-white font-black text-2xl mb-2 tracking-tight">TAP TO PLAY</p>
-                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Dodge the walls</p>
+                        <p class="text-white font-black text-2xl mb-2 tracking-tight">TAP TO BREACH</p>
+                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Evade the firewalls</p>
                     </div>
                 </div>
 
                 <div id="game-over-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-red-950/90 backdrop-blur-md z-10 hidden">
-                    <p class="text-red-400 font-black text-3xl mb-1 tracking-widest drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]">GAME OVER</p>
-                    <p class="text-white font-mono text-xl mb-8">Score: <span id="final-score" class="text-white font-black">0</span></p>
-                    <button onclick="resetGame()" class="bg-white text-black px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform mb-4">PLAY AGAIN</button>
-                    <button onclick="closeGameModal()" class="text-white/50 font-mono text-xs hover:text-white uppercase tracking-widest">Close Game</button>
+                    <p class="text-red-400 font-black text-3xl mb-1 tracking-widest drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]">CONNECTION LOST</p>
+                    <p class="text-white font-mono text-xl mb-8">Packets Sent: <span id="final-score" class="text-white font-black">0</span></p>
+                    <button onclick="resetGame()" class="bg-white text-black px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform mb-4">REBOOT</button>
+                    <button onclick="closeGameModal()" class="text-white/50 font-mono text-xs hover:text-white uppercase tracking-widest">Exit Terminal</button>
                 </div>
             </div>
         </div>
@@ -281,14 +296,14 @@
         <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
             <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-6 flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Admin Login
+                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Root Access
             </h3>
-            <input type="password" id="pin-input" placeholder="Enter PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
+            <input type="password" id="pin-input" placeholder="Enter Secure PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
             <div class="flex gap-4">
                 <button onclick="closePinModal()" class="flex-1 px-4 py-3 bg-[#111] border border-white/5 text-gray-300 text-sm font-bold rounded-xl hover:text-white transition-colors">Cancel</button>
-                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Login</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Authenticate</button>
             </div>
-            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Wrong PIN bro.</p>
+            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Access Denied: Invalid PIN.</p>
         </div>
     </div>
 
@@ -362,7 +377,19 @@
 
         let db, auth, provider, currentUser = null;
         window.globalBlogs = []; 
-        window.currentEditId = null; // Keeps track if we are editing a post
+        window.currentEditId = null;
+
+        function showOfflineLoader(elementId) {
+            document.getElementById(elementId).innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20 gap-4">
+                    <div class="relative w-12 h-12">
+                        <div class="absolute inset-0 border-4 border-red-500/20 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-red-500 rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-red-500 font-mono text-sm animate-pulse">Network Offline. Retrying...</p>
+                </div>
+            `;
+        }
 
         try {
             const app = initializeApp(firebaseConfig);
@@ -373,7 +400,7 @@
             window.fetchLeaderboard(); 
         } catch (error) {
             console.error("Firebase Error:", error);
-            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold font-mono">Database offline.</p>';
+            showOfflineLoader('blog-list');
         }
 
         // --- AUTH ---
@@ -406,7 +433,11 @@
             const terminal = document.getElementById('terminal-output');
             if(!terminal) return;
             if(scores.length === 0) {
-                terminal.innerHTML = `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>`;
+                terminal.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                        <span class="text-blue-400">Awaiting game data...</span>
+                    </div>`;
                 return;
             }
             terminal.innerHTML = '';
@@ -415,7 +446,6 @@
                 const name = s.displayName || "Unknown";
                 terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Player [${name}] scored ${s.score}.</div>`;
             });
-            terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>`;
         }
 
         // --- LEADERBOARD ---
@@ -452,8 +482,14 @@
                     rank++;
                 });
                 window.updateTerminalLog(scoresData);
-                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Loading logs...</p>';
-            } catch (error) { console.error("Leaderboard Error:", error); }
+                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No scores yet.</p>';
+            } catch (error) { 
+                console.error("Leaderboard Error:", error); 
+                document.getElementById('leaderboard-list').innerHTML = `
+                    <div class="flex justify-center mt-8">
+                        <div class="w-6 h-6 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin"></div>
+                    </div>`;
+            }
         }
 
         async function saveScore(score) {
@@ -478,7 +514,6 @@
                     return tB - tA; 
                 });
                 
-                // Public list
                 const list = document.getElementById('blog-list');
                 list.innerHTML = '';
                 
@@ -506,10 +541,12 @@
                     list.appendChild(card);
                 });
 
-                // Update the Admin Management List too
                 window.renderAdminBlogs();
 
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error(err); 
+                showOfflineLoader('blog-list');
+            }
         }
 
         window.renderAdminBlogs = function() {
@@ -541,12 +578,10 @@
             
             document.getElementById('post-title').value = blog.title;
             document.getElementById('post-html').value = blog.content;
-            window.currentEditId = id; // Lock in the ID we are editing
+            window.currentEditId = id; 
             
             document.getElementById('publish-btn').innerText = "UPDATE POST";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            
-            // Scroll up to editor
             document.getElementById('admin-modal').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -555,7 +590,7 @@
             document.getElementById('post-html').value = '';
             window.currentEditId = null;
             
-            document.getElementById('publish-btn').innerText = "PUBLISH POST";
+            document.getElementById('publish-btn').innerText = "Publish Post";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         }
 
@@ -563,7 +598,7 @@
             if(!confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
             try {
                 await deleteDoc(doc(db, "blogs", id));
-                window.fetchBlogs(); // Reload lists
+                window.fetchBlogs(); 
             } catch (err) {
                 alert("Error deleting post: " + err.message);
             }
@@ -580,37 +615,31 @@
             const content = document.getElementById('post-html').value;
             if(!title || !content) { 
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "MISSING INFO"; 
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "PUBLISH POST"; }, 2000); 
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "Publish Post"; }, 2000); 
                 return; 
             }
 
             try {
                 if(window.currentEditId) {
-                    // Update existing post
-                    await updateDoc(doc(db, "blogs", window.currentEditId), { 
-                        title: title, 
-                        content: content 
-                        // Intentionally not updating the timestamp so it keeps its original spot
-                    });
+                    await updateDoc(doc(db, "blogs", window.currentEditId), { title: title, content: content });
                 } else {
-                    // Create new post
                     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                     await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
                 }
                 
                 btn.style.backgroundColor = "#10b981"; btn.innerText = "SUCCESS!";
-                window.cancelEdit(); // Reset form
+                window.cancelEdit(); 
                 
                 setTimeout(() => {
                     closeAdminModal(); 
                     switchView('blog'); 
                     window.fetchBlogs();
                     btn.style.backgroundColor = ""; 
-                    btn.innerText = "PUBLISH POST";
+                    btn.innerText = "Publish Post";
                 }, 1500);
             } catch (err) {
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "ERROR";
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "PUBLISH POST"; }, 3000);
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "Publish Post"; }, 3000);
             }
         }
         
@@ -734,7 +763,6 @@
     </script>
 
     <script>
-        // Wrapping inside load event to ensure Three.js is loaded from CDN
         window.addEventListener('load', () => {
             const container = document.getElementById('canvas-container');
             if (container && window.THREE) {
