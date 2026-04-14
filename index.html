@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fahad Malik | Systems Architecture</title>
+    <title>Fahad Malik | SpydeY</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -63,11 +66,10 @@
             
             <div class="flex justify-center w-full md:w-auto order-3 md:order-2">
                 <div class="flex items-center bg-[#0a0a0a] p-1.5 rounded-xl border border-white/5 shadow-inner overflow-x-auto whitespace-nowrap hide-scrollbar">
-                    <button onclick="switchView('main')" id="tab-main" class="px-6 py-2 text-sm font-semibold rounded-lg bg-[#1f1f22] text-white shadow-sm transition-all border border-white/5">Overview</button>
-                    <button onclick="switchView('blog')" id="tab-blog" class="px-6 py-2 text-sm font-semibold rounded-lg text-gray-400 hover:text-white transition-all bg-transparent shadow-none">Insights</button>
+                    <button onclick="switchView('main')" id="tab-main" class="px-6 py-2 text-sm font-semibold rounded-lg bg-[#1f1f22] text-white shadow-sm transition-all border border-white/5">Home</button>
+                    <button onclick="switchView('blog')" id="tab-blog" class="px-6 py-2 text-sm font-semibold rounded-lg text-gray-400 hover:text-white transition-all bg-transparent shadow-none">Blog</button>
                     <button onclick="openGameModal()" class="px-6 py-2 text-sm font-semibold rounded-lg text-blue-400 hover:text-blue-300 transition-all bg-transparent flex items-center gap-2">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
-                        Network Hub
+                        🎮 Play Game
                     </button>
                 </div>
             </div>
@@ -89,10 +91,10 @@
                     Tokyo Based Developer
                 </div>
                 <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-tight">
-                    Architecting <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">scalable systems</span> for the modern web.
+                    Building <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">cool stuff</span> for the web.
                 </h1>
                 <p class="text-lg md:text-xl text-gray-400 font-medium leading-relaxed max-w-3xl mx-auto mb-10">
-                    I'm Fahad Malik (SpydeY), a 23-year-old Full Stack engineer. I build high-performance web applications, secure infrastructure, and enterprise-grade SaaS platforms.
+                    I'm Fahad Malik (SpydeY), a 23-year-old Full Stack dev. I build fast websites, secure bots, and useful web apps.
                 </p>
             </div>
         </header>
@@ -100,9 +102,9 @@
         <section class="py-24 px-6 max-w-6xl mx-auto border-b border-brand-border">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h3 class="text-3xl font-extrabold text-white mb-6 tracking-tight">System Infrastructure</h3>
+                    <h3 class="text-3xl font-extrabold text-white mb-6 tracking-tight">My Setup</h3>
                     <p class="text-gray-400 mb-8 text-lg leading-relaxed">
-                        My stack is built on a precisely interconnected web of modern technologies. View the live 3D node map, or check out the latest activity on the network hub.
+                        Drag the 3D map to see the tech I use, or check out the live game scores happening right now.
                     </p>
                     
                     <div class="bg-[#0a0a0a] rounded-2xl p-5 shadow-2xl border border-white/10 relative overflow-hidden mb-6">
@@ -113,22 +115,19 @@
                                 <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                                 <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
                             </div>
-                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Network_Breach_Logs</span>
+                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Game_Logs</span>
                         </div>
                         <div class="font-mono text-sm text-gray-300 space-y-2 h-32 overflow-y-auto hide-scrollbar flex flex-col justify-end" id="terminal-output">
-                            <div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Connecting to Firebase DB...</div>
+                            <div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>
                         </div>
                     </div>
 
                     <button onclick="openGameModal()" class="w-full bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all font-bold py-4 rounded-xl uppercase tracking-widest text-sm flex justify-center items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> INITIATE ARCADE
+                        <span class="text-xl">🎮</span> PLAY!
                     </button>
                 </div>
                 
                 <div class="relative flex justify-center items-center h-[500px] w-full bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-                    <div class="absolute top-6 left-6 z-10 flex items-center gap-3 text-xs font-mono text-blue-400 tracking-widest uppercase bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
-                        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Live Node Map
-                    </div>
                     <div class="absolute bottom-6 right-6 z-10 text-xs font-mono text-gray-500 bg-black/50 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
                         Drag to rotate
                     </div>
@@ -139,16 +138,16 @@
 
         <section class="py-20 px-6 max-w-6xl mx-auto">
             <h3 class="text-sm font-mono text-gray-500 mb-8 tracking-widest uppercase flex items-center gap-4">
-                Active Enterprises <div class="h-px bg-brand-border flex-grow"></div>
+                My Projects <div class="h-px bg-brand-border flex-grow"></div>
             </h3>
             
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-blue-500/30 transition-all group shadow-2xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h4 class="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">WebLooM Inc. & VertexCreative</h4>
-                    <p class="text-gray-400 mb-8 leading-relaxed text-lg">Serving as Founder and CEO. We engineer next-generation web utilities, primarily focused on our flagship browser-based operating environment, VertexOS.</p>
+                    <h4 class="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">WebLooM & VertexCreative</h4>
+                    <p class="text-gray-400 mb-8 leading-relaxed text-lg">Founder & CEO. We build cool web tools, mostly focusing on VertexOS, an operating system inside your browser.</p>
                     <div class="flex gap-3">
-                        <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">SaaS Architecture</span>
+                        <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">Web Apps</span>
                         <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">WebOS</span>
                     </div>
                 </div>
@@ -156,10 +155,10 @@
                 <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-emerald-500/30 transition-all group shadow-2xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <h4 class="text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">BuildCore</h4>
-                    <p class="text-gray-400 mb-8 leading-relaxed text-lg">Founder. Architecting platforms that empower developers. Home to the developer-centric Scope network and the Kodo educational application.</p>
+                    <p class="text-gray-400 mb-8 leading-relaxed text-lg">Founder. I make platforms for developers, like the Scope social network and the Kodo learning app.</p>
                     <div class="flex gap-3">
                         <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">Community</span>
-                        <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">EdTech</span>
+                        <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">Learning</span>
                     </div>
                 </div>
             </div>
@@ -167,7 +166,7 @@
 
         <section class="py-20 px-6 max-w-6xl mx-auto mb-10">
             <h3 class="text-sm font-mono text-gray-500 mb-8 tracking-widest uppercase flex items-center gap-4">
-                Technical Stack <div class="h-px bg-brand-border flex-grow"></div>
+                My Tech Stack <div class="h-px bg-brand-border flex-grow"></div>
             </h3>
             <div class="flex flex-wrap gap-3">
                 <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Python</span>
@@ -175,24 +174,24 @@
                 <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Node.js</span>
                 <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Tailwind CSS</span>
                 <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Discord Security Bots</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Firebase (V12)</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Firebase</span>
             </div>
         </section>
     </div>
 
     <div id="view-blog" class="w-full flex-grow hidden">
         <div id="blog-feed-container" class="max-w-4xl mx-auto px-6 py-16 block">
-            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">System Insights</h2>
-            <p class="text-lg text-gray-400 mb-12 border-b border-brand-border pb-8">Architectural decisions, code snippets, and deployment logs.</p>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">My Blog</h2>
+            <p class="text-lg text-gray-400 mb-12 border-b border-brand-border pb-8">Just my thoughts and code.</p>
             
             <div id="blog-list" class="space-y-6">
-                <div class="text-center py-20"><p class="text-blue-400 font-mono text-sm animate-pulse">Querying Firebase Network...</p></div>
+                <div class="text-center py-20"><p class="text-blue-400 font-mono text-sm animate-pulse">Loading Posts...</p></div>
             </div>
         </div>
 
         <div id="single-post-container" class="max-w-3xl mx-auto px-6 py-16 hidden">
             <button onclick="closePost()" class="text-sm font-mono text-gray-400 hover:text-white mb-10 transition flex items-center gap-3 bg-[#0a0a0a] px-5 py-2.5 rounded-xl border border-brand-border hover:border-white/20">
-                &larr; Return to logs
+                &larr; Back to posts
             </button>
             <div class="py-4">
                 <div id="read-date" class="text-xs font-mono text-blue-500 mb-4 uppercase tracking-widest font-bold"></div>
@@ -216,44 +215,44 @@
             <div class="bg-[#050505] border border-white/5 p-5 rounded-2xl mb-6">
                 <div id="user-info" class="hidden flex justify-between items-center">
                     <div class="flex items-center gap-4">
-                        <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                        <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-blue-500">
                         <div>
                             <p class="text-white font-bold text-sm" id="user-name">Player</p>
-                            <p class="text-emerald-400 font-mono text-[10px] tracking-widest uppercase">Authenticated</p>
+                            <p class="text-emerald-400 font-mono text-[10px] tracking-widest uppercase">Logged in</p>
                         </div>
                     </div>
                     <button id="logout-btn" class="text-gray-500 hover:text-white font-mono text-xs border border-white/10 px-3 py-1 rounded bg-[#111]">Logout</button>
                 </div>
                 <div id="login-prompt" class="flex flex-col w-full">
-                    <p class="text-gray-400 font-mono text-xs mb-4 text-center">Authentication Required</p>
+                    <p class="text-gray-400 font-mono text-xs mb-4 text-center">Login to save your score</p>
                     <button id="google-login-btn" class="w-full bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition-all text-sm">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Sign in with Google
                     </button>
                 </div>
             </div>
 
-            <h3 class="text-yellow-500 font-extrabold text-xs tracking-widest uppercase mb-3 flex items-center gap-2">👑 Top Operative</h3>
+            <h3 class="text-yellow-500 font-extrabold text-xs tracking-widest uppercase mb-3 flex items-center gap-2">👑 Top Player</h3>
             <div class="bg-gradient-to-r from-yellow-900/20 to-black border border-yellow-700/30 p-5 rounded-2xl mb-6 flex items-center justify-between shadow-inner">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-yellow-600/10 border border-yellow-500/50 flex justify-center items-center text-2xl" id="hof-pfp">🏆</div>
                     <div>
-                        <p class="text-white font-bold text-lg" id="hof-name">Awaiting Data...</p>
-                        <p class="text-yellow-500 font-mono text-[10px] tracking-widest uppercase">Global Rank #1</p>
+                        <p class="text-white font-bold text-lg" id="hof-name">Waiting...</p>
+                        <p class="text-yellow-500 font-mono text-[10px] tracking-widest uppercase">Rank #1</p>
                     </div>
                 </div>
                 <div class="text-3xl font-black text-yellow-500" id="hof-score">0</div>
             </div>
 
-            <h3 class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-3">Live Network Scores</h3>
+            <h3 class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-3">Live Scores</h3>
             <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
-                <p class="text-gray-500 font-mono text-xs text-center mt-8">Syncing database...</p>
+                <p class="text-gray-500 font-mono text-xs text-center mt-8">Loading logs...</p>
             </div>
         </div>
 
         <div class="bg-[#0a0a0a] border border-brand-border p-2 sm:p-4 rounded-[2.5rem] shadow-2xl flex flex-col items-center relative order-1 xl:order-2 w-full sm:w-auto">
             <div class="w-full flex justify-between items-center mb-4 px-4 pt-2">
                 <h3 class="text-white font-mono text-sm tracking-widest uppercase font-bold flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> Terminal Breach
+                    <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> Firewall Runner
                 </h3>
                 <button onclick="closeGameModal()" class="text-gray-500 hover:text-white font-bold text-2xl leading-none">&times;</button>
             </div>
@@ -263,16 +262,16 @@
                 
                 <div id="game-start-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-black/70 backdrop-blur-sm z-10 pointer-events-none">
                     <div class="bg-[#0a0a0a] border border-white/10 px-8 py-6 rounded-2xl flex flex-col items-center shadow-2xl">
-                        <p class="text-white font-black text-2xl mb-2 tracking-tight">TAP TO BREACH</p>
-                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Evade the firewalls</p>
+                        <p class="text-white font-black text-2xl mb-2 tracking-tight">TAP TO PLAY</p>
+                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Dodge the walls</p>
                     </div>
                 </div>
 
                 <div id="game-over-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-red-950/90 backdrop-blur-md z-10 hidden">
-                    <p class="text-red-400 font-black text-3xl mb-1 tracking-widest drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]">CONNECTION LOST</p>
-                    <p class="text-white font-mono text-xl mb-8">Packets Sent: <span id="final-score" class="text-white font-black">0</span></p>
-                    <button onclick="resetGame()" class="bg-white text-black px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform mb-4">REBOOT</button>
-                    <button onclick="closeGameModal()" class="text-white/50 font-mono text-xs hover:text-white uppercase tracking-widest">Exit Terminal</button>
+                    <p class="text-red-400 font-black text-3xl mb-1 tracking-widest drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]">GAME OVER</p>
+                    <p class="text-white font-mono text-xl mb-8">Score: <span id="final-score" class="text-white font-black">0</span></p>
+                    <button onclick="resetGame()" class="bg-white text-black px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform mb-4">PLAY AGAIN</button>
+                    <button onclick="closeGameModal()" class="text-white/50 font-mono text-xs hover:text-white uppercase tracking-widest">Close Game</button>
                 </div>
             </div>
         </div>
@@ -282,36 +281,36 @@
         <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
             <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-6 flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Root Access
+                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Admin Login
             </h3>
-            <input type="password" id="pin-input" placeholder="Enter Secure PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
+            <input type="password" id="pin-input" placeholder="Enter PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
             <div class="flex gap-4">
                 <button onclick="closePinModal()" class="flex-1 px-4 py-3 bg-[#111] border border-white/5 text-gray-300 text-sm font-bold rounded-xl hover:text-white transition-colors">Cancel</button>
-                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Authenticate</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Login</button>
             </div>
-            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Access Denied: Invalid PIN.</p>
+            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Wrong PIN bro.</p>
         </div>
     </div>
 
     <div id="admin-modal" class="fixed inset-0 z-[9999] bg-[#030303] hidden flex-col overflow-y-auto w-full h-full">
         <div class="bg-[#0a0a0a] border-b border-brand-border px-6 py-5 flex justify-between items-center sticky top-0 z-10 shadow-2xl">
             <div class="font-bold flex items-center gap-3 text-white text-sm md:text-base tracking-wide">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span> Command Center
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span> Write Post
             </div>
             <button onclick="closeAdminModal()" class="text-xs font-mono text-gray-400 hover:text-white px-4 py-2 border border-white/10 rounded-lg bg-[#111]">CLOSE</button>
         </div>
         <div class="flex-grow p-4 md:p-8 w-full flex flex-col gap-6 max-w-5xl mx-auto mb-20">
-            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-3xl md:text-5xl font-extrabold bg-transparent border-b border-white/10 text-white focus:outline-none focus:border-blue-500 pb-4 placeholder-gray-700">
+            <input type="text" id="post-title" placeholder="Title" class="w-full text-3xl md:text-5xl font-extrabold bg-transparent border-b border-white/10 text-white focus:outline-none focus:border-blue-500 pb-4 placeholder-gray-700">
             
-            <div class="text-xs text-blue-500 font-mono tracking-widest uppercase">HTML Payload</div>
-            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your raw HTML here...</p>" class="w-full min-h-[350px] flex-grow bg-[#0a0a0a] border border-brand-border text-gray-300 rounded-2xl p-6 font-mono text-sm focus:outline-none focus:border-blue-500 shadow-inner"></textarea>
+            <div class="text-xs text-blue-500 font-mono tracking-widest uppercase">HTML Content</div>
+            <textarea id="post-html" placeholder="<p>Write your HTML here...</p>" class="w-full min-h-[350px] flex-grow bg-[#0a0a0a] border border-brand-border text-gray-300 rounded-2xl p-6 font-mono text-sm focus:outline-none focus:border-blue-500 shadow-inner"></textarea>
             
             <div id="debug-logger" class="w-full bg-[#050505] text-emerald-400 font-mono text-xs p-4 rounded-xl h-32 overflow-y-auto border border-white/5 shadow-inner">
-                > System ready. Waiting for input...
+                > Ready to post.
             </div>
 
             <button id="publish-btn" type="button" class="w-full bg-blue-600 text-white font-extrabold text-lg py-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] active:scale-[0.98] transition-all mt-2 uppercase tracking-widest" style="touch-action: manipulation;">
-                Deploy to Network
+                Publish Post
             </button>
         </div>
     </div>
@@ -363,7 +362,7 @@
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
             window.fetchBlogs(); 
-            window.fetchLeaderboard(); // Fetch scores for the terminal right away
+            window.fetchLeaderboard(); 
         } catch (error) {
             console.error("Firebase Error:", error);
             document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold font-mono">Database offline.</p>';
@@ -400,18 +399,17 @@
             if(!terminal) return;
             
             if(scores.length === 0) {
-                terminal.innerHTML = `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> No breaches detected yet. Play the game!</div>`;
+                terminal.innerHTML = `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>`;
                 return;
             }
 
             terminal.innerHTML = '';
-            // Display the top 5 scores in the terminal
             const top5 = scores.slice(0, 5);
             top5.forEach((s) => {
                 const name = s.displayName || "Unknown";
-                terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Node [${name}] bypassed ${s.score} firewalls.</div>`;
+                terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Player [${name}] scored ${s.score}.</div>`;
             });
-            terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Awaiting new network data...</div>`;
+            terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Loading logs...</div>`;
         }
 
         // --- LEADERBOARD ---
@@ -449,10 +447,9 @@
                     rank++;
                 });
 
-                // Update the terminal on the homepage with the real data
                 window.updateTerminalLog(scoresData);
 
-                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Awaiting network data...</p>';
+                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Loading logs...</p>';
             } catch (error) { console.error("Leaderboard Error:", error); }
         }
 
@@ -491,7 +488,7 @@
                 list.innerHTML = '';
                 
                 if(window.globalBlogs.length === 0) {
-                    list.innerHTML = '<div class="bg-[#0a0a0a] p-10 rounded-2xl border border-white/5 text-center"><p class="text-gray-500 font-mono text-sm">System logs empty.</p></div>';
+                    list.innerHTML = '<div class="bg-[#0a0a0a] p-10 rounded-2xl border border-white/5 text-center"><p class="text-gray-500 font-mono text-sm">No posts yet.</p></div>';
                     return;
                 }
                 
@@ -508,7 +505,7 @@
                         <div class="text-xs text-blue-500 mb-3 font-mono tracking-widest uppercase font-bold">${blog.date}</div>
                         <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4 group-hover:text-blue-400 transition-colors">${blog.title}</h3>
                         <p class="text-gray-400 leading-relaxed text-lg">${snippet}</p>
-                        <div class="mt-8 text-sm font-bold text-white flex items-center gap-2 group-hover:gap-3 transition-all">Execute Read &rarr;</div>
+                        <div class="mt-8 text-sm font-bold text-white flex items-center gap-2 group-hover:gap-3 transition-all">Read Post &rarr;</div>
                     `;
                     list.appendChild(card);
                 });
@@ -519,29 +516,29 @@
             const btn = document.getElementById('publish-btn');
             if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
-            logAdminStatus("Initiating deployment to Firebase...");
+            logAdminStatus("Saving post...");
             
             if(!db) { logAdminStatus("ERROR: Database disconnected.", true); btn.innerText = "FAILED"; return; }
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
-            if(!title || !content) { logAdminStatus("ERROR: Payload empty.", true); btn.style.backgroundColor = "#ef4444"; btn.innerText = "ABORT"; setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network"; }, 2000); return; }
+            if(!title || !content) { logAdminStatus("ERROR: Payload empty.", true); btn.style.backgroundColor = "#ef4444"; btn.innerText = "ABORT"; setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Publish Post"; }, 2000); return; }
 
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             
             try {
                 await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
-                logAdminStatus("SUCCESS: Payload injected.");
-                btn.style.backgroundColor = "#10b981"; btn.innerText = "DEPLOYED!";
+                logAdminStatus("SUCCESS: Post saved.");
+                btn.style.backgroundColor = "#10b981"; btn.innerText = "PUBLISHED!";
                 document.getElementById('post-title').value = ''; document.getElementById('post-html').value = '';
                 setTimeout(() => {
                     closeAdminModal(); switchView('blog'); window.fetchBlogs();
-                    btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network";
+                    btn.style.backgroundColor = ""; btn.innerText = "Publish Post";
                 }, 1500);
             } catch (err) {
                 logAdminStatus("ERROR: " + err.message, true);
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "SYSTEM ERROR";
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network"; }, 3000);
+                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Publish Post"; }, 3000);
             }
         }
         
@@ -550,7 +547,7 @@
 
         window.openPost = function(id) {
             const blog = window.globalBlogs.find(b => b.id === id);
-            if(!blog) { alert("File corrupted or missing."); return; }
+            if(!blog) { alert("File missing."); return; }
             document.getElementById('blog-feed-container').style.display = 'none';
             document.getElementById('single-post-container').style.display = 'block';
             document.getElementById('read-date').innerText = blog.date;
@@ -565,7 +562,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- TERMINAL BREACH GAME ---
+        // --- FIREWALL RUNNER GAME ---
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         let frames = 0, score = 0, gameActive = false, gameOver = false;
@@ -664,12 +661,10 @@
         fetchDiscordData(); setInterval(fetchDiscordData, 10000);
     </script>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
+    <script>
+        // Use normal script to prevent mobile module crashes
         const container = document.getElementById('canvas-container');
-        if (container) {
+        if (container && window.THREE) {
             const scene = new THREE.Scene();
             scene.fog = new THREE.Fog(0x0a0a0a, 8, 35); 
 
@@ -678,25 +673,23 @@
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
-            // Limit pixel ratio to save mobile battery
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
             container.appendChild(renderer.domElement);
 
-            const controls = new OrbitControls(camera, renderer.domElement);
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true; controls.dampingFactor = 0.05;
             controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
             controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
 
             const mainGroup = new THREE.Group();
             
-            // Optimized Particles (Reduced from 600 to 200 for mobile performance)
             const particleGeo = new THREE.BufferGeometry();
             const posArray = new Float32Array(200 * 3);
             for(let i=0; i<200*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
             particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            mainGroup.add(new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x3b82f6, transparent: true, opacity: 0.5 })));
+            let particlesMesh = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x3b82f6, transparent: true, opacity: 0.5 }));
+            mainGroup.add(particlesMesh);
 
-            // Optimized Web structure
             const webGeo = new THREE.BufferGeometry();
             const linePoints = [];
             const nodes = [new THREE.Vector3(0, 0, 0)];
@@ -721,7 +714,7 @@
             webGeo.setFromPoints(linePoints);
             mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.8 })));
 
-            const techStack = ['React', 'Next.js', 'Node.js', 'C++', 'Tailwind', 'Docker', 'AWS', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase'];
+            const techStack = ['React', 'Next.js', 'Node.js', 'Python', 'Tailwind', 'Docker', 'AWS', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase'];
 
             function createTextSprite(text) {
                 const canvas = document.createElement('canvas');
@@ -764,9 +757,8 @@
             function animate() {
                 requestAnimationFrame(animate);
                 controls.update(); 
-                // Rotate particles very slowly
-                mainGroup.children[0].rotation.y -= 0.0005; 
-                mainGroup.children[0].rotation.z += 0.0002;
+                particlesMesh.rotation.y -= 0.0005; 
+                particlesMesh.rotation.z += 0.0002;
                 renderer.render(scene, camera);
             }
             animate();
