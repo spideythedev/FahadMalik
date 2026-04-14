@@ -26,7 +26,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Premium Tech Background */
         .tech-bg {
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
@@ -37,8 +36,9 @@
         }
 
         #game-canvas { touch-action: none; background-image: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px); background-size: 20px 20px; }
+        canvas { outline: none; cursor: grab; }
+        canvas:active { cursor: grabbing; }
         
-        /* Clean Blog Formatting */
         .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1.25rem; color: #ffffff; letter-spacing: -0.025em; }
         .blog-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #ffffff; border-bottom: 1px solid #1f1f22; padding-bottom: 0.5rem;}
         .blog-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #a1a1aa; font-size: 1.125rem;}
@@ -96,6 +96,46 @@
                 </p>
             </div>
         </header>
+
+        <section class="py-24 px-6 max-w-6xl mx-auto border-b border-brand-border">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-extrabold text-white mb-6 tracking-tight">System Infrastructure</h3>
+                    <p class="text-gray-400 mb-8 text-lg leading-relaxed">
+                        My stack is built on a precisely interconnected web of modern technologies. View the live 3D node map, or check out the latest activity on the network hub.
+                    </p>
+                    
+                    <div class="bg-[#0a0a0a] rounded-2xl p-5 shadow-2xl border border-white/10 relative overflow-hidden mb-6">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            </div>
+                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Network_Breach_Logs</span>
+                        </div>
+                        <div class="font-mono text-sm text-gray-300 space-y-2 h-32 overflow-y-auto hide-scrollbar flex flex-col justify-end" id="terminal-output">
+                            <div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Connecting to Firebase DB...</div>
+                        </div>
+                    </div>
+
+                    <button onclick="openGameModal()" class="w-full bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all font-bold py-4 rounded-xl uppercase tracking-widest text-sm flex justify-center items-center gap-3">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse"></span> INITIATE ARCADE
+                    </button>
+                </div>
+                
+                <div class="relative flex justify-center items-center h-[500px] w-full bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+                    <div class="absolute top-6 left-6 z-10 flex items-center gap-3 text-xs font-mono text-blue-400 tracking-widest uppercase bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
+                        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Live Node Map
+                    </div>
+                    <div class="absolute bottom-6 right-6 z-10 text-xs font-mono text-gray-500 bg-black/50 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                        Drag to rotate
+                    </div>
+                    <div id="canvas-container" class="w-full h-full"></div>
+                </div>
+            </div>
+        </section>
 
         <section class="py-20 px-6 max-w-6xl mx-auto">
             <h3 class="text-sm font-mono text-gray-500 mb-8 tracking-widest uppercase flex items-center gap-4">
@@ -302,7 +342,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        // Switched back to signInWithPopup for reliability. Just ensure domain is whitelisted!
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -316,8 +355,6 @@
         };
 
         let db, auth, provider, currentUser = null;
-        
-        // This is the global array that the "Read File" button looks at.
         window.globalBlogs = []; 
 
         try {
@@ -326,6 +363,7 @@
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
             window.fetchBlogs(); 
+            window.fetchLeaderboard(); // Fetch scores for the terminal right away
         } catch (error) {
             console.error("Firebase Error:", error);
             document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold font-mono">Database offline.</p>';
@@ -356,6 +394,26 @@
         
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
+        // --- LIVE TERMINAL LOGIC ---
+        window.updateTerminalLog = function(scores) {
+            const terminal = document.getElementById('terminal-output');
+            if(!terminal) return;
+            
+            if(scores.length === 0) {
+                terminal.innerHTML = `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> No breaches detected yet. Play the game!</div>`;
+                return;
+            }
+
+            terminal.innerHTML = '';
+            // Display the top 5 scores in the terminal
+            const top5 = scores.slice(0, 5);
+            top5.forEach((s) => {
+                const name = s.displayName || "Unknown";
+                terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Node [${name}] bypassed ${s.score} firewalls.</div>`;
+            });
+            terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Awaiting new network data...</div>`;
+        }
+
         // --- LEADERBOARD ---
         window.fetchLeaderboard = async function() {
             if(!db) return;
@@ -366,8 +424,12 @@
                 list.innerHTML = '';
                 
                 let rank = 1;
+                let scoresData = [];
+
                 snapshot.forEach(doc => {
                     const data = doc.data();
+                    scoresData.push(data);
+
                     if(rank === 1) {
                         document.getElementById('hof-name').innerText = data.displayName;
                         document.getElementById('hof-score').innerText = data.score;
@@ -386,6 +448,10 @@
                     }
                     rank++;
                 });
+
+                // Update the terminal on the homepage with the real data
+                window.updateTerminalLog(scoresData);
+
                 if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Awaiting network data...</p>';
             } catch (error) { console.error("Leaderboard Error:", error); }
         }
@@ -398,8 +464,8 @@
             } catch (error) { console.error("Score Error", error); }
         }
 
-        // --- BLOG SYSTEM (BUG FIXED) ---
-        function logStatus(message, isError = false) {
+        // --- BLOG SYSTEM ---
+        function logAdminStatus(message, isError = false) {
             const logger = document.getElementById('debug-logger');
             if(logger) {
                 const color = isError ? "text-red-500 font-bold" : "text-emerald-400";
@@ -412,10 +478,7 @@
             if(!db) return;
             try {
                 const snapshot = await getDocs(collection(db, 'blogs'));
-                
-                // IMPORTANT FIX: Update the global array!
                 window.globalBlogs = []; 
-                
                 snapshot.forEach(doc => { window.globalBlogs.push({ id: doc.id, ...doc.data() }); });
                 
                 window.globalBlogs.sort((a, b) => {
@@ -456,19 +519,19 @@
             const btn = document.getElementById('publish-btn');
             if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
-            logStatus("Initiating deployment to Firebase...");
+            logAdminStatus("Initiating deployment to Firebase...");
             
-            if(!db) { logStatus("ERROR: Database disconnected.", true); btn.innerText = "FAILED"; return; }
+            if(!db) { logAdminStatus("ERROR: Database disconnected.", true); btn.innerText = "FAILED"; return; }
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
-            if(!title || !content) { logStatus("ERROR: Payload empty.", true); btn.style.backgroundColor = "#ef4444"; btn.innerText = "ABORT"; setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network"; }, 2000); return; }
+            if(!title || !content) { logAdminStatus("ERROR: Payload empty.", true); btn.style.backgroundColor = "#ef4444"; btn.innerText = "ABORT"; setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network"; }, 2000); return; }
 
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             
             try {
                 await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
-                logStatus("SUCCESS: Payload injected.");
+                logAdminStatus("SUCCESS: Payload injected.");
                 btn.style.backgroundColor = "#10b981"; btn.innerText = "DEPLOYED!";
                 document.getElementById('post-title').value = ''; document.getElementById('post-html').value = '';
                 setTimeout(() => {
@@ -476,7 +539,7 @@
                     btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network";
                 }, 1500);
             } catch (err) {
-                logStatus("ERROR: " + err.message, true);
+                logAdminStatus("ERROR: " + err.message, true);
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "SYSTEM ERROR";
                 setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "Deploy to Network"; }, 3000);
             }
@@ -486,10 +549,8 @@
         if(pubBtn) { pubBtn.addEventListener('pointerdown', function(e) { e.preventDefault(); window.publishPost(); }); }
 
         window.openPost = function(id) {
-            // FIXED: Looking at the correct global array
             const blog = window.globalBlogs.find(b => b.id === id);
             if(!blog) { alert("File corrupted or missing."); return; }
-            
             document.getElementById('blog-feed-container').style.display = 'none';
             document.getElementById('single-post-container').style.display = 'block';
             document.getElementById('read-date').innerText = blog.date;
@@ -593,11 +654,123 @@
                     }
                     const colors = { online: '#10b981', idle: '#f59e0b', dnd: '#ef4444', offline: '#52525b' };
                     document.getElementById('status-dot').style.backgroundColor = colors[data.discord_status] || colors.offline;
+                    if(data.discord_status === 'online') {
+                        document.getElementById('status-dot').classList.add('animate-pulse', 'shadow-[0_0_8px_rgba(16,185,129,0.8)]');
+                    }
                     document.getElementById('status-text').innerText = data.discord_status.toUpperCase();
                 }
             } catch(e) {}
         }
         fetchDiscordData(); setInterval(fetchDiscordData, 10000);
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const container = document.getElementById('canvas-container');
+        if (container) {
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x0a0a0a, 8, 35); 
+
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, -12, 18); 
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            // Limit pixel ratio to save mobile battery
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
+            container.appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; controls.dampingFactor = 0.05;
+            controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
+            controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
+
+            const mainGroup = new THREE.Group();
+            
+            // Optimized Particles (Reduced from 600 to 200 for mobile performance)
+            const particleGeo = new THREE.BufferGeometry();
+            const posArray = new Float32Array(200 * 3);
+            for(let i=0; i<200*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            mainGroup.add(new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x3b82f6, transparent: true, opacity: 0.5 })));
+
+            // Optimized Web structure
+            const webGeo = new THREE.BufferGeometry();
+            const linePoints = [];
+            const nodes = [new THREE.Vector3(0, 0, 0)];
+            const radials = 12, rings = 6, maxRadius = 9;
+            
+            for (let r = 1; r <= rings; r++) {
+                const radius = (r / rings) * maxRadius;
+                for (let i = 0; i < radials; i++) {
+                    const angle = (i / radials) * Math.PI * 2;
+                    const z = Math.pow(r / rings, 2) * 3 - 2 + (Math.sin(angle * 4) * 0.4);
+                    nodes.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, z));
+                }
+            }
+
+            for (let i = 0; i < radials; i++) {
+                for (let r = 0; r < rings; r++) { linePoints.push(nodes[r===0?0:1+(r-1)*radials+i], nodes[1+r*radials+i]); }
+            }
+            for (let r = 1; r <= rings; r++) {
+                for (let i = 0; i < radials; i++) { linePoints.push(nodes[1+(r-1)*radials+i], nodes[1+(r-1)*radials+((i+1)%radials)]); }
+            }
+
+            webGeo.setFromPoints(linePoints);
+            mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.8 })));
+
+            const techStack = ['React', 'Next.js', 'Node.js', 'C++', 'Tailwind', 'Docker', 'AWS', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase'];
+
+            function createTextSprite(text) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512; canvas.height = 128;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 512, 128);
+                ctx.font = 'bold 42px Inter, sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(text, 256, 64);
+                const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
+                sprite.scale.set(5.5, 1.375, 1);
+                return sprite;
+            }
+
+            techStack.forEach((tech, i) => {
+                const ringLevel = rings - (i % 3); 
+                const radialPos = (i * 3) % radials; 
+                const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
+                const pos = nodes[nodeIndex];
+                
+                const dot = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3b82f6 }));
+                dot.position.copy(pos); 
+                mainGroup.add(dot);
+                
+                const sprite = createTextSprite(tech);
+                sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
+                mainGroup.add(sprite);
+            });
+
+            mainGroup.rotation.x = Math.PI / 4.5;
+            scene.add(mainGroup);
+
+            window.addEventListener('resize', () => {
+                if(container.clientWidth > 0 && container.clientHeight > 0) { 
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update(); 
+                // Rotate particles very slowly
+                mainGroup.children[0].rotation.y -= 0.0005; 
+                mainGroup.children[0].rotation.z += 0.0002;
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
     </script>
 </body>
 </html>
