@@ -6,7 +6,6 @@
     <title>Fahad Malik | Full Stack Developer</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script type="importmap">
@@ -42,7 +41,9 @@
         .cursor::after { content: '█'; animation: blink 1s step-start infinite; color: #71717a; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        /* Blog Prose Styling */
+        /* Disable scrolling when tapping on the game */
+        #game-canvas { touch-action: none; }
+        
         .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1.25rem; color: #0a0a0a; letter-spacing: -0.025em; }
         .blog-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #0a0a0a; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.5rem;}
         .blog-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #4b5563; font-size: 1.125rem; }
@@ -54,8 +55,8 @@
 </head>
 <body class="selection:bg-gray-300 selection:text-black flex flex-col min-h-screen relative">
 
-    <div class="w-full bg-orange-500 text-white text-center py-1.5 font-mono text-xs font-bold tracking-widest uppercase z-[9999] relative shadow-md">
-        System Version 5.0 - Firebase V12 Live
+    <div class="w-full bg-blue-600 text-white text-center py-1.5 font-mono text-xs font-bold tracking-widest uppercase z-[9999] relative shadow-md">
+        System Version 6.0 - Arcade Mode Live
     </div>
 
     <nav class="bg-white px-6 py-3 sticky top-0 z-50 border-b border-gray-100 flex-none shadow-sm">
@@ -71,9 +72,12 @@
             </div>
             
             <div class="flex justify-center w-full">
-                <div class="flex items-center bg-gray-50/80 p-1 rounded-lg border border-gray-200 shadow-inner">
-                    <button onclick="switchView('main')" id="tab-main" class="px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all">Overview</button>
-                    <button onclick="switchView('blog')" id="tab-blog" class="px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none">My Blog</button>
+                <div class="flex items-center bg-gray-50/80 p-1 rounded-lg border border-gray-200 shadow-inner overflow-x-auto whitespace-nowrap hide-scrollbar">
+                    <button onclick="switchView('main')" id="tab-main" class="px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all">Overview</button>
+                    <button onclick="switchView('blog')" id="tab-blog" class="px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none">My Blog</button>
+                    <button onclick="openGameModal()" class="px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md text-blue-600 hover:text-blue-800 hover:bg-blue-50 transition-all bg-transparent shadow-none border border-transparent hover:border-blue-100 flex items-center gap-2">
+                        🎮 <span class="hidden sm:inline">Play</span> Game
+                    </button>
                 </div>
             </div>
 
@@ -87,7 +91,6 @@
     </nav>
 
     <div id="view-main" class="w-full flex-grow block">
-        
         <header class="w-full bg-gradient-to-br from-brand-dark to-brand-gray pt-20 pb-28 px-6">
             <div class="max-w-6xl mx-auto">
                 <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-2 leading-none">
@@ -101,15 +104,9 @@
         </header>
 
         <section class="py-24 px-6 max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-black mb-2 leading-tight">
-                Turning your best ideas into
-            </h2>
-            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-brand-accent mb-8 leading-tight">
-                real, working software.
-            </h2>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto font-medium">
-                I combine clean code with creative design. Whether you need a simple website or a complex web operating system, I have the skills to build it from scratch.
-            </p>
+            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-black mb-2 leading-tight">Turning your best ideas into</h2>
+            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-brand-accent mb-8 leading-tight">real, working software.</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto font-medium">I combine clean code with creative design. Whether you need a simple website or a complex web operating system, I have the skills to build it from scratch.</p>
         </section>
 
         <section class="py-12 px-6 max-w-6xl mx-auto border-t border-gray-100">
@@ -125,15 +122,12 @@
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                     <h3 class="text-3xl font-extrabold text-black mb-6">The tools I use to build</h3>
-                    <p class="text-gray-600 mb-6 text-lg font-medium leading-relaxed">
-                        To build high-quality websites, I use the best modern tools available. You can interact with the 3D web on the right to see my full tech stack.
-                    </p>
+                    <p class="text-gray-600 mb-6 text-lg font-medium leading-relaxed">To build high-quality websites, I use the best modern tools available. You can interact with the 3D web on the right to see my full tech stack.</p>
                     <ul class="space-y-4 text-gray-500 font-medium mb-10">
                         <li class="flex items-center gap-3"><div class="w-1.5 h-1.5 rounded-full bg-black"></div> Frontend Design (React, Next.js, Tailwind)</li>
                         <li class="flex items-center gap-3"><div class="w-1.5 h-1.5 rounded-full bg-black"></div> Backend Logic (Node.js, C++)</li>
                         <li class="flex items-center gap-3"><div class="w-1.5 h-1.5 rounded-full bg-black"></div> Safety (Ethical Hacking & Security)</li>
                     </ul>
-                    
                     <div class="bg-brand-dark rounded-xl p-4 shadow-lg border border-gray-800 relative">
                         <div class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-800">
                             <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div><div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div><div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
@@ -144,12 +138,8 @@
                 </div>
                 
                 <div class="relative flex justify-center items-center h-[500px] md:h-[600px] w-full bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden shadow-inner">
-                    <div class="absolute top-4 left-4 z-10 flex items-center gap-2 text-xs font-bold text-gray-400 tracking-widest uppercase">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> My Skills Map
-                    </div>
-                    <div class="absolute bottom-4 right-4 z-10 text-xs font-medium text-gray-400 bg-white/70 px-3 py-1.5 rounded-md backdrop-blur-md border border-gray-200 shadow-sm">
-                        Drag to rotate • Scroll to zoom
-                    </div>
+                    <div class="absolute top-4 left-4 z-10 flex items-center gap-2 text-xs font-bold text-gray-400 tracking-widest uppercase"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> My Skills Map</div>
+                    <div class="absolute bottom-4 right-4 z-10 text-xs font-medium text-gray-400 bg-white/70 px-3 py-1.5 rounded-md backdrop-blur-md border border-gray-200 shadow-sm">Drag to rotate • Scroll to zoom</div>
                     <div id="canvas-container" class="w-full h-full"></div>
                 </div>
             </div>
@@ -161,25 +151,16 @@
                 <div class="bg-gray-50 p-8 rounded-xl border border-gray-200 hover:border-gray-300 transition shadow-sm">
                     <h4 class="text-xl font-bold text-black mb-3">WebLooM Inc. & VertexCreative</h4>
                     <p class="text-gray-600 mb-6">I am the Founder and CEO. Here, I lead the team to build modern web tools, including our custom web-based operating system called VertexOS.</p>
-                    <div class="flex gap-2">
-                        <span class="bg-white border border-gray-200 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Web Apps</span>
-                        <span class="bg-white border border-gray-200 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Leadership</span>
-                    </div>
                 </div>
                 <div class="bg-gray-50 p-8 rounded-xl border border-gray-200 hover:border-gray-300 transition shadow-sm">
                     <h4 class="text-xl font-bold text-black mb-3">BuildCore</h4>
                     <p class="text-gray-600 mb-6">I am the Founder. I create platforms to help other developers learn and connect, like the Scope social network and the Kodo learning app.</p>
-                    <div class="flex gap-2">
-                        <span class="bg-white border border-gray-200 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Community</span>
-                        <span class="bg-white border border-gray-200 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Education</span>
-                    </div>
                 </div>
             </div>
         </section>
     </div>
 
     <div id="view-blog" class="w-full flex-grow hidden bg-white">
-        
         <div id="blog-feed-container" class="max-w-3xl mx-auto px-6 py-16 md:py-24 block">
             <h2 class="text-4xl md:text-5xl font-extrabold text-black mb-4 tracking-tight">My Developer Blog</h2>
             <p class="text-lg text-gray-500 mb-12 border-b border-gray-100 pb-8">Read my latest thoughts on coding, web design, and my current projects.</p>
@@ -189,9 +170,7 @@
         </div>
 
         <div id="single-post-container" class="max-w-3xl mx-auto px-6 py-16 md:py-24 hidden">
-            <button onclick="closePost()" class="text-sm font-semibold text-gray-500 hover:text-black mb-8 transition flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-fit">
-                &larr; Back to all posts
-            </button>
+            <button onclick="closePost()" class="text-sm font-semibold text-gray-500 hover:text-black mb-8 transition flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-fit">&larr; Back to all posts</button>
             <div class="bg-white py-4">
                 <div id="read-date" class="text-sm font-mono text-blue-600 mb-4 uppercase tracking-widest font-bold"></div>
                 <h1 id="read-title" class="text-4xl md:text-5xl font-extrabold text-black mb-10 leading-tight tracking-tight border-b border-gray-100 pb-8"></h1>
@@ -207,118 +186,244 @@
         </div>
     </footer>
 
-    <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md hidden flex justify-center items-center p-4">
-        <div class="bg-brand-dark border border-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-sm" onclick="event.stopPropagation()">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                <h3 class="text-white font-mono text-sm tracking-widest uppercase">Admin Login Required</h3>
+    <div id="game-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col md:flex-row justify-center items-center p-4 gap-6 overflow-y-auto hide-scrollbar">
+        
+        <div class="bg-brand-dark border border-gray-700 p-4 rounded-3xl shadow-2xl flex flex-col items-center relative w-full max-w-[360px]">
+            <div class="w-full flex justify-between items-center mb-4 px-2">
+                <h3 class="text-white font-mono text-sm tracking-widest uppercase flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Firewall Runner
+                </h3>
+                <button onclick="closeGameModal()" class="text-gray-500 hover:text-white font-bold text-xl leading-none">&times;</button>
             </div>
-            <input type="password" id="pin-input" placeholder="Enter PIN Code..." class="w-full bg-black border border-gray-700 text-white font-mono p-3 rounded-lg focus:outline-none focus:border-white mb-4">
+            
+            <canvas id="game-canvas" width="320" height="420" class="bg-black rounded-2xl border border-gray-800 shadow-inner cursor-pointer"></canvas>
+            
+            <div id="game-start-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-black/60 rounded-3xl z-10 pointer-events-none">
+                <p class="text-white font-bold text-xl mb-2">TAP TO START</p>
+                <p class="text-gray-400 font-mono text-xs">Dodge the red firewalls!</p>
+            </div>
+
+            <div id="game-over-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-black/80 rounded-3xl z-10 hidden">
+                <p class="text-red-500 font-bold text-3xl mb-2 tracking-widest">SYSTEM BREACHED</p>
+                <p class="text-white font-mono text-lg mb-6">Score: <span id="final-score" class="text-blue-400 font-bold">0</span></p>
+                <button onclick="resetGame()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-500 transition-all mb-4">REBOOT SYSTEM</button>
+                <button onclick="closeGameModal()" class="text-gray-500 font-mono text-xs hover:text-white underline">Exit Game</button>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-700 p-6 rounded-3xl shadow-2xl w-full max-w-[400px] flex flex-col h-[520px]">
+            
+            <div id="auth-section" class="bg-black border border-gray-800 p-4 rounded-xl mb-6 flex justify-between items-center">
+                <div id="user-info" class="hidden flex items-center gap-3">
+                    <img id="user-pfp" src="" class="w-10 h-10 rounded-full border border-gray-700">
+                    <div>
+                        <p class="text-white font-bold text-sm" id="user-name">Player</p>
+                        <p class="text-emerald-400 font-mono text-[10px]">Logged in & Ready</p>
+                    </div>
+                </div>
+                <div id="login-prompt" class="flex flex-col w-full">
+                    <p class="text-gray-400 font-mono text-xs mb-2 text-center">Login to save your high score!</p>
+                    <button id="google-login-btn" class="w-full bg-white text-black font-bold py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition-all text-sm">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Sign in with Google
+                    </button>
+                </div>
+                <button id="logout-btn" class="hidden text-gray-500 hover:text-white text-xs underline">Logout</button>
+            </div>
+
+            <h3 class="text-yellow-500 font-extrabold text-sm tracking-widest uppercase mb-3 flex items-center gap-2">
+                👑 Hall of Fame (Rank #1)
+            </h3>
+            <div id="hall-of-fame-box" class="bg-gradient-to-r from-yellow-900/40 to-black border border-yellow-700/50 p-4 rounded-xl mb-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-yellow-600/20 border border-yellow-500 flex justify-center items-center text-xl" id="hof-pfp">🏆</div>
+                    <div>
+                        <p class="text-white font-bold" id="hof-name">Awaiting Master...</p>
+                        <p class="text-yellow-500 font-mono text-xs">Global Leader</p>
+                    </div>
+                </div>
+                <div class="text-3xl font-extrabold text-yellow-400" id="hof-score">0</div>
+            </div>
+
+            <h3 class="text-blue-400 font-extrabold text-sm tracking-widest uppercase mb-3">Live Global Network</h3>
+            <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
+                <p class="text-gray-500 font-mono text-xs text-center mt-4">Syncing with Firebase...</p>
+            </div>
+            
+        </div>
+    </div>
+
+    <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md hidden flex-col justify-center items-center p-4">
+        <div class="bg-brand-dark border border-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-sm" onclick="event.stopPropagation()">
+            <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>Admin Login</h3>
+            <input type="password" id="pin-input" placeholder="Enter PIN..." class="w-full bg-black border border-gray-700 text-white font-mono p-3 rounded-lg focus:outline-none focus:border-white mb-4">
             <div class="flex gap-3">
-                <button onclick="closePinModal()" class="flex-1 px-4 py-2.5 bg-gray-800 text-white text-sm font-bold rounded-lg hover:bg-gray-700 transition">Cancel</button>
-                <button onclick="verifyPin()" class="flex-1 px-4 py-2.5 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition">Login</button>
+                <button onclick="closePinModal()" class="flex-1 px-4 py-2.5 bg-gray-800 text-white text-sm font-bold rounded-lg hover:bg-gray-700">Cancel</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-2.5 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200">Login</button>
             </div>
             <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden">Error: Wrong PIN.</p>
         </div>
     </div>
 
-    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-gray-50 hidden flex-col overflow-y-auto">
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-gray-50 hidden flex-col overflow-y-auto w-full h-full">
         <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-10">
-            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Welcome, Fahad</div>
+            <div class="font-bold flex items-center gap-2 text-sm md:text-base"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Admin V6</div>
             <button onclick="closeAdminModal()" class="text-sm font-bold text-gray-500 p-2 border border-gray-200 rounded-md">Close Menu</button>
         </div>
-        <div class="flex-grow p-4 md:p-6 max-w-5xl mx-auto w-full flex flex-col gap-4 mb-20">
-            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-2xl md:text-4xl font-extrabold text-black bg-transparent border-none focus:outline-none placeholder-gray-300">
-            <div class="text-xs text-gray-400 font-mono tracking-wide border-b border-gray-200 pb-2">HTML FORMATTING ENABLED</div>
-            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[250px] flex-grow bg-white border border-gray-200 rounded-xl p-4 md:p-6 font-mono text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none shadow-inner leading-relaxed"></textarea>
-            
-            <div id="debug-logger" class="w-full bg-black text-green-400 font-mono text-xs p-3 rounded-lg h-32 overflow-y-auto border border-gray-700">
-                > System ready. Waiting for input...
-            </div>
-
-            <div class="flex justify-end pb-10 mt-2">
-                <button id="publish-btn" class="w-full md:w-auto bg-blue-600 text-white px-8 py-5 rounded-xl font-bold shadow-lg hover:bg-blue-700 active:scale-95 transition-transform" style="touch-action: manipulation;">
-                    🚀 PUBLISH TO FIREBASE
-                </button>
-            </div>
+        <div class="flex-grow p-4 md:p-6 w-full flex flex-col gap-4 max-w-5xl mx-auto mb-20">
+            <input type="text" id="post-title" placeholder="Post Title" class="w-full text-2xl font-extrabold bg-transparent border-b border-gray-200 focus:outline-none pb-2">
+            <textarea id="post-html" placeholder="<h2>Your heading</h2><p>Write your blog content here using HTML tags...</p>" class="w-full min-h-[250px] flex-grow bg-white border border-gray-200 rounded-xl p-4 font-mono text-sm focus:outline-none shadow-inner"></textarea>
+            <div id="debug-logger" class="w-full bg-black text-green-400 font-mono text-xs p-3 rounded-lg h-32 overflow-y-auto border border-gray-700">> System ready. Waiting for button tap...</div>
+            <button id="publish-btn" type="button" class="w-full bg-blue-600 text-white font-extrabold text-lg py-5 rounded-xl shadow-lg active:scale-95 transition-transform mt-4" style="touch-action: manipulation;">
+                🚀 PUBLISH TO CLOUD
+            </button>
         </div>
     </div>
 
     <script>
         function switchView(view) {
-            const mainView = document.getElementById('view-main');
-            const blogView = document.getElementById('view-blog');
-            const tabMain = document.getElementById('tab-main');
-            const tabBlog = document.getElementById('tab-blog');
-
+            document.getElementById('view-main').style.display = view === 'main' ? 'block' : 'none';
+            document.getElementById('view-blog').style.display = view === 'blog' ? 'block' : 'none';
+            const m = document.getElementById('tab-main'), b = document.getElementById('tab-blog');
             if(view === 'main') {
-                mainView.style.display = 'block'; 
-                blogView.style.display = 'none';
-                tabMain.className = 'px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all';
-                tabBlog.className = 'px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none';
+                m.className = 'px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all';
+                b.className = 'px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none';
                 setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
             } else {
-                mainView.style.display = 'none'; 
-                blogView.style.display = 'block'; 
-                tabBlog.className = 'px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all';
-                tabMain.className = 'px-4 sm:px-6 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none';
+                b.className = 'px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-black transition-all';
+                m.className = 'px-3 sm:px-5 py-1.5 text-sm font-semibold rounded-md text-gray-500 hover:text-black hover:bg-gray-100 transition-all bg-transparent shadow-none';
                 if(typeof window.fetchBlogs === 'function') window.fetchBlogs();
                 if(typeof window.closePost === 'function') window.closePost();
             }
         }
-
-        const SECRET_PIN = "23455432";
-        function openPinModal() {
-            document.getElementById('pin-modal').classList.remove('hidden');
-            document.getElementById('pin-modal').classList.add('flex');
-            document.getElementById('pin-input').value = '';
-            document.getElementById('pin-error').classList.add('hidden');
-            setTimeout(() => document.getElementById('pin-input').focus(), 100);
-        }
-        function closePinModal() { 
-            document.getElementById('pin-modal').classList.add('hidden'); 
-            document.getElementById('pin-modal').classList.remove('flex');
-        }
-        function verifyPin() {
-            if(document.getElementById('pin-input').value === SECRET_PIN) {
-                closePinModal(); 
-                openAdminModal();
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-            }
-        }
-        function openAdminModal() { 
-            document.getElementById('admin-modal').classList.remove('hidden'); 
-            document.getElementById('admin-modal').classList.add('flex'); 
-            document.getElementById('debug-logger').innerHTML = '> System ready. Waiting for input...';
-        }
-        function closeAdminModal() { 
-            document.getElementById('admin-modal').classList.add('hidden'); 
-            document.getElementById('admin-modal').classList.remove('flex'); 
-        }
-
-        document.getElementById('pin-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') verifyPin();
-        });
+        function openPinModal() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-modal').classList.add('flex'); }
+        function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
+        function verifyPin() { if(document.getElementById('pin-input').value === "23455432") { closePinModal(); document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-modal').classList.add('flex'); } else { document.getElementById('pin-error').classList.remove('hidden'); } }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
+        function openGameModal() { document.getElementById('game-modal').classList.remove('hidden'); document.getElementById('game-modal').classList.add('flex'); if(typeof window.fetchLeaderboard === 'function') window.fetchLeaderboard(); }
+        function closeGameModal() { document.getElementById('game-modal').classList.add('hidden'); document.getElementById('game-modal').classList.remove('flex'); if(typeof window.endGame === 'function') window.endGame(true); }
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-        // YOUR EXACT FIREBASE CONFIGURATION
+        // ==========================================
+        // ⚠️ PASTE YOUR EXACT FIREBASE KEYS HERE ⚠️
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
-            authDomain: "spidey-a1a4f.firebaseapp.com",
-            projectId: "spidey-a1a4f",
-            storageBucket: "spidey-a1a4f.firebasestorage.app",
-            messagingSenderId: "839659120593",
-            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
-        let db;
-        let blogs = [];
+        let db, auth, provider, currentUser = null;
 
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            provider = new GoogleAuthProvider();
+            window.fetchBlogs(); 
+        } catch (error) {
+            console.error("Firebase Error:", error);
+            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold font-mono text-sm">Firebase failed to connect. Did you add your keys?</p>';
+        }
+
+        // --- GOOGLE AUTHENTICATION ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-prompt').classList.add('hidden');
+                document.getElementById('user-info').classList.remove('hidden');
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('user-name').innerText = user.displayName.split(' ')[0];
+                document.getElementById('user-pfp').src = user.photoURL;
+            } else {
+                currentUser = null;
+                document.getElementById('login-prompt').classList.remove('hidden');
+                document.getElementById('user-info').classList.add('hidden');
+                document.getElementById('logout-btn').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(error => {
+                alert("Login Error: " + error.message);
+            });
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // --- LEADERBOARD LOGIC ---
+        window.fetchLeaderboard = async function() {
+            if(!db) return;
+            try {
+                // Fetch top 10 scores
+                const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+                const snapshot = await getDocs(q);
+                
+                const list = document.getElementById('leaderboard-list');
+                list.innerHTML = '';
+                
+                let rank = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // Hall of Fame (Rank 1)
+                    if(rank === 1) {
+                        document.getElementById('hof-name').innerText = data.displayName;
+                        document.getElementById('hof-score').innerText = data.score;
+                        if(data.photoURL) {
+                            document.getElementById('hof-pfp').innerHTML = `<img src="${data.photoURL}" class="w-full h-full rounded-full object-cover border border-yellow-500">`;
+                        }
+                    } else {
+                        // Top 2-10 List
+                        list.innerHTML += `
+                            <div class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border border-gray-700">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-gray-500 font-bold text-sm w-4">#${rank}</div>
+                                    <img src="${data.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-full border border-gray-600">
+                                    <p class="text-white font-medium text-sm">${data.displayName}</p>
+                                </div>
+                                <div class="text-blue-400 font-extrabold">${data.score}</div>
+                            </div>
+                        `;
+                    }
+                    rank++;
+                });
+
+                if(snapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-4">Be the first to set a high score!</p>';
+                }
+
+            } catch (error) {
+                console.error("Leaderboard Error:", error);
+            }
+        }
+
+        async function saveScore(score) {
+            if(!currentUser || score === 0 || !db) return;
+            try {
+                await addDoc(collection(db, "scores"), {
+                    uid: currentUser.uid,
+                    displayName: currentUser.displayName,
+                    photoURL: currentUser.photoURL,
+                    score: score,
+                    timestamp: serverTimestamp()
+                });
+                window.fetchLeaderboard(); // Refresh board
+            } catch (error) {
+                console.error("Failed to save score", error);
+            }
+        }
+
+        // --- BLOG PUBLISHING LOGIC ---
         function logStatus(message, isError = false) {
             const logger = document.getElementById('debug-logger');
             if(logger) {
@@ -328,206 +433,192 @@
             }
         }
 
-        // Initialize Firebase
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            logStatus("Firebase Module Initialized!");
-            window.fetchBlogs(); 
-        } catch (error) {
-            console.error("Firebase Error:", error);
-            document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-bold font-mono text-sm">Firebase failed to connect.</p>';
-        }
-
-        // Exposing fetchBlogs to the global window so HTML buttons can run it
         window.fetchBlogs = async function() {
             if(!db) return;
             try {
-                // Fetch the blogs collection
                 const snapshot = await getDocs(collection(db, 'blogs'));
-                
-                blogs = [];
-                snapshot.forEach(doc => {
-                    blogs.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort blogs locally by timestamp to prevent Firebase Index errors
+                let blogs = [];
+                snapshot.forEach(doc => { blogs.push({ id: doc.id, ...doc.data() }); });
                 blogs.sort((a, b) => {
                     const tA = a.timestamp ? a.timestamp.toMillis() : 0;
                     const tB = b.timestamp ? b.timestamp.toMillis() : 0;
-                    return tB - tA; // Newest first
+                    return tB - tA; 
                 });
-
-                window.renderBlogFeed(); 
+                
+                const list = document.getElementById('blog-list');
+                list.innerHTML = '';
+                if(blogs.length === 0) {
+                    list.innerHTML = '<div class="bg-gray-50 p-8 rounded-xl border border-dashed border-gray-300 text-center"><p class="text-gray-500 font-medium">No blog posts yet.</p></div>';
+                    return;
+                }
+                blogs.forEach(blog => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-8 rounded-2xl border border-gray-200 hover:border-gray-400 hover:shadow-lg transition-all cursor-pointer group";
+                    card.onclick = () => window.openPost(blog.id);
+                    const tempDiv = document.createElement("div"); tempDiv.innerHTML = blog.content;
+                    let snippet = (tempDiv.textContent || tempDiv.innerText || "").substring(0, 180) + "...";
+                    card.innerHTML = `<div class="text-xs font-mono text-blue-600 font-bold mb-3 tracking-widest uppercase">${blog.date}</div><h3 class="text-2xl font-extrabold text-black mb-3 group-hover:text-blue-600 transition">${blog.title}</h3><p class="text-gray-500 leading-relaxed">${snippet}</p><div class="mt-6 text-sm font-bold text-black flex items-center gap-2 group-hover:gap-3 transition-all">Read Post &rarr;</div>`;
+                    list.appendChild(card);
+                });
             } catch (err) {
                 console.error(err);
-                document.getElementById('blog-list').innerHTML = '<p class="text-red-500 font-mono text-sm">Error reading database from Firebase.</p>';
             }
         }
 
         window.publishPost = async function() {
             const btn = document.getElementById('publish-btn');
-            if (btn.innerText === "PROCESSING...") return; // Prevent double taps
-
+            if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
             logStatus("Mobile Tap Registered! Connecting to Firebase...");
             
-            if(!db) {
-                logStatus("ERROR: Firebase database is not initialized.", true);
-                btn.style.backgroundColor = "#ef4444"; btn.innerText = "SYSTEM FAILED";
-                return;
-            }
+            if(!db) return logStatus("ERROR: Firebase database is not initialized.", true);
             
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
-            
-            if(!title || !content) {
-                logStatus("ERROR: You must type a Title and HTML content.", true);
-                btn.style.backgroundColor = "#ef4444"; btn.innerText = "FAILED - EMPTY TEXT";
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO FIREBASE"; }, 2000);
-                return;
-            }
+            if(!title || !content) return logStatus("ERROR: You must type a Title and HTML content.", true);
 
             logStatus("Deploying safely to Firebase Cloud...");
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             
             try {
-                // Send to Firebase
-                await addDoc(collection(db, "blogs"), {
-                    title: title,
-                    content: content,
-                    date: dateStr,
-                    timestamp: serverTimestamp()
-                });
-
+                await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
                 logStatus("SUCCESS! Saved to cloud.");
-                btn.style.backgroundColor = "#10b981"; // turns green
-                btn.innerText = "PUBLISHED SUCCESSFULLY!";
-                
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-html').value = '';
-                
+                btn.style.backgroundColor = "#10b981"; btn.innerText = "PUBLISHED SUCCESSFULLY!";
+                document.getElementById('post-title').value = ''; document.getElementById('post-html').value = '';
                 setTimeout(() => {
-                    closeAdminModal();
-                    switchView('blog');
-                    window.fetchBlogs();
-                    
-                    btn.style.backgroundColor = "";
-                    btn.innerText = "🚀 PUBLISH TO FIREBASE";
+                    closeAdminModal(); switchView('blog'); window.fetchBlogs();
+                    btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO CLOUD";
                 }, 1500);
-                
             } catch (err) {
                 logStatus("FIREBASE REJECTED IT: " + err.message, true);
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "DATABASE ERROR";
-                setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = "🚀 PUBLISH TO FIREBASE"; }, 3000);
             }
         }
-
-        // Attach pointerdown event listener for mobile ghost-click fix
+        
         const pubBtn = document.getElementById('publish-btn');
-        if(pubBtn) {
-            pubBtn.addEventListener('pointerdown', function(e) {
-                e.preventDefault(); 
-                window.publishPost();
-            });
+        if(pubBtn) { pubBtn.addEventListener('pointerdown', function(e) { e.preventDefault(); window.publishPost(); }); }
+
+        window.openPost = function(id) { /* Implemented in fetchBlogs */ }
+
+        // --- FIREWALL RUNNER GAME LOGIC ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let frames = 0, score = 0, best = 0;
+        let gameActive = false, gameOver = false;
+
+        const bird = { x: 50, y: 150, width: 20, height: 20, velocity: 0, gravity: 0.25, jump: -4.5 };
+        const pipes = [];
+        const pipeWidth = 40;
+        const gap = 110;
+
+        function drawBird() {
+            ctx.fillStyle = '#60a5fa'; // Blue Data Packet
+            ctx.shadowBlur = 10; ctx.shadowColor = '#60a5fa';
+            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+            ctx.shadowBlur = 0; // Reset
         }
 
-        window.renderBlogFeed = function() {
-            const list = document.getElementById('blog-list');
-            list.innerHTML = '';
-            if(blogs.length === 0) {
-                list.innerHTML = '<div class="bg-gray-50 p-8 rounded-xl border border-dashed border-gray-300 text-center"><p class="text-gray-500 font-medium">No blog posts yet.</p></div>';
-                return;
+        function drawPipes() {
+            ctx.fillStyle = '#ef4444'; // Red Firewall
+            ctx.shadowBlur = 5; ctx.shadowColor = '#ef4444';
+            for (let i = 0; i < pipes.length; i++) {
+                let p = pipes[i];
+                ctx.fillRect(p.x, 0, pipeWidth, p.top);
+                ctx.fillRect(p.x, canvas.height - p.bottom, pipeWidth, p.bottom);
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            // Generate Pipes
+            if (frames % 100 === 0) {
+                let topH = Math.random() * (canvas.height - gap - 40) + 20;
+                let bottomH = canvas.height - gap - topH;
+                pipes.push({ x: canvas.width, top: topH, bottom: bottomH });
             }
 
-            blogs.forEach(blog => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-8 rounded-2xl border border-gray-200 hover:border-gray-400 hover:shadow-lg transition-all cursor-pointer group";
-                card.onclick = () => window.openPost(blog.id);
-                
-                const tempDiv = document.createElement("div");
-                tempDiv.innerHTML = blog.content;
-                let snippet = (tempDiv.textContent || tempDiv.innerText || "").substring(0, 180) + "...";
+            // Move & Check Collision
+            for (let i = 0; i < pipes.length; i++) {
+                let p = pipes[i];
+                p.x -= 2;
 
-                card.innerHTML = `
-                    <div class="text-xs font-mono text-blue-600 font-bold mb-3 tracking-widest uppercase">${blog.date}</div>
-                    <h3 class="text-2xl font-extrabold text-black mb-3 group-hover:text-blue-600 transition">${blog.title}</h3>
-                    <p class="text-gray-500 leading-relaxed">${snippet}</p>
-                    <div class="mt-6 text-sm font-bold text-black flex items-center gap-2 group-hover:gap-3 transition-all">Read Post &rarr;</div>
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        window.openPost = function(id) {
-            const blog = blogs.find(b => b.id === id);
-            if(!blog) return;
-            document.getElementById('blog-feed-container').style.display = 'none';
-            document.getElementById('single-post-container').style.display = 'block';
-            document.getElementById('read-date').innerText = blog.date;
-            document.getElementById('read-title').innerText = blog.title;
-            document.getElementById('read-content').innerHTML = blog.content;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.closePost = function() {
-            document.getElementById('single-post-container').style.display = 'none';
-            document.getElementById('blog-feed-container').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    </script>
-
-    <script>
-        const discordID = "1329835276020748321";
-        async function fetchDiscordData() {
-            try {
-                const r = await fetch(`https://api.lanyard.rest/v1/users/${discordID}`);
-                const res = await r.json();
-                
-                if(res.success && res.data) {
-                    const data = res.data;
-                    if(data.discord_user.avatar) {
-                        const ext = data.discord_user.avatar.startsWith("a_") ? "gif" : "png";
-                        document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${discordID}/${data.discord_user.avatar}.${ext}?size=128`;
+                // Collision
+                if (bird.x + bird.width > p.x && bird.x < p.x + pipeWidth) {
+                    if (bird.y < p.top || bird.y + bird.height > canvas.height - p.bottom) {
+                        window.endGame();
                     }
-                    const colors = { online: '#10b981', idle: '#f59e0b', dnd: '#ef4444', offline: '#9ca3af' };
-                    document.getElementById('status-dot').style.backgroundColor = colors[data.discord_status] || colors.offline;
-                    
-                    const statusText = data.discord_status.charAt(0).toUpperCase() + data.discord_status.slice(1);
-                    document.getElementById('status-text').innerText = statusText;
-                } else {
-                    document.getElementById('status-text').innerText = "Offline";
                 }
-            } catch(e) {
-                document.getElementById('status-text').innerText = "Offline";
+
+                // Score
+                if (p.x === bird.x) { score++; }
+            }
+
+            // Ground/Ceiling Collision
+            if (bird.y + bird.height >= canvas.height || bird.y <= 0) {
+                window.endGame();
+            }
+
+            // Remove off-screen pipes
+            if (pipes.length > 0 && pipes[0].x < -pipeWidth) { pipes.shift(); }
+
+            frames++;
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0a0a0a'; // Background
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawPipes();
+            drawBird();
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 24px monospace';
+            ctx.fillText(score, canvas.width/2 - 10, 40);
+        }
+
+        function loop() {
+            update();
+            draw();
+            if(!gameOver) requestAnimationFrame(loop);
+        }
+
+        window.endGame = function(forced = false) {
+            gameActive = false;
+            gameOver = true;
+            if(!forced) {
+                document.getElementById('game-over-overlay').classList.remove('hidden');
+                document.getElementById('final-score').innerText = score;
+                saveScore(score); // Automatically save to DB
             }
         }
-        fetchDiscordData(); setInterval(fetchDiscordData, 10000);
-    </script>
 
-    <script>
-        const logs = [
-            "Fahad Malik successfully logged in...",
-            "Starting WebLooM Inc. servers...",
-            "Checking VertexOS updates...",
-            "Connecting to BuildCore community...",
-            "Testing code security...",
-            "Everything is running perfectly in Tokyo."
-        ];
-        const terminal = document.getElementById('terminal-output');
-        let logIndex = 0;
-        function typeLog() {
-            if (logIndex >= logs.length) logIndex = 0;
-            const line = document.createElement('div');
-            line.innerHTML = `<span class="text-emerald-500">➜</span> <span class="text-blue-400">~</span> ${logs[logIndex]}`;
-            if (terminal.children.length > 3) terminal.removeChild(terminal.firstChild);
-            terminal.appendChild(line);
-            document.querySelectorAll('.cursor').forEach(c => c.classList.remove('cursor'));
-            line.classList.add('cursor');
-            logIndex++;
-            setTimeout(typeLog, Math.random() * 1500 + 1000);
+        window.resetGame = function() {
+            bird.y = 150; bird.velocity = 0;
+            pipes.length = 0;
+            score = 0; frames = 0;
+            gameOver = false; gameActive = true;
+            document.getElementById('game-start-overlay').classList.add('hidden');
+            document.getElementById('game-over-overlay').classList.add('hidden');
+            loop();
         }
-        setTimeout(typeLog, 1000);
+
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            if (!gameActive && !gameOver) {
+                window.resetGame();
+            } else if (gameActive) {
+                bird.velocity = bird.jump;
+            }
+        });
+
+        // Initial Draw
+        draw();
     </script>
 
     <script type="module">
@@ -544,62 +635,43 @@
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
             container.appendChild(renderer.domElement);
 
             const controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 0.8;
-            controls.enablePan = false;
-            controls.minDistance = 8;
-            controls.maxDistance = 30;
+            controls.enableDamping = true; controls.dampingFactor = 0.05;
+            controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
+            controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
 
             const mainGroup = new THREE.Group();
             
-            // Particles
             const particleGeo = new THREE.BufferGeometry();
             const posArray = new Float32Array(600 * 3);
             for(let i=0; i<600*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
             particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af }));
-            mainGroup.add(particles);
+            mainGroup.add(new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.05, color: 0x9ca3af })));
 
-            // Web structure (RESTORED LINES)
             const webGeo = new THREE.BufferGeometry();
-            const linePoints = [];
-            const nodes = [new THREE.Vector3(0, 0, 0)];
+            const linePoints = []; const nodes = [new THREE.Vector3(0, 0, 0)];
             const radials = 16, rings = 8, maxRadius = 9;
             
-            // Calculate Nodes
             for (let r = 1; r <= rings; r++) {
                 const radius = (r / rings) * maxRadius;
                 for (let i = 0; i < radials; i++) {
                     const angle = (i / radials) * Math.PI * 2;
-                    const z = Math.pow(r / rings, 2) * 3 - 2 + (Math.sin(angle * 4) * 0.4);
-                    nodes.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, z));
+                    nodes.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, Math.pow(r / rings, 2) * 3 - 2 + (Math.sin(angle * 4) * 0.4)));
                 }
             }
 
-            // Draw Spokes
             for (let i = 0; i < radials; i++) {
-                for (let r = 0; r < rings; r++) {
-                    linePoints.push(nodes[r===0?0:1+(r-1)*radials+i], nodes[1+r*radials+i]);
-                }
+                for (let r = 0; r < rings; r++) { linePoints.push(nodes[r===0?0:1+(r-1)*radials+i], nodes[1+r*radials+i]); }
             }
-            
-            // Draw Rings
             for (let r = 1; r <= rings; r++) {
-                for (let i = 0; i < radials; i++) {
-                    linePoints.push(nodes[1+(r-1)*radials+i], nodes[1+(r-1)*radials+((i+1)%radials)]);
-                }
+                for (let i = 0; i < radials; i++) { linePoints.push(nodes[1+(r-1)*radials+i], nodes[1+(r-1)*radials+((i+1)%radials)]); }
             }
 
             webGeo.setFromPoints(linePoints);
             mainGroup.add(new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.9 })));
 
-            // Tech Labels
             const techStack = ['React', 'Next.js', 'Node.js', 'C++', 'Tailwind', 'Docker', 'AWS', 'Figma', 'TypeScript', 'Git', 'VertexOS', 'Security', 'Firebase', 'GraphQL', 'Vercel', 'Linux', 'Redis', 'WebLooM', 'BuildCore', 'Kubernetes'];
 
             function createTextSprite(text) {
@@ -615,18 +687,10 @@
             }
 
             techStack.forEach((tech, i) => {
-                const ringLevel = rings - (i % 3); 
-                const radialPos = (i * 3) % radials; 
-                
-                const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
-                const pos = nodes[nodeIndex];
-                
+                const pos = nodes[1 + (rings - (i % 3) - 1) * radials + ((i * 3) % radials)];
                 const dot = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0x0a0a0a }));
-                dot.position.copy(pos); 
-                mainGroup.add(dot);
-                
-                const sprite = createTextSprite(tech);
-                sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
+                dot.position.copy(pos); mainGroup.add(dot);
+                const sprite = createTextSprite(tech); sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
                 mainGroup.add(sprite);
             });
 
