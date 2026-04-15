@@ -60,13 +60,22 @@
             animation: spin 1s linear infinite; margin: 0 auto 16px auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        #xp-toast {
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+            transition: opacity 0.5s;
+        }
     </style>
 </head>
 <body>
 
     <div class="bg-grid"></div>
 
-    <div class="relative w-full max-w-md text-center">
+    <div class="relative w-full max-w-md text-center z-10">
+
+        <div id="xp-toast" class="absolute -top-16 left-1/2 transform -translate-x-1/2 text-active font-bold font-mono text-sm opacity-0 z-[100] whitespace-nowrap">
+            +0 XP Synced to Hub!
+        </div>
 
         <div class="mb-8">
             <h1 class="font-head text-5xl font-black text-cyan tracking-tighter drop-shadow-lg mb-2">SEQ-X</h1>
@@ -86,6 +95,7 @@
             <button onclick="bootSequence()" class="bg-cyan hover:bg-cyan-400 text-black font-bold font-mono py-3 px-8 rounded-full transition hover:scale-105 shadow-neon">
                 ESTABLISH LINK
             </button>
+            <button onclick="window.close()" class="mt-8 text-zinc-500 hover:text-white text-xs font-mono uppercase tracking-widest underline transition">Return to Hub</button>
         </div>
 
         <div id="view-load" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-black rounded-3xl border border-zinc-800">
@@ -101,9 +111,10 @@
                 RANK: UNKNOWN
             </div>
 
-            <button onclick="resetGame()" class="border border-white/20 hover:bg-white hover:text-red-900 text-white font-bold font-mono py-3 px-8 rounded-full transition">
+            <button onclick="resetGame()" class="border border-white/20 hover:bg-white hover:text-red-900 text-white font-bold font-mono py-3 px-8 rounded-full transition shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                 RETRY CONNECTION
             </button>
+            <button onclick="window.close()" class="mt-6 text-zinc-400 hover:text-white text-xs font-mono uppercase tracking-widest underline transition">Return to Arcade Hub</button>
         </div>
 
         <div class="pad-grid">
@@ -138,8 +149,8 @@
             document.getElementById('view-start').classList.add('hidden');
             document.getElementById('view-over').classList.add('hidden');
             document.getElementById('view-load').classList.remove('hidden');
+            document.getElementById('xp-toast').style.opacity = 0;
 
-            // Wait 2 Seconds
             await new Promise(r => setTimeout(r, 2000));
 
             document.getElementById('view-load').classList.add('hidden');
@@ -161,11 +172,9 @@
             isPlayerTurn = false;
             document.getElementById('turn-ind').style.opacity = '0';
 
-            // Add random step (0-8)
             sequence.push(Math.floor(Math.random() * 9));
 
-            // Play sequence
-            await new Promise(r => setTimeout(r, 500)); // Small pause
+            await new Promise(r => setTimeout(r, 500)); 
             for (let id of sequence) {
                 await flashPad(id);
             }
@@ -177,12 +186,10 @@
         async function handleInput(id) {
             if(!isPlayerTurn) return;
 
-            // Flash the clicked pad immediately
             const pad = document.getElementById(`p${id}`);
             pad.classList.add('flash');
             setTimeout(() => pad.classList.remove('flash'), 150);
 
-            // Check correctness
             const currentStep = playerSeq.length;
             if (id !== sequence[currentStep]) {
                 gameOver();
@@ -191,7 +198,6 @@
 
             playerSeq.push(id);
 
-            // Check if round complete
             if (playerSeq.length === sequence.length) {
                 isPlayerTurn = false;
                 document.getElementById('turn-ind').style.opacity = '0';
@@ -202,10 +208,9 @@
         async function flashPad(id) {
             const pad = document.getElementById(`p${id}`);
             pad.classList.add('flash');
-            // Play Sound logic could go here
-            await new Promise(r => setTimeout(r, 300)); // Flash duration
+            await new Promise(r => setTimeout(r, 300)); 
             pad.classList.remove('flash');
-            await new Promise(r => setTimeout(r, 150)); // Gap between flashes
+            await new Promise(r => setTimeout(r, 150)); 
         }
 
         function gameOver() {
@@ -213,14 +218,23 @@
             document.getElementById('final-score').innerText = level;
             document.getElementById('view-over').classList.remove('hidden');
 
-            // Rank Logic
             const rankEl = document.getElementById('rank-badge');
-            let rank = "GOLDFISH"; // Default
+            let rank = "GOLDFISH"; 
             if (level >= 5) rank = "HUMAN";
             if (level >= 10) rank = "CYBERNETIC";
-            if (level >= 15) rank = "AI CORE"; // God tier
+            if (level >= 15) rank = "AI CORE"; 
 
             rankEl.innerText = `RANK: ${rank}`;
+
+            // FIREBASE XP TRIGGER: 10 XP per memory level reached
+            const finalXP = level * 10; 
+            if (window.saveGameScore && finalXP > 0) {
+                window.saveGameScore(finalXP);
+                const xpToast = document.getElementById('xp-toast');
+                xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                xpToast.style.opacity = 1;
+                setTimeout(() => xpToast.style.opacity = 0, 3000);
+            }
         }
 
         function resetGame() {
@@ -230,7 +244,56 @@
         function updateScore() {
             document.getElementById('score-display').innerText = `LEVEL ${level}`;
         }
+    </script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Error:", error);
+        }
+
+        // Track logged in user
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                currentUser = null;
+            }
+        });
+
+        // Expose save function to the game engine
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, {
+                    totalScore: increment(xpGained)
+                });
+                console.log(`Successfully synced ${xpGained} XP to Hub!`);
+            } catch (err) {
+                console.error("Error saving XP to database:", err);
+            }
+        };
     </script>
 </body>
 </html>
