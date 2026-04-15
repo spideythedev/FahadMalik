@@ -25,6 +25,13 @@
         }
         .hud-val { color: #fff; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
+        #xp-toast {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 16px; font-weight: bold; color: #00ff80;
+            text-shadow: 0 0 10px rgba(0, 255, 128, 0.8);
+            opacity: 0; transition: opacity 0.5s; z-index: 100;
+        }
+
         /* MENU */
         #menu {
             background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
@@ -41,6 +48,7 @@
             cursor: pointer; transition: 0.2s; margin-top: 20px;
             box-shadow: 0 0 15px rgba(0, 255, 128, 0.2);
         }
+        .btn-neon:hover { background: rgba(0, 255, 128, 0.1); }
         .btn-neon:active { background: #00ff80; color: #000; box-shadow: 0 0 40px rgba(0, 255, 128, 0.6); transform: scale(0.95); }
 
     </style>
@@ -51,6 +59,8 @@
         <div>SCORE: <span id="score" class="hud-val">0</span></div>
         <div>HIGH: <span id="high-score" class="hud-val">0</span></div>
     </div>
+    
+    <div id="xp-toast">+0 XP Synced to Hub!</div>
 
     <canvas id="game"></canvas>
 
@@ -59,8 +69,9 @@
             <h1 class="text-4xl font-bold text-white mb-2 tracking-tighter" style="text-shadow: 0 0 20px #00ff80;">SERPENT X</h1>
             <p class="text-xs text-green-400/60 mb-6 font-mono">NEON GRID SYSTEM</p>
             <div id="death-msg" class="text-red-500 font-bold mb-4 hidden">SYSTEM FAILURE</div>
-            <button class="btn-neon" onclick="startGame()">INITIALIZE</button>
-            <p class="mt-4 text-[10px] text-gray-600">Swipe or Arrow Keys</p>
+            <button class="btn-neon block mx-auto" onclick="startGame()">INITIALIZE</button>
+            <p class="mt-4 mb-4 text-[10px] text-gray-600">Swipe or Arrow Keys</p>
+            <button onclick="window.close()" class="mt-4 text-gray-500 hover:text-white text-[10px] font-mono uppercase tracking-widest underline transition block mx-auto">Return to Hub</button>
         </div>
     </div>
 
@@ -71,6 +82,7 @@
         const scoreEl = document.getElementById('score');
         const highEl = document.getElementById('high-score');
         const deathMsg = document.getElementById('death-msg');
+        const xpToast = document.getElementById('xp-toast');
 
         // --- CONFIG ---
         const TILE = 20; 
@@ -106,8 +118,8 @@
             state.running = true;
             state.score = 0;
             scoreEl.innerText = "0";
+            state.speed = 100;
 
-            // Center Snake
             const startX = Math.floor((canvas.width/TILE)/2) * TILE;
             const startY = Math.floor((canvas.height/TILE)/2) * TILE;
 
@@ -122,6 +134,7 @@
 
             menu.classList.remove('visible');
             deathMsg.classList.add('hidden');
+            xpToast.style.opacity = 0;
 
             requestAnimationFrame(gameLoop);
         }
@@ -185,6 +198,14 @@
             }
             menu.classList.add('visible');
             deathMsg.classList.remove('hidden');
+
+            // FIREBASE XP TRIGGER (XP = Total Score)
+            const finalXP = state.score;
+            if (window.saveGameScore && finalXP > 0) {
+                window.saveGameScore(finalXP);
+                xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                xpToast.style.opacity = 1;
+            }
         }
 
         // --- RENDER ---
@@ -235,11 +256,13 @@
         let touchStartY = 0;
 
         document.addEventListener('touchstart', e => {
+            if(e.target.closest('#menu')) return;
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         }, {passive: false});
 
         document.addEventListener('touchend', e => {
+            if(e.target.closest('#menu')) return;
             let touchEndX = e.changedTouches[0].screenX;
             let touchEndY = e.changedTouches[0].screenY;
             handleSwipe(touchEndX, touchEndY);
@@ -249,21 +272,52 @@
             let diffX = endX - touchStartX;
             let diffY = endY - touchStartY;
 
-            // Threshold to prevent accidental tiny taps
             if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) return;
 
             if (Math.abs(diffX) > Math.abs(diffY)) {
-                // Horizontal
-                if (diffX > 0 && state.vel.x === 0) state.nextVel = {x: TILE, y: 0}; // Right
-                else if (diffX < 0 && state.vel.x === 0) state.nextVel = {x: -TILE, y: 0}; // Left
+                if (diffX > 0 && state.vel.x === 0) state.nextVel = {x: TILE, y: 0}; 
+                else if (diffX < 0 && state.vel.x === 0) state.nextVel = {x: -TILE, y: 0}; 
             } else {
-                // Vertical
-                if (diffY > 0 && state.vel.y === 0) state.nextVel = {x: 0, y: TILE}; // Down
-                else if (diffY < 0 && state.vel.y === 0) state.nextVel = {x: 0, y: -TILE}; // Up
+                if (diffY > 0 && state.vel.y === 0) state.nextVel = {x: 0, y: TILE}; 
+                else if (diffY < 0 && state.vel.y === 0) state.nextVel = {x: 0, y: -TILE}; 
             }
         }
 
         resize();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) { console.error("Firebase Error:", error); }
+
+        onAuthStateChanged(auth, (user) => { currentUser = user ? user : null; });
+
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { totalScore: increment(xpGained) });
+            } catch (err) { console.error("Error saving XP to database:", err); }
+        };
     </script>
 </body>
 </html>
