@@ -1,1 +1,458 @@
-.
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syndicate Clubs | SpydeY Network</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { brand: { dark: '#030303', border: '#1f1f22', primary: '#9333ea' } },
+                    animation: {
+                        'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        popIn: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #030303; color: #e5e7eb; -webkit-font-smoothing: antialiased; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .bg-grid-purple {
+            background-image: linear-gradient(rgba(147, 51, 234, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(147, 51, 234, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Chat Message Styles */
+        .msg-own { background: rgba(147, 51, 234, 0.2); border: 1px solid rgba(147, 51, 234, 0.5); align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg-other { background: #111; border: 1px solid #333; align-self: flex-start; border-bottom-left-radius: 0; }
+
+        /* Custom Tooltip */
+        .badge-container { position: relative; cursor: pointer; }
+        .badge-tooltip {
+            visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+            background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;
+            padding: 4px 8px; border-radius: 4px; border: 1px solid #333; white-space: nowrap; z-index: 50;
+            transition: 0.2s; pointer-events: none;
+        }
+        .badge-container:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
+        
+        /* HD SVG Gradients */
+        .badge-club-1 { fill: url(#club-gold); filter: drop-shadow(0 0 15px rgba(234, 179, 8, 1)); }
+        .badge-club-top { fill: url(#club-silver); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.8)); }
+    </style>
+</head>
+<body class="bg-grid-purple flex flex-col min-h-screen">
+
+    <svg width="0" height="0" class="absolute">
+        <defs>
+            <linearGradient id="club-gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#a16207"/></linearGradient>
+            <linearGradient id="club-silver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+        </defs>
+        <g id="icon-club"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></g>
+    </svg>
+
+    <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="extra.html" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-purple-400 transition">
+                &larr; <span class="font-mono text-sm tracking-widest uppercase">Arcade Hub</span>
+            </a>
+            
+            <div class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.1)]">
+                <div class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(147,51,234,0.8)] animate-pulse"></div>
+                <span class="font-mono text-xs text-purple-300 tracking-widest">SYNDICATE NETWORK</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex-grow w-full max-w-[1500px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-3 space-y-6">
+            
+            <div id="my-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <img id="club-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-20 h-20 rounded-2xl border-2 border-purple-500 shadow-[0_0_20px_rgba(147,51,234,0.4)] mb-3 object-cover">
+                    <h2 id="club-name" class="text-white font-extrabold text-2xl tracking-tight">Neon Dragons</h2>
+                    <p class="text-purple-400 font-mono text-[10px] tracking-widest uppercase mb-4">Total XP: <span id="club-xp" class="text-white font-bold">124,500</span></p>
+                    
+                    <div class="w-full flex gap-2 mb-4">
+                        <button class="flex-1 bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2 rounded-lg transition"><i data-lucide="user-plus" class="w-3 h-3 inline"></i> Invite</button>
+                        <button class="flex-1 bg-purple-600/20 hover:bg-purple-600 border border-purple-600/50 text-purple-400 hover:text-white text-xs font-bold py-2 rounded-lg transition"><i data-lucide="settings" class="w-3 h-3 inline"></i> Edit</button>
+                    </div>
+
+                    <div class="w-full text-left">
+                        <p class="text-gray-500 font-mono text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mb-3">Roster (4/50)</p>
+                        <div class="space-y-2 overflow-y-auto max-h-[200px] hide-scrollbar">
+                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border border-yellow-500/30">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">👑</div>
+                                    <span class="text-white text-xs font-bold">SpydeY</span>
+                                </div>
+                                <span class="text-yellow-500 text-[9px] font-mono">OWNER</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border border-purple-500/30 group">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">🛡️</div>
+                                    <span class="text-white text-xs font-bold">ZeroCool</span>
+                                </div>
+                                <button class="text-red-500 hover:text-red-400 bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold opacity-0 group-hover:opacity-100 transition">KICK</button>
+                            </div>
+                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border border-white/5 group">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">👤</div>
+                                    <span class="text-gray-300 text-xs font-bold">Glitch</span>
+                                </div>
+                                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button class="text-purple-400 hover:text-purple-300 bg-purple-500/10 px-2 py-1 rounded text-[9px] font-bold">MOD</button>
+                                    <button class="text-red-500 hover:text-red-400 bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold">KICK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="no-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden text-center">
+                <div class="w-16 h-16 mx-auto bg-[#111] rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.2)]">
+                    <i data-lucide="shield-alert" class="text-purple-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-white font-bold text-lg mb-2">No Syndicate Found</h3>
+                <p class="text-gray-400 text-xs mb-6 font-mono">You are a lone wolf. Join a club or forge your own to access team missions.</p>
+                
+                <div class="bg-black/50 border border-red-500/20 p-3 rounded-xl mb-4">
+                    <p class="text-gray-400 text-[10px] font-mono">Required to Forge:</p>
+                    <p class="text-white font-bold text-sm">2,500 XP <span class="text-red-500" id="xp-status">(Lock Active)</span></p>
+                </div>
+
+                <button id="create-club-btn" onclick="openCreateModal()" class="w-full bg-[#111] text-gray-500 border border-gray-800 font-bold py-3 rounded-xl transition-all text-sm mb-2 cursor-not-allowed">
+                    Forge Syndicate 🔒
+                </button>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl flex flex-col h-[400px]">
+                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i data-lucide="trophy" class="text-yellow-500 w-4 h-4"></i> Top Syndicates
+                </h3>
+                
+                <div class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
+                    <div class="flex justify-between items-center bg-gradient-to-r from-yellow-900/20 to-[#111] p-3 rounded-xl border border-yellow-500/30 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div class="badge-container">
+                                <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="badge-club-1" /></svg>
+                                <span class="badge-tooltip">No#1 Club</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Neon Dragons</p>
+                                <p class="text-gray-500 font-mono text-[9px]">48 Members</p>
+                            </div>
+                        </div>
+                        <div class="text-yellow-500 font-black text-sm">1.2M</div>
+                    </div>
+                    <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/10 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div class="badge-container">
+                                <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="badge-club-top" /></svg>
+                                <span class="badge-tooltip">Top #25 Club</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Cyber Punks</p>
+                                <p class="text-gray-500 font-mono text-[9px]">50 Members</p>
+                            </div>
+                        </div>
+                        <div class="text-white font-black text-sm">980K</div>
+                    </div>
+                    <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/10 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div class="badge-container">
+                                <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="badge-club-top" /></svg>
+                                <span class="badge-tooltip">Top #25 Club</span>
+                            </div>
+                            <div>
+                                <p class="text-gray-300 font-bold text-sm">Data Wraiths</p>
+                                <p class="text-gray-500 font-mono text-[9px]">32 Members</p>
+                            </div>
+                        </div>
+                        <div class="text-white font-black text-sm">750K</div>
+                    </div>
+                </div>
+                <p class="text-center text-[9px] text-gray-600 font-mono mt-3">Refreshes every month</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-6 flex flex-col h-[calc(100vh-120px)]">
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl shadow-2xl flex-grow flex flex-col overflow-hidden relative">
+                
+                <div class="bg-[#050505] p-4 border-b border-white/10 flex justify-between items-center relative z-10">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="message-square" class="text-purple-500 w-5 h-5"></i>
+                        <div>
+                            <h3 class="text-white font-bold">Syndicate Encrypted Comms</h3>
+                            <p class="text-purple-500 font-mono text-[10px] uppercase">End-to-End Encrypted</p>
+                        </div>
+                    </div>
+                    <div class="flex -space-x-2">
+                        <img class="w-8 h-8 rounded-full border-2 border-black" src="https://cdn.discordapp.com/embed/avatars/0.png">
+                        <img class="w-8 h-8 rounded-full border-2 border-black" src="https://cdn.discordapp.com/embed/avatars/1.png">
+                        <img class="w-8 h-8 rounded-full border-2 border-black" src="https://cdn.discordapp.com/embed/avatars/2.png">
+                        <div class="w-8 h-8 rounded-full border-2 border-black bg-gray-800 flex items-center justify-center text-xs text-white">+4</div>
+                    </div>
+                </div>
+
+                <div id="chat-box" class="flex-grow p-6 overflow-y-auto space-y-4 flex flex-col relative z-10">
+                    <div class="text-center mb-6">
+                        <span class="bg-white/5 text-gray-500 text-[10px] font-mono px-3 py-1 rounded-full uppercase">Comms Established - Today</span>
+                    </div>
+
+                    <div class="flex flex-col msg-other p-3 rounded-2xl max-w-[80%] relative group">
+                        <span class="text-purple-400 font-bold text-[10px] mb-1 flex items-center gap-1">ZeroCool <span class="text-gray-500 border border-gray-600 px-1 rounded text-[8px]">MOD</span></span>
+                        <p class="text-sm text-gray-200">We need 5 more members to clear the Hardcore mission today. Who is online?</p>
+                    </div>
+
+                    <div class="flex flex-col msg-other p-3 rounded-2xl max-w-[80%]">
+                        <span class="text-gray-400 font-bold text-[10px] mb-1">Glitch</span>
+                        <p class="text-sm text-gray-200">I'm grinding Neon Dash right now. Give me 10 mins.</p>
+                    </div>
+
+                    <div class="flex flex-col msg-own p-3 rounded-2xl max-w-[80%]">
+                        <span class="text-white font-bold text-[10px] mb-1 text-right flex items-center gap-1 justify-end">SpydeY <span class="text-yellow-500 border border-yellow-600 px-1 rounded text-[8px]">OWNER</span></span>
+                        <p class="text-sm text-white">Bet. Everyone queue up Stack Overflow after, we need the points.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-[#050505] border-t border-white/10 relative z-10">
+                    <div class="flex gap-2">
+                        <input type="text" placeholder="Transmit message to Syndicate..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 font-mono">
+                        <button class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold transition shadow-[0_0_15px_rgba(147,51,234,0.3)]">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="chat-lock" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                    <i data-lucide="lock" class="text-purple-500 w-12 h-12 mb-4"></i>
+                    <p class="text-white font-bold">Comms Locked</p>
+                    <p class="text-gray-400 text-xs font-mono">Join a Syndicate to access encrypted chat.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3 space-y-6">
+            
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
+                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i data-lucide="crosshair" class="text-red-500 w-4 h-4"></i> Syndicate Directives
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-green-500"></div>
+                        <div class="flex justify-between items-start mb-1 pl-2">
+                            <span class="text-white font-bold text-xs uppercase">Daily Protocol</span>
+                            <span class="text-green-400 font-mono text-[9px]">+1K XP</span>
+                        </div>
+                        <p class="text-gray-400 text-[10px] pl-2 mb-2">Team scores 10,000 total points.</p>
+                        <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div class="bg-green-500 h-full w-[80%]"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
+                        <div class="flex justify-between items-start mb-1 pl-2">
+                            <span class="text-white font-bold text-xs uppercase">Weekly Operation</span>
+                            <span class="text-blue-400 font-mono text-[9px]">+5K XP</span>
+                        </div>
+                        <p class="text-gray-400 text-[10px] pl-2 mb-2">20 members play Cyber Defense.</p>
+                        <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div class="bg-blue-500 h-full w-[40%]"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-yellow-500"></div>
+                        <div class="flex justify-between items-start mb-1 pl-2">
+                            <span class="text-white font-bold text-xs uppercase">Monthly Raid</span>
+                            <span class="text-yellow-400 font-mono text-[9px]">+25K XP</span>
+                        </div>
+                        <p class="text-gray-400 text-[10px] pl-2 mb-2">Reach Top 10 on Global Leaderboard.</p>
+                        <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div class="bg-yellow-500 h-full w-[10%]"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-red-900/30 to-[#111] p-3 rounded-xl border border-red-500/50 relative overflow-hidden shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-red-500 shadow-[0_0_10px_red]"></div>
+                        <div class="flex justify-between items-start mb-1 pl-2">
+                            <span class="text-white font-black text-xs uppercase flex items-center gap-1"><i data-lucide="skull" class="w-3 h-3 text-red-500"></i> Hardcore</span>
+                            <span class="text-red-400 font-mono text-[9px] font-bold">REWARD: EXCLUSIVE BADGE</span>
+                        </div>
+                        <p class="text-gray-300 text-[10px] pl-2">Bypass 50,000 Firewalls in Gravity Jet collectively. Requires 5 active members online.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
+                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i data-lucide="gift" class="text-purple-500 w-4 h-4"></i> Syndicate Treasury
+                </h3>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-[#111] border border-white/5 p-2 rounded-lg opacity-50">
+                        <div class="text-2xl mb-1">🎭</div>
+                        <p class="text-[8px] font-bold text-white uppercase">Profile Tag</p>
+                    </div>
+                    <div class="bg-[#111] border border-white/5 p-2 rounded-lg opacity-50">
+                        <div class="text-2xl mb-1">🎨</div>
+                        <p class="text-[8px] font-bold text-white uppercase">Chat Color</p>
+                    </div>
+                    <div class="bg-[#111] border border-white/5 p-2 rounded-lg opacity-50">
+                        <div class="text-2xl mb-1">🛡️</div>
+                        <p class="text-[8px] font-bold text-white uppercase">Club Badge</p>
+                    </div>
+                </div>
+                <p class="text-center text-[9px] text-gray-500 font-mono mt-3">Unlocks automatically via Missions.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="create-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-purple-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(147,51,234,0.2)] w-full max-w-md relative animate-pop-in">
+            <button onclick="closeCreateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            
+            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Forge Syndicate</h2>
+            <p class="text-gray-400 text-xs font-mono text-center mb-8">Establish your core architecture.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Syndicate Name</label>
+                    <input type="text" placeholder="Enter name (e.g. Neon Dragons)" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 font-bold">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Insignia URL (Image)</label>
+                    <input type="text" placeholder="https://..." class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 text-xs font-mono">
+                </div>
+                
+                <button onclick="forgeClub()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] mt-4">
+                    INITIALIZE PROTOCOL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        // YOUR FIREBASE KEYS
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        lucide.createIcons();
+
+        let db, auth, provider, currentUser = null;
+        let localXP = 0;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            provider = new GoogleAuthProvider();
+        } catch (error) {
+            console.error("Firebase Error:", error);
+        }
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserDB(user.uid);
+            } else {
+                currentUser = null;
+                // UI Reset
+                document.getElementById('create-club-btn').className = "w-full bg-[#111] text-gray-500 border border-gray-800 font-bold py-3 rounded-xl transition-all text-sm mb-2 cursor-not-allowed";
+                document.getElementById('create-club-btn').innerHTML = "Forge Syndicate 🔒";
+                document.getElementById('xp-status').innerText = "(Login Required)";
+            }
+        });
+
+        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
+
+        // --- LOAD USER & XP CHECK ---
+        async function loadUserDB(uid) {
+            if(!db) return;
+            const docSnap = await getDoc(doc(db, "users", uid));
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                localXP = data.totalScore || 0;
+            } else {
+                localXP = 0;
+            }
+
+            // XP Lock Logic for Create Club
+            const createBtn = document.getElementById('create-club-btn');
+            const statusText = document.getElementById('xp-status');
+
+            if(localXP >= 2500) {
+                createBtn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all text-sm mb-2 shadow-[0_0_15px_rgba(147,51,234,0.3)]";
+                createBtn.innerHTML = "Forge Syndicate <i data-lucide='zap' class='w-4 h-4 inline ml-1'></i>";
+                statusText.innerText = "(Unlocked)";
+                statusText.className = "text-emerald-500";
+            } else {
+                createBtn.className = "w-full bg-[#111] text-gray-500 border border-gray-800 font-bold py-3 rounded-xl transition-all text-sm mb-2 cursor-not-allowed";
+                createBtn.innerHTML = "Forge Syndicate 🔒";
+                statusText.innerText = `(Need ${2500 - localXP} more XP)`;
+            }
+            lucide.createIcons();
+        }
+
+        // --- UI INTERACTION ---
+        window.openCreateModal = function() {
+            if(!currentUser) return alert("You must authenticate first.");
+            if(localXP < 2500) return alert("ACCESS DENIED: Insufficient XP. Grind in the Arcade Hub first.");
+            
+            document.getElementById('create-modal').classList.remove('hidden');
+            document.getElementById('create-modal').classList.add('flex');
+        }
+
+        window.closeCreateModal = function() {
+            document.getElementById('create-modal').classList.add('hidden');
+            document.getElementById('create-modal').classList.remove('flex');
+        }
+
+        window.forgeClub = function() {
+            // UI Demo of joining a club
+            closeCreateModal();
+            document.getElementById('no-club-panel').style.display = 'none';
+            document.getElementById('my-club-panel').style.display = 'block';
+            document.getElementById('chat-lock').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
