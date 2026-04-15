@@ -24,6 +24,13 @@
             text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
         }
 
+        #xp-toast {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 16px; font-weight: bold; color: #a855f7;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+            opacity: 0; transition: opacity 0.5s; z-index: 100;
+        }
+
         /* MENU SCREEN */
         #menu {
             background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px);
@@ -50,6 +57,7 @@
 <body>
 
     <div id="hud">DISTANCE: <span id="score">0</span>m</div>
+    <div id="xp-toast">+0 XP Synced to Hub!</div>
 
     <canvas id="game"></canvas>
 
@@ -58,8 +66,9 @@
             <h1 class="text-4xl font-extrabold text-white mb-1 italic">GRAVITY JET</h1>
             <p class="tagline">DATA PACKET ESCAPE PROTOCOL</p>
             <div id="death-info" class="text-red-500 font-bold mb-2 hidden">CONNECTION LOST</div>
-            <button class="btn-start" onclick="startGame()">INITIATE LAUNCH</button>
-            <p class="mt-4 text-[10px] text-gray-500">CLICK or SPACE to Thrust</p>
+            <button class="btn-start block mx-auto" onclick="startGame()">INITIATE LAUNCH</button>
+            <p class="mt-4 mb-6 text-[10px] text-gray-500">CLICK or SPACE to Thrust</p>
+            <button onclick="window.close()" class="text-gray-500 hover:text-white text-[10px] font-mono uppercase tracking-widest underline transition block mx-auto">Return to Hub</button>
         </div>
     </div>
 
@@ -69,20 +78,17 @@
         const menu = document.getElementById('menu');
         const scoreEl = document.getElementById('score');
         const deathInfo = document.getElementById('death-info');
+        const xpToast = document.getElementById('xp-toast');
 
-        // --- CONFIG ---
-        const GRAVITY = 0.5; // Heavy pull
-        const LIFT = -8;     // Powerful thrust
-        const SPEED = 5;     // Scroll speed
-        const SPAWN_RATE = 100; // Frames between pipes
+        const GRAVITY = 0.5; 
+        const LIFT = -8;     
+        const SPEED = 5;     
+        const SPAWN_RATE = 100; 
 
         let state = {
-            running: false,
-            score: 0,
-            frames: 0,
+            running: false, score: 0, frames: 0,
             player: { x: 100, y: 300, w: 30, h: 30, dy: 0, angle: 0 },
-            walls: [],
-            particles: []
+            walls: [], particles: []
         };
 
         function resize() {
@@ -93,26 +99,21 @@
         window.addEventListener('resize', resize);
 
         function startGame() {
-            state.running = true;
-            state.score = 0;
-            state.frames = 0;
+            state.running = true; state.score = 0; state.frames = 0;
             state.player = { x: 100, y: canvas.height/2, w: 20, h: 20, dy: 0, angle: 0 };
-            state.walls = [];
-            state.particles = [];
+            state.walls = []; state.particles = [];
 
             scoreEl.innerText = "0";
             menu.classList.add('hidden');
             deathInfo.classList.add('hidden');
+            xpToast.style.opacity = 0;
 
             loop();
         }
 
-        // --- GAME LOOP ---
         function loop() {
             if (!state.running) return;
-
-            update();
-            draw();
+            update(); draw();
             requestAnimationFrame(loop);
         }
 
@@ -120,73 +121,47 @@
             state.frames++;
             const p = state.player;
 
-            // Physics
-            p.dy += GRAVITY;
-            p.y += p.dy;
-
-            // Rotation based on velocity
+            p.dy += GRAVITY; p.y += p.dy;
             p.angle = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (p.dy * 0.1)));
 
-            // Floor/Ceiling Collision
             if (p.y + p.h > canvas.height || p.y < 0) gameOver();
 
-            // Spawn Particles (Jet Trail)
             state.particles.push({
-                x: p.x - 10,
-                y: p.y + p.h/2,
-                vx: (Math.random() - 0.5) * 2 - 4, // Shoot left
+                x: p.x - 10, y: p.y + p.h/2,
+                vx: (Math.random() - 0.5) * 2 - 4, 
                 vy: (Math.random() - 0.5) * 2,
-                life: 1.0,
-                color: `hsl(${Math.random()*60 + 180}, 100%, 50%)` // Cyan/Blue Fire
+                life: 1.0, color: `hsl(${Math.random()*60 + 180}, 100%, 50%)` 
             });
 
-            // Update Particles
             for(let i = state.particles.length - 1; i >= 0; i--) {
                 const part = state.particles[i];
-                part.x += part.vx;
-                part.y += part.vy;
-                part.life -= 0.04;
+                part.x += part.vx; part.y += part.vy; part.life -= 0.04;
                 if(part.life <= 0) state.particles.splice(i, 1);
             }
 
-            // Spawn Walls
             if (state.frames % SPAWN_RATE === 0) {
-                const gap = 200; // Space between top and bottom
+                const gap = 200; 
                 const minH = 100;
                 const maxH = canvas.height - gap - minH;
                 const topH = Math.floor(Math.random() * (maxH - minH + 1)) + minH;
 
-                state.walls.push({
-                    x: canvas.width,
-                    topH: topH,
-                    bottomY: topH + gap,
-                    w: 60,
-                    passed: false
-                });
+                state.walls.push({ x: canvas.width, topH: topH, bottomY: topH + gap, w: 60, passed: false });
             }
 
-            // Update Walls
             for(let i = state.walls.length - 1; i >= 0; i--) {
                 const w = state.walls[i];
                 w.x -= SPEED;
 
-                // Collision Logic
-                // Horizontal Hit
                 if (p.x + p.w > w.x && p.x < w.x + w.w) {
-                    // Vertical Hit (Top or Bottom)
-                    if (p.y < w.topH || p.y + p.h > w.bottomY) {
-                        gameOver();
-                    }
+                    if (p.y < w.topH || p.y + p.h > w.bottomY) { gameOver(); }
                 }
 
-                // Score Logic
                 if (w.x + w.w < p.x && !w.passed) {
                     state.score++;
                     scoreEl.innerText = state.score;
                     w.passed = true;
                 }
 
-                // Cleanup
                 if (w.x + w.w < 0) state.walls.splice(i, 1);
             }
         }
@@ -195,80 +170,89 @@
             state.running = false;
             menu.classList.remove('hidden');
             deathInfo.classList.remove('hidden');
+
+            // FIREBASE XP TRIGGER (5 XP per wall bypassed)
+            const finalXP = state.score * 5;
+            if (window.saveGameScore && finalXP > 0) {
+                window.saveGameScore(finalXP);
+                xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                xpToast.style.opacity = 1;
+            }
         }
 
-        // --- RENDER ---
         function draw() {
-            // Clear & Background Trail
-            ctx.fillStyle = 'rgba(0,0,0,0.5)'; // Slight trails for speed effect
+            ctx.fillStyle = 'rgba(0,0,0,0.5)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Particles
             state.particles.forEach(part => {
-                ctx.fillStyle = part.color;
-                ctx.globalAlpha = part.life;
-                ctx.beginPath();
-                ctx.arc(part.x, part.y, 3, 0, Math.PI*2);
-                ctx.fill();
+                ctx.fillStyle = part.color; ctx.globalAlpha = part.life;
+                ctx.beginPath(); ctx.arc(part.x, part.y, 3, 0, Math.PI*2); ctx.fill();
             });
             ctx.globalAlpha = 1;
 
-            // Draw Walls (Neon Red)
-            ctx.fillStyle = '#ef4444';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#ef4444';
+            ctx.fillStyle = '#ef4444'; ctx.shadowBlur = 20; ctx.shadowColor = '#ef4444';
             state.walls.forEach(w => {
-                // Top Wall
                 ctx.fillRect(w.x, 0, w.w, w.topH);
-                // Bottom Wall
                 ctx.fillRect(w.x, w.bottomY, w.w, canvas.height - w.bottomY);
-
-                // Tech Details on Walls
                 ctx.fillStyle = 'rgba(255,255,255,0.2)';
                 ctx.fillRect(w.x + 10, 0, 2, w.topH);
                 ctx.fillRect(w.x + 10, w.bottomY, 2, canvas.height - w.bottomY);
-                ctx.fillStyle = '#ef4444'; // Reset
+                ctx.fillStyle = '#ef4444'; 
             });
 
-            // Draw Player
             ctx.save();
             ctx.translate(state.player.x + state.player.w/2, state.player.y + state.player.h/2);
             ctx.rotate(state.player.angle);
 
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#3b82f6';
-            ctx.fillStyle = '#fff';
-
-            // Triangle Ship Shape
-            ctx.beginPath();
-            ctx.moveTo(15, 0); // Nose
-            ctx.lineTo(-10, 10); // Bottom Left
-            ctx.lineTo(-5, 0); // Engine Indent
-            ctx.lineTo(-10, -10); // Top Left
-            ctx.closePath();
-            ctx.fill();
+            ctx.shadowBlur = 20; ctx.shadowColor = '#3b82f6'; ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.moveTo(15, 0); ctx.lineTo(-10, 10); ctx.lineTo(-5, 0); ctx.lineTo(-10, -10); ctx.closePath(); ctx.fill();
 
             ctx.restore();
-            ctx.shadowBlur = 0; // Reset
+            ctx.shadowBlur = 0; 
         }
 
-        function drawStatic() {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+        function drawStatic() { ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 
-        // --- INPUT ---
-        function thrust() {
-            if(state.running) state.player.dy = LIFT;
-        }
+        function thrust() { if(state.running) state.player.dy = LIFT; }
 
         window.addEventListener('mousedown', thrust);
-        window.addEventListener('keydown', (e) => {
-            if(e.code === 'Space') thrust();
-        });
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') thrust(); });
 
         resize();
+    </script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) { console.error("Firebase Error:", error); }
+
+        onAuthStateChanged(auth, (user) => { currentUser = user ? user : null; });
+
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { totalScore: increment(xpGained) });
+            } catch (err) { console.error("Error saving XP to database:", err); }
+        };
     </script>
 </body>
 </html>
