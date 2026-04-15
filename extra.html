@@ -47,6 +47,7 @@
         .badge-silver { fill: url(#silver-grad); filter: drop-shadow(0 0 5px rgba(156, 163, 175, 0.5)); }
         .badge-gold { fill: url(#gold-grad); filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)); }
         .badge-fire { fill: url(#fire-grad); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.9)); }
+        .badge-error { fill: none; stroke: #ef4444; stroke-width: 2; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.8)); }
     </style>
 </head>
 <body class="bg-grid flex flex-col min-h-screen">
@@ -112,7 +113,7 @@
                                 </div>
                         </div>
 
-                        <button onclick="claimDailyXP()" class="w-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 hover:text-black text-red-400 font-bold py-2 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                        <button id="claim-xp-btn" onclick="claimDailyXP()" class="w-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 hover:text-black text-red-400 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
                             <i data-lucide="zap" class="w-4 h-4"></i> Claim Daily XP (+250)
                         </button>
 
@@ -162,7 +163,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🐍</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/serpent-x.html" target="_blank" class="bg-green-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/serpent-x.html" target="_blank" class="bg-green-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -179,7 +180,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🧠</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/seq-x.html" target="_blank" class="bg-cyan-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(6,182,212,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/seq-x.html" target="_blank" class="bg-cyan-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(6,182,212,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -196,7 +197,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🎯</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/reflex-x.html" target="_blank" class="bg-yellow-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/reflex-x.html" target="_blank" class="bg-yellow-500 text-black px-8 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -213,7 +214,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">⌨️</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/type-x.html" target="_blank" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/type-x.html" target="_blank" class="bg-blue-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -230,7 +231,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🧱</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/stack-overflow.html" target="_blank" class="bg-indigo-500 text-white px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(99,102,241,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/stack-overflow.html" target="_blank" class="bg-indigo-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(99,102,241,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -247,7 +248,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🚀</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/gravity-jet.html" target="_blank" class="bg-purple-500 text-white px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/gravity-jet.html" target="_blank" class="bg-purple-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -264,7 +265,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">🛡️</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/cyber-defense.html" target="_blank" class="bg-red-500 text-white px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/cyber-defense.html" target="_blank" class="bg-red-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -281,7 +282,7 @@
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/40 to-black"></div>
                         <div class="text-4xl z-10 game-img transition-transform duration-300">⬛</div>
                         <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/neon-dash.html" target="_blank" class="bg-emerald-500 text-black px-6 py-2 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                            <a href="arcade/neon-dash.html" target="_blank" class="bg-emerald-500 text-black px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:scale-105 transition-transform mb-2">PLAY SOLO</a>
                         </div>
                     </div>
                     <div class="p-3 border-t border-white/5 flex justify-between items-center">
@@ -298,17 +299,36 @@
 
         <div class="lg:col-span-3 space-y-6">
             
-            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl h-[700px] flex flex-col">
+            <div class="bg-gradient-to-br from-yellow-900/30 to-[#0a0a0a] border border-yellow-600/30 p-5 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">👑</div>
+                <h3 class="text-yellow-500 font-extrabold text-[10px] tracking-widest uppercase mb-4">Weekly Top Player</h3>
+                <div class="flex items-center gap-4 mb-1 cursor-pointer" id="weekly-click" onclick="openProfileModal(window.topWeeklyUid)">
+                    <img id="weekly-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full border-2 border-yellow-500 hover:scale-105 transition-transform">
+                    <div>
+                        <p class="text-white font-bold text-base" id="weekly-name">Waiting...</p>
+                        <p class="text-yellow-500 font-mono text-[10px] uppercase">Global Rank #1</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-cyan-900/30 to-[#0a0a0a] border border-cyan-600/30 p-5 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">💎</div>
+                <h3 class="text-cyan-500 font-extrabold text-[10px] tracking-widest uppercase mb-4">Monthly Top Player</h3>
+                <div class="flex items-center gap-4 mb-1 cursor-pointer" id="monthly-click" onclick="openProfileModal(window.topMonthlyUid)">
+                    <img id="monthly-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full border-2 border-cyan-500 hover:scale-105 transition-transform">
+                    <div>
+                        <p class="text-white font-bold text-base" id="monthly-name">Waiting...</p>
+                        <p class="text-cyan-500 font-mono text-[10px] uppercase">Global Rank #2</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl h-[400px] flex flex-col">
                 <h3 class="text-white font-bold text-sm tracking-tight mb-1 flex items-center gap-2 border-b border-white/10 pb-3">
                     <i data-lucide="globe" class="text-red-500 w-4 h-4"></i> Global Network
                 </h3>
                 
-                <div class="flex justify-between mt-3 mb-4">
-                    <button class="text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-lg">Top Players</button>
-                    <button class="text-xs font-bold text-gray-500 hover:text-white px-3 py-1 transition">Friends <span id="friend-count">(0)</span></button>
-                </div>
-
-                <div id="community-list" class="flex-grow overflow-y-auto space-y-3 pr-2 hide-scrollbar">
+                <div id="community-list" class="flex-grow overflow-y-auto space-y-3 pr-2 hide-scrollbar mt-4">
                     <div class="flex flex-col items-center justify-center h-full gap-4">
                         <div class="w-6 h-6 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin"></div>
                     </div>
@@ -320,13 +340,13 @@
 
     <div id="toast-modal" class="fixed top-10 left-1/2 transform -translate-x-1/2 z-[10000] hidden">
         <div class="bg-gradient-to-r from-[#111] to-[#0a0a0a] border border-white/20 p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-4 animate-slide-up relative overflow-hidden min-w-[300px]">
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500/20 to-transparent"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/20 to-transparent"></div>
             
-            <div id="toast-icon-container" class="w-14 h-14 bg-black/50 rounded-full border-2 border-yellow-500 flex items-center justify-center relative z-10 animate-bounce">
+            <div id="toast-icon-container" class="w-14 h-14 bg-black/50 rounded-full border-2 border-red-500 flex items-center justify-center relative z-10 animate-bounce shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                 </div>
             
             <div class="relative z-10">
-                <p id="toast-title" class="text-yellow-400 font-black text-sm uppercase tracking-widest mb-1">ACHIEVEMENT UNLOCKED!</p>
+                <p id="toast-title" class="text-red-400 font-black text-[10px] uppercase tracking-widest mb-1">ACHIEVEMENT UNLOCKED!</p>
                 <p id="toast-desc" class="text-white font-bold text-lg">S-Rank Hunter</p>
                 <p id="toast-sub" class="text-gray-400 font-mono text-[10px]">You leveled up.</p>
             </div>
@@ -340,22 +360,22 @@
             <div class="flex flex-col items-center mt-4">
                 <img id="pub-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-full border-4 border-gray-600 mb-4">
                 <h3 class="text-white font-black text-2xl mb-1" id="pub-name">Unknown Player</h3>
-                <p class="text-red-400 font-mono text-xs uppercase tracking-widest mb-4" id="pub-title">Operative</p>
+                <p class="text-red-400 font-mono text-[10px] uppercase tracking-widest mb-4" id="pub-title">Operative</p>
                 
-                <div class="flex gap-6 mb-6">
-                    <div class="text-center">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono">Level</p>
+                <div class="flex gap-6 mb-6 w-full justify-center">
+                    <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl">
+                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Level</p>
                         <p class="text-white font-bold text-xl" id="pub-lvl">1</p>
                     </div>
-                    <div class="text-center">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono">Total XP</p>
+                    <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl">
+                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Total XP</p>
                         <p class="text-red-400 font-bold text-xl" id="pub-xp">0</p>
                     </div>
                 </div>
 
-                <div class="w-full bg-[#111] rounded-xl p-3 border border-white/5 mb-6 text-center">
-                    <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-2">Display Badges</p>
-                    <div class="flex gap-2 justify-center" id="pub-badges">
+                <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-6 text-center">
+                    <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-3">Display Badges</p>
+                    <div class="flex gap-3 justify-center" id="pub-badges">
                         </div>
                 </div>
 
@@ -363,7 +383,7 @@
                     <button id="add-friend-btn" onclick="addFriend()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
                     </button>
-                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
                         <i data-lucide="swords" class="w-4 h-4"></i> Rival
                     </button>
                 </div>
@@ -374,7 +394,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // YOUR FIREBASE KEYS
@@ -395,11 +415,16 @@
         let localLevel = 1;
         let friendCount = 0;
 
+        // Ensure variables are attached to window so HTML onClick works
+        window.lastClaimed = null; 
+
         // Raw SVGs for shiny badges
         const svgShield = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 badge-bronze"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
         const svgSwords = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 badge-silver"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M2 22l4-4M6 18l-4-4"/></svg>`;
         const svgCrown = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 badge-gold"><path d="M2 4h20v2H2zM2 8l4 10h12l4-10-6 4-4-6-4 6z"/></svg>`;
         const svgFire = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 badge-fire"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+        const svgLock = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 text-gray-500"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+        const svgError = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 badge-error"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
 
         try {
             const app = initializeApp(firebaseConfig);
@@ -436,7 +461,7 @@
         });
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-        // --- DATABASE SYNC & XP ---
+        // --- DATABASE SYNC & PATCHED XP SYSTEM ---
         async function loadUserDB(uid, name, photo) {
             if(!db) return;
             const docRef = doc(db, "users", uid);
@@ -446,10 +471,12 @@
                 const data = docSnap.data();
                 localXP = data.totalScore || 0;
                 localLevel = data.level || 1;
+                window.lastClaimed = data.lastClaimed || null;
             } else {
                 localXP = 0;
                 localLevel = 1;
-                await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1 });
+                window.lastClaimed = null;
+                await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1, lastClaimed: null });
             }
             updateProfileUI();
         }
@@ -457,29 +484,38 @@
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return alert("Must login first!");
             
+            const today = new Date().toDateString(); // Gives format like "Tue Oct 24 2023"
+            
+            // SECURITY CHECK: Stop the 10000x click glitch!
+            if (window.lastClaimed === today) {
+                window.showToast("ACCESS DENIED", "Cooldown Active", "Daily XP already claimed. Return tomorrow.", svgError);
+                return;
+            }
+
             const oldLevel = localLevel;
             const oldXP = localXP;
             
             // Add 250 XP
             localXP += 250;
             localLevel = Math.floor(localXP / 500) + 1;
+            window.lastClaimed = today; // Lock it locally
 
             // Save to DB
             const docRef = doc(db, "users", currentUser.uid);
-            await updateDoc(docRef, { totalScore: localXP, level: localLevel });
+            await updateDoc(docRef, { totalScore: localXP, level: localLevel, lastClaimed: today });
             
             updateProfileUI();
-            fetchGlobalLeaderboard();
+            fetchGlobalLeaderboard(); // Update rankings
 
             // Check Milestones for Animations
             if(localLevel > oldLevel) {
-                showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding, operative.", svgSwords);
+                window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding, operative.", svgSwords);
             } else if (localXP >= 1000 && oldXP < 1000) {
-                showToast("BADGE UNLOCKED", "S-Rank Hunter", "1000 XP Milestone.", svgCrown);
+                window.showToast("BADGE UNLOCKED", "S-Rank Hunter", "1000 XP Milestone.", svgCrown);
             } else if (localXP >= 5000 && oldXP < 5000) {
-                showToast("SPECIAL GRADE", "Domain Expanded", "5000 XP Milestone.", svgFire);
+                window.showToast("SPECIAL GRADE", "Domain Expanded", "5000 XP Milestone.", svgFire);
             } else {
-                showToast("MISSION COMPLETE", "+250 XP", "Daily network sync successful.", svgShield);
+                window.showToast("MISSION COMPLETE", "+250 XP", "Daily network sync successful.", svgShield);
             }
         }
 
@@ -487,10 +523,10 @@
             document.getElementById('total-points').innerText = localXP;
             document.getElementById('user-level').innerText = `LVL ${localLevel}`;
 
-            // Title Logic based on user traits
+            // Title Logic
             let title = "Novice Coder";
-            if(localXP >= 1000) title = "S-Rank Hunter"; // Anime Nod
-            if(localXP >= 5000) title = "Special Grade Dev"; // Anime Nod
+            if(localXP >= 1000) title = "S-Rank Hunter"; 
+            if(localXP >= 5000) title = "Special Grade Dev"; 
             document.getElementById('user-title').innerText = title;
 
             // Badges
@@ -504,6 +540,18 @@
             if(localXP >= 5000) { badgeContainer.innerHTML += `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center cursor-help" title="Special Grade">${svgFire}</div>`; bCount++; }
 
             if(bCount === 0) badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet. Claim XP!</p>`;
+
+            // Update Claim Button UI if already claimed
+            const btn = document.getElementById('claim-xp-btn');
+            if(window.lastClaimed === new Date().toDateString()) {
+                btn.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Network Sync Complete`;
+                btn.className = "w-full bg-[#111] border border-gray-800 text-gray-500 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 opacity-50 cursor-not-allowed";
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> Claim Daily XP (+250)`;
+                btn.className = "w-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 hover:text-black text-red-400 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 shadow-[0_0_10px_rgba(239,68,68,0.2)] cursor-pointer";
+                lucide.createIcons();
+            }
         }
 
         // --- TOAST ANIMATION ---
@@ -522,7 +570,7 @@
         }
 
         // --- COMMUNITY LEADERBOARD ---
-        window.usersData = []; // Store globally for profile clicks
+        window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
             if(!db) return;
@@ -539,6 +587,18 @@
                     const data = doc.data();
                     data.uid = doc.id;
                     window.usersData.push(data);
+
+                    // Hall of Fame Populators
+                    if(rank === 1) {
+                        window.topWeeklyUid = data.uid;
+                        document.getElementById('weekly-name').innerText = data.displayName;
+                        if(data.photoURL) document.getElementById('weekly-pfp').src = data.photoURL;
+                    }
+                    if(rank === 2) {
+                        window.topMonthlyUid = data.uid;
+                        document.getElementById('monthly-name').innerText = data.displayName;
+                        if(data.photoURL) document.getElementById('monthly-pfp').src = data.photoURL;
+                    }
                     
                     let rankBadge = `<div class="text-gray-500 font-bold text-sm w-4">#${rank}</div>`;
                     if(rank === 1) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]">👑</div>`;
@@ -546,16 +606,16 @@
                     if(rank === 3) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(180,83,9,0.8)]">🥉</div>`;
 
                     list.innerHTML += `
-                        <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-blue-500/50 transition cursor-pointer group">
+                        <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-red-500/50 transition cursor-pointer group">
                             <div class="flex items-center gap-3">
                                 ${rankBadge}
                                 <div class="relative">
-                                    <img src="${data.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-10 h-10 rounded-full border border-white/10 group-hover:border-blue-500 transition">
+                                    <img src="${data.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-10 h-10 rounded-full border border-white/10 group-hover:border-red-500 transition">
                                     <div class="absolute -bottom-1 -right-1 bg-gray-800 text-white text-[9px] font-bold px-1 rounded border border-gray-600">L${data.level || 1}</div>
                                 </div>
                                 <div class="flex flex-col">
                                     <p class="text-gray-300 font-bold text-sm group-hover:text-white transition">${data.displayName}</p>
-                                    <p class="text-blue-500 font-mono text-[10px] opacity-0 group-hover:opacity-100 transition">View Profile &rarr;</p>
+                                    <p class="text-red-500 font-mono text-[10px] opacity-0 group-hover:opacity-100 transition">View Profile &rarr;</p>
                                 </div>
                             </div>
                             <div class="text-white font-black">${data.totalScore || 0}</div>
@@ -573,6 +633,7 @@
 
         // --- PUBLIC PROFILE & FRIENDS ---
         window.openProfileModal = function(uid) {
+            if(!uid) return;
             if(uid === 'self') {
                 if(!currentUser) return;
                 uid = currentUser.uid;
@@ -593,11 +654,11 @@
             // Render Badges in Public Modal
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
-            if(user.totalScore >= 250) pBadge.innerHTML += `<div class="w-8 h-8 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgShield}</div>`;
-            if(user.totalScore >= 1000) pBadge.innerHTML += `<div class="w-8 h-8 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgSwords}</div>`;
-            if(user.totalScore >= 3000) pBadge.innerHTML += `<div class="w-8 h-8 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgCrown}</div>`;
-            if(user.totalScore >= 5000) pBadge.innerHTML += `<div class="w-8 h-8 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgFire}</div>`;
-            if(pBadge.innerHTML === '') pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`;
+            if(user.totalScore >= 250) pBadge.innerHTML += `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgShield}</div>`;
+            if(user.totalScore >= 1000) pBadge.innerHTML += `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgSwords}</div>`;
+            if(user.totalScore >= 3000) pBadge.innerHTML += `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgCrown}</div>`;
+            if(user.totalScore >= 5000) pBadge.innerHTML += `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center">${svgFire}</div>`;
+            if(pBadge.innerHTML === '') pBadge.innerHTML = `<div class="w-10 h-10 bg-black rounded-full border border-gray-800 flex items-center justify-center opacity-50">${svgLock}</div>`;
 
             // Reset Buttons
             const fBtn = document.getElementById('add-friend-btn');
@@ -607,7 +668,7 @@
             fBtn.className = "flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2";
             
             rBtn.innerHTML = `<i data-lucide="swords" class="w-4 h-4"></i> Rival`;
-            rBtn.className = "flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
+            rBtn.className = "flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]";
 
             // Hide buttons if looking at own profile
             if(currentUser && uid === currentUser.uid) {
@@ -631,24 +692,20 @@
         window.addFriend = function() {
             if(!currentUser) return alert("You must login to add friends.");
             const btn = document.getElementById('add-friend-btn');
-            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
+            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Sent`;
             btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
             lucide.createIcons();
-            
-            friendCount++;
-            document.getElementById('friend-count').innerText = `(${friendCount})`;
         }
 
         window.markRival = function() {
             if(!currentUser) return alert("You must login to select rivals.");
             const btn = document.getElementById('add-rival-btn');
-            btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i> Rival Tracked`;
+            btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i> Tracked`;
             btn.className = "flex-1 bg-red-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-colors text-sm flex items-center justify-center gap-2";
             lucide.createIcons();
             
-            showToast("RIVAL DECLARED", "System Tracking Initiated", "You will be notified of their scores.", svgSwords);
+            window.showToast("RIVAL DECLARED", "System Tracking Initiated", "You will be notified of their scores.", svgSwords);
         }
-
     </script>
 </body>
 </html>
