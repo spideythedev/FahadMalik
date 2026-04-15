@@ -25,6 +25,14 @@
         .stat-box { display: flex; align-items: center; gap: 10px; color: white; font-size: 14px; }
         .stat-val { font-size: 20px; font-weight: bold; text-shadow: 0 0 10px currentColor; }
 
+        /* XP TOAST */
+        #xp-toast {
+            position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+            font-size: 16px; font-weight: bold; color: #10b981;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            opacity: 0; transition: opacity 0.5s; z-index: 100;
+        }
+
         /* BOTTOM SHOP */
         #shop-bar {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -96,6 +104,8 @@
             </div>
         </div>
 
+        <div id="xp-toast">+0 XP Synced to Hub!</div>
+
         <div id="msg-area">
             <div class="wave-text" id="wave-msg">WAVE 1</div>
         </div>
@@ -125,7 +135,8 @@
         <div id="game-over">
             <h1 class="text-6xl font-bold text-red-500 mb-4 tracking-tighter">SYSTEM FAILURE</h1>
             <p class="text-gray-400 mb-8">THE CORE WAS BREACHED</p>
-            <button onclick="location.reload()" class="bg-white text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition">REBOOT SYSTEM</button>
+            <button onclick="location.reload()" class="bg-white text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.4)]">REBOOT SYSTEM</button>
+            <button onclick="window.close()" class="mt-8 text-gray-500 hover:text-white text-xs font-mono uppercase tracking-widest underline transition">Return to Arcade Hub</button>
         </div>
     </div>
 
@@ -139,6 +150,7 @@
         const waveMsg = document.getElementById('wave-msg');
         const startBtn = document.getElementById('start-btn');
         const gameOverScreen = document.getElementById('game-over');
+        const xpToast = document.getElementById('xp-toast');
 
         // --- CONFIG ---
         const TILE = 60;
@@ -150,6 +162,7 @@
         let lives = 20;
         let wave = 1;
         let waveActive = false;
+        let isGameOver = false;
 
         let path = [];
         let enemies = [];
@@ -162,9 +175,9 @@
         let spawnTimer = 0;
 
         const TOWER_TYPES = [
-            { name: "Blaster", cost: 50, range: 120, damage: 20, rate: 30, color: "#facc15" }, // Rate = frames between shots
+            { name: "Blaster", cost: 50, range: 120, damage: 20, rate: 30, color: "#facc15" }, 
             { name: "Sniper", cost: 120, range: 300, damage: 100, rate: 90, color: "#ef4444" },
-            { name: "Pulsar", cost: 250, range: 100, damage: 2, rate: 5, color: "#22d3ee" } // Beam weapon
+            { name: "Pulsar", cost: 250, range: 100, damage: 2, rate: 5, color: "#22d3ee" } 
         ];
 
         // --- INIT ---
@@ -176,36 +189,28 @@
         window.addEventListener('resize', resize);
 
         function generatePath() {
-            // Create a simple snake path based on screen size
             path = [];
             const cols = Math.floor(canvas.width / TILE);
             const rows = Math.floor(canvas.height / TILE);
 
-            // Start Top Left
             let x = 2; 
             let y = 2;
             path.push({x: x*TILE, y: y*TILE});
 
-            // Snake down
             while(y < rows - 2) {
-                // Go Right
                 x = cols - 3;
                 path.push({x: x*TILE, y: y*TILE});
-                // Go Down
                 y += 2;
                 path.push({x: x*TILE, y: y*TILE});
 
                 if(y >= rows - 2) break;
 
-                // Go Left
                 x = 2;
                 path.push({x: x*TILE, y: y*TILE});
-                // Go Down
                 y += 2;
                 path.push({x: x*TILE, y: y*TILE});
             }
-            // End Point
-            path.push({x: x*TILE + (x===2?-TILE:TILE), y: y*TILE}); // Exit screen
+            path.push({x: x*TILE + (x===2?-TILE:TILE), y: y*TILE}); 
         }
 
         // --- GAME LOOP ---
@@ -221,7 +226,7 @@
             // Spawning
             if(waveActive && spawnQueue > 0) {
                 spawnTimer++;
-                if(spawnTimer > 40) { // Spawn every 40 frames
+                if(spawnTimer > 40) { 
                     spawnEnemy();
                     spawnTimer = 0;
                     spawnQueue--;
@@ -234,7 +239,6 @@
             for(let i = enemies.length - 1; i >= 0; i--) {
                 const e = enemies[i];
 
-                // Move logic
                 const target = path[e.wp];
                 const dx = target.x - e.x;
                 const dy = target.y - e.y;
@@ -245,7 +249,6 @@
                     e.y = target.y;
                     e.wp++;
                     if(e.wp >= path.length) {
-                        // Reached End
                         takeDamage(1);
                         enemies.splice(i, 1);
                         continue;
@@ -262,8 +265,6 @@
                 t.cooldown--;
 
                 if(t.cooldown <= 0) {
-                    // Find Target (First enemy in range)
-                    // Sorting by 'progress' (wp) is better, but simple dist check is ok for now
                     let target = null;
                     let maxDist = type.range;
 
@@ -271,22 +272,18 @@
                         const d = Math.hypot(e.x - t.x, e.y - t.y);
                         if(d < maxDist) {
                             target = e;
-                            break; // First one found
+                            break; 
                         }
                     }
 
                     if(target) {
                         if(t.type === 2) {
-                            // Pulsar (Continuous Beam / Rapid fire low dmg)
                              t.cooldown = type.rate;
-                             // Just deal damage directly
                              target.hp -= type.damage;
                              spawnParticles(target.x, target.y, 1, type.color);
                              if(target.hp <= 0) killEnemy(target);
-                             // Draw beam in render phase
                              t.firingAt = {x: target.x, y: target.y};
                         } else {
-                            // Projectile
                             t.cooldown = type.rate;
                             projectiles.push({
                                 x: t.x, y: t.y,
@@ -306,7 +303,7 @@
             for(let i = projectiles.length - 1; i >= 0; i--) {
                 const p = projectiles[i];
                 if(!enemies.includes(p.target)) {
-                    projectiles.splice(i, 1); // Target dead
+                    projectiles.splice(i, 1); 
                     continue;
                 }
 
@@ -315,7 +312,6 @@
                 const dist = Math.hypot(dx, dy);
 
                 if(dist < p.speed) {
-                    // Hit
                     p.target.hp -= p.damage;
                     spawnParticles(p.target.x, p.target.y, 3, p.color);
                     if(p.target.hp <= 0) killEnemy(p.target);
@@ -335,12 +331,10 @@
                 if(p.life <= 0) particles.splice(i, 1);
             }
 
-            // UI Update
             updateUI();
         }
 
         function spawnEnemy() {
-            // Enemy health scales with wave
             enemies.push({
                 x: path[0].x,
                 y: path[0].y,
@@ -363,12 +357,21 @@
         function takeDamage(amt) {
             lives -= amt;
             uiLives.innerText = lives;
-            // Screen flash red
+            
             document.body.style.boxShadow = "inset 0 0 50px red";
             setTimeout(() => document.body.style.boxShadow = "none", 100);
 
-            if(lives <= 0) {
+            if(lives <= 0 && !isGameOver) {
+                isGameOver = true;
                 gameOverScreen.classList.add('visible');
+
+                // FIREBASE XP TRIGGER: 20 XP per wave completed
+                const finalXP = wave * 20; 
+                if (window.saveGameScore && finalXP > 0) {
+                    window.saveGameScore(finalXP);
+                    xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                    xpToast.style.opacity = 1;
+                }
             }
         }
 
@@ -404,16 +407,14 @@
 
         // --- INTERACTION ---
         function selectTower(idx) {
-            if(selectedTower === idx) selectedTower = -1; // Toggle off
+            if(selectedTower === idx) selectedTower = -1; 
             else selectedTower = idx;
-
             updateUI();
         }
 
         function updateUI() {
             uiMoney.innerText = money;
 
-            // Highlight cards
             for(let i=0; i<3; i++) {
                 const card = document.getElementById(`card-${i}`);
                 if(money < TOWER_TYPES[i].cost) card.classList.add('too-expensive');
@@ -427,23 +428,12 @@
         canvas.addEventListener('mousedown', e => {
             if(selectedTower === -1) return;
 
-            // Place Tower
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // Snap to Grid (visually nice, not strictly grid bound logic)
-            // Or just place freely? Free placement is cooler but check path collision
-
-            // Check cost
             const type = TOWER_TYPES[selectedTower];
             if(money < type.cost) return;
-
-            // Check distance to path (Don't build ON path)
-            // Simple check: dist to any waypoint line segment
-            // For simplicity in this engine: just check dist to waypoints
-            // A robust engine checks line segments. Let's do a simple proximity check to path nodes for now
-            // Actually, let's just allow placement anywhere for "arcade" fun, unless it's literally on a point
 
             towers.push({
                 x: x, y: y,
@@ -453,13 +443,12 @@
             });
 
             money -= type.cost;
-            selectedTower = -1; // Deselect
+            selectedTower = -1; 
             spawnParticles(x, y, 10, type.color);
         });
 
         // --- DRAW ---
         function draw() {
-            // Background Grid
             ctx.fillStyle = "#020205";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -470,7 +459,6 @@
             for(let y=0; y<canvas.height; y+=TILE) { ctx.moveTo(0,y); ctx.lineTo(canvas.width, y); }
             ctx.stroke();
 
-            // Path (Neon Line)
             ctx.strokeStyle = "rgba(50, 100, 255, 0.2)";
             ctx.lineWidth = 20;
             ctx.lineCap = 'round';
@@ -482,26 +470,21 @@
             }
             ctx.stroke();
 
-            // Path Core Line
             ctx.strokeStyle = "rgba(100, 200, 255, 0.8)";
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Towers
             towers.forEach(t => {
                 const type = TOWER_TYPES[t.type];
 
-                // Base
                 ctx.fillStyle = "#222";
                 ctx.beginPath(); ctx.arc(t.x, t.y, 15, 0, Math.PI*2); ctx.fill();
 
-                // Turret Color
                 ctx.fillStyle = type.color;
                 ctx.shadowBlur = 15; ctx.shadowColor = type.color;
                 ctx.beginPath(); ctx.arc(t.x, t.y, 8, 0, Math.PI*2); ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Pulsar Beam
                 if(t.type === 2 && t.firingAt) {
                     ctx.strokeStyle = type.color;
                     ctx.lineWidth = 2;
@@ -511,14 +494,12 @@
                 }
             });
 
-            // Enemies
             enemies.forEach(e => {
                 ctx.fillStyle = "#fff";
                 ctx.shadowBlur = 10; ctx.shadowColor = "purple";
                 ctx.beginPath(); ctx.arc(e.x, e.y, 10, 0, Math.PI*2); ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Health Bar
                 const hpPct = e.hp / e.maxHp;
                 ctx.fillStyle = "red";
                 ctx.fillRect(e.x - 10, e.y - 20, 20, 4);
@@ -526,7 +507,6 @@
                 ctx.fillRect(e.x - 10, e.y - 20, 20 * hpPct, 4);
             });
 
-            // Projectiles
             projectiles.forEach(p => {
                 ctx.fillStyle = p.color;
                 ctx.shadowBlur = 10; ctx.shadowColor = p.color;
@@ -534,26 +514,68 @@
                 ctx.shadowBlur = 0;
             });
 
-            // Particles
             particles.forEach(p => {
                 ctx.fillStyle = p.color;
                 ctx.globalAlpha = p.life;
                 ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
             });
             ctx.globalAlpha = 1;
-
-            // Placement Preview
-            if(selectedTower !== -1) {
-                // We don't have mouse pos here easily without tracking it globally
-                // Skip for simplicity, standard click-to-build
-            }
         }
 
-        // Init
         resize();
         generatePath();
         loop();
 
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Error:", error);
+        }
+
+        // Track logged in user
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                currentUser = null;
+            }
+        });
+
+        // Expose save function to the game engine
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, {
+                    totalScore: increment(xpGained)
+                });
+                console.log(`Successfully synced ${xpGained} XP to Hub!`);
+            } catch (err) {
+                console.error("Error saving XP to database:", err);
+            }
+        };
     </script>
 </body>
 </html>
