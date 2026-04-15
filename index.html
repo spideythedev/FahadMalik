@@ -6,7 +6,7 @@
     <title>Fahad Malik | SpydeY</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -25,7 +25,6 @@
     
     <style>
         body { background-color: #030303; color: #e5e7eb; -webkit-font-smoothing: antialiased; }
-        
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -40,10 +39,6 @@
         
         canvas { outline: none; cursor: grab; }
         canvas:active { cursor: grabbing; }
-
-        /* Game Card Hover Effects */
-        .game-card:hover .game-img { transform: scale(1.05); }
-        .game-card:hover .game-overlay { opacity: 1; }
         
         .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1.25rem; color: #ffffff; letter-spacing: -0.025em; }
         .blog-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #ffffff; border-bottom: 1px solid #1f1f22; padding-bottom: 0.5rem;}
@@ -71,10 +66,9 @@
                 <div class="flex items-center bg-[#0a0a0a] p-1.5 rounded-xl border border-white/5 shadow-inner overflow-x-auto whitespace-nowrap hide-scrollbar">
                     <button onclick="switchView('main')" id="tab-main" class="px-6 py-2 text-sm font-semibold rounded-lg bg-[#1f1f22] text-white shadow-sm transition-all border border-white/5">Home</button>
                     <button onclick="switchView('blog')" id="tab-blog" class="px-6 py-2 text-sm font-semibold rounded-lg text-gray-400 hover:text-white transition-all bg-transparent shadow-none">Blog</button>
-                    <button onclick="openGameModal()" class="px-6 py-2 text-sm font-semibold rounded-lg text-blue-400 hover:text-blue-300 transition-all bg-transparent flex items-center gap-2">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
-                        Arcade Hub
-                    </button>
+                    <a href="extra.html" class="px-6 py-2 text-sm font-semibold rounded-lg text-blue-400 hover:text-blue-300 transition-all bg-transparent flex items-center gap-2">
+                        🎮 Play Game
+                    </a>
                 </div>
             </div>
 
@@ -108,7 +102,7 @@
                 <div>
                     <h3 class="text-3xl font-extrabold text-white mb-6 tracking-tight">My Setup</h3>
                     <p class="text-gray-400 mb-8 text-lg leading-relaxed">
-                        Drag the 3D map to see the tech I use, or check out the live Arcade Hub scores happening right now.
+                        Drag the 3D map to see the tech I use, or check out the live game scores happening right now.
                     </p>
                     
                     <div class="bg-[#0a0a0a] rounded-2xl p-5 shadow-2xl border border-white/10 relative overflow-hidden mb-6">
@@ -119,7 +113,7 @@
                                 <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                                 <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
                             </div>
-                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Hub_Logs</span>
+                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Arcade_Logs</span>
                         </div>
                         <div class="font-mono text-sm text-gray-300 space-y-2 h-32 overflow-y-auto hide-scrollbar flex flex-col justify-end" id="terminal-output">
                             <div class="flex items-center gap-3">
@@ -129,9 +123,9 @@
                         </div>
                     </div>
 
-                    <button onclick="openGameModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white transition-all font-bold py-4 rounded-xl uppercase tracking-widest text-sm flex justify-center items-center gap-3 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-                        <span class="text-xl">🎮</span> ENTER ARCADE HUB
-                    </button>
+                    <a href="extra.html" class="w-full bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all font-bold py-4 rounded-xl uppercase tracking-widest text-sm flex justify-center items-center gap-3">
+                        <span class="text-xl">🎮</span> PLAY!
+                    </a>
                 </div>
                 
                 <div class="relative flex justify-center items-center h-[500px] w-full bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
@@ -149,9 +143,8 @@
             </h3>
             
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-blue-500/30 transition-all group shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h4 class="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">WebLooM & VertexCreative</h4>
+                <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-blue-500/30 transition-all shadow-2xl relative overflow-hidden">
+                    <h4 class="text-2xl font-bold text-white mb-4">WebLooM & VertexCreative</h4>
                     <p class="text-gray-400 mb-8 leading-relaxed text-lg">Founder & CEO. We build cool web tools, mostly focusing on VertexOS, an operating system inside your browser.</p>
                     <div class="flex gap-3">
                         <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">Web Apps</span>
@@ -159,9 +152,8 @@
                     </div>
                 </div>
 
-                <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-emerald-500/30 transition-all group shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h4 class="text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">BuildCore</h4>
+                <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-emerald-500/30 transition-all shadow-2xl relative overflow-hidden">
+                    <h4 class="text-2xl font-bold text-white mb-4">BuildCore</h4>
                     <p class="text-gray-400 mb-8 leading-relaxed text-lg">Founder. I make platforms for developers, like the Scope social network and the Kodo learning app.</p>
                     <div class="flex gap-3">
                         <span class="bg-[#111] border border-white/5 text-gray-300 text-xs font-mono px-4 py-1.5 rounded-lg">Community</span>
@@ -176,12 +168,12 @@
                 My Tech Stack <div class="h-px bg-brand-border flex-grow"></div>
             </h3>
             <div class="flex flex-wrap gap-3">
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Python</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">React & Next.js</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Node.js</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Tailwind CSS</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Discord Security Bots</span>
-                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm hover:border-white/30 transition-colors">Firebase</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">Python</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">React & Next.js</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">Node.js</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">Tailwind CSS</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">Discord Security Bots</span>
+                <span class="px-5 py-3 bg-[#0a0a0a] border border-brand-border rounded-xl text-gray-300 font-mono text-sm">Firebase</span>
             </div>
         </section>
     </div>
@@ -220,187 +212,6 @@
             <div class="text-sm text-gray-600 font-mono">&copy; 2026 Fahad Malik. Tokyo, Japan.</div>
         </div>
     </footer>
-
-    <div id="game-modal" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl hidden flex-col justify-start items-center p-4 md:p-8 overflow-y-auto hide-scrollbar w-full h-full">
-        
-        <div class="w-full max-w-7xl flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex justify-center items-center text-white text-2xl shadow-[0_0_20px_rgba(59,130,246,0.6)]">🎮</div>
-                <div>
-                    <h2 class="text-white font-extrabold text-3xl tracking-tight">Spidey Arcade Hub</h2>
-                    <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Global Network</p>
-                </div>
-            </div>
-            <button onclick="closeGameModal()" class="bg-[#111] hover:bg-gray-800 border border-white/10 text-white px-6 py-2 rounded-xl font-bold transition-colors">Close Hub</button>
-        </div>
-
-        <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-                    <p class="text-gray-500 font-mono text-xs uppercase tracking-widest mb-4">Player Profile</p>
-                    
-                    <div id="hub-auth-section">
-                        <div id="hub-user-info" class="hidden flex flex-col items-center text-center">
-                            <div class="relative">
-                                <img id="hub-user-pfp" src="" class="w-24 h-24 rounded-full border-4 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)] mb-4">
-                                <div class="absolute -bottom-2 -right-2 bg-purple-600 text-white text-[10px] font-black px-2 py-1 rounded-lg border-2 border-black">LVL 1</div>
-                            </div>
-                            <h3 class="text-white font-bold text-xl" id="hub-user-name">Player</h3>
-                            <p class="text-blue-400 font-mono text-xs mb-4">Total Points: <span id="hub-user-score" class="font-bold text-white">0</span></p>
-                            
-                            <div class="w-full bg-[#050505] rounded-xl p-3 border border-white/5 mb-4">
-                                <p class="text-gray-500 text-[10px] uppercase mb-2 text-left">Earned Badges</p>
-                                <div class="flex gap-2 justify-center">
-                                    <div class="w-8 h-8 rounded-full bg-yellow-500/20 border border-yellow-500 flex items-center justify-center text-xs" title="Sharpshooter">🎯</div>
-                                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500 flex items-center justify-center text-xs" title="Code Ninja">🥷</div>
-                                    <div class="w-8 h-8 rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center text-xs opacity-50" title="Locked">🔒</div>
-                                </div>
-                            </div>
-                            
-                            <button id="hub-logout-btn" class="text-gray-500 hover:text-white text-xs underline">Logout</button>
-                        </div>
-
-                        <div id="hub-login-prompt" class="flex flex-col items-center py-6">
-                            <div class="w-20 h-20 bg-[#111] rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-3xl mb-4">👤</div>
-                            <p class="text-gray-400 text-sm mb-4 text-center">Login to track your points and earn badges.</p>
-                            <button id="hub-google-login-btn" class="w-full bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-all">
-                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Sign in with Google
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-2">
-                <p class="text-gray-400 font-mono text-xs uppercase tracking-widest mb-4">Available Software</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">🐍</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/serpent-x.html" target="_blank" class="bg-green-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">Serpent X</h4>
-                            <p class="text-gray-500 text-xs">Classic neon snake protocol.</p>
-                        </div>
-                    </div>
-
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">🧠</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/seq-x.html" target="_blank" class="bg-cyan-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(6,182,212,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">SEQ-X Memory</h4>
-                            <p class="text-gray-500 text-xs">Neural pattern recognition.</p>
-                        </div>
-                    </div>
-
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">🎯</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/reflex-x.html" target="_blank" class="bg-yellow-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(234,179,8,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">REFLEX-X</h4>
-                            <p class="text-gray-500 text-xs">Tactical aim training engine.</p>
-                        </div>
-                    </div>
-
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">⚔️</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/cyber-defense.html" target="_blank" class="bg-red-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">Cyber Defense</h4>
-                            <p class="text-gray-500 text-xs">Tower defense core protection.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">🚀</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/gravity-jet.html" target="_blank" class="bg-purple-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">Gravity Jet</h4>
-                            <p class="text-gray-500 text-xs">Data packet escape protocol.</p>
-                        </div>
-                    </div>
-
-                    <div class="game-card bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative group">
-                        <div class="h-32 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/40 to-black"></div>
-                            <div class="text-5xl z-10 game-img transition-transform duration-300">⬛</div>
-                            <div class="game-overlay absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 transition-opacity z-20">
-                                <a href="arcade/neon-dash.html" target="_blank" class="bg-blue-500 text-black px-6 py-2 rounded-full font-bold shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:scale-105 transition-transform">PLAY</a>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-white/5">
-                            <h4 class="text-white font-bold text-lg">Neon Dash</h4>
-                            <p class="text-gray-500 text-xs">Geometry Dash Vertex Edition.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-gradient-to-br from-yellow-900/30 to-[#0a0a0a] border border-yellow-600/30 p-6 rounded-3xl shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">👑</div>
-                    <h3 class="text-yellow-500 font-extrabold text-xs tracking-widest uppercase mb-4">Weekly Top Player</h3>
-                    <div class="flex items-center gap-4 mb-2">
-                        <img id="weekly-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full border-2 border-yellow-500">
-                        <div>
-                            <p class="text-white font-bold text-lg" id="weekly-name">Waiting...</p>
-                            <p class="text-yellow-500 font-mono text-[10px] uppercase">Rank #1</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gradient-to-br from-cyan-900/30 to-[#0a0a0a] border border-cyan-600/30 p-6 rounded-3xl shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">💎</div>
-                    <h3 class="text-cyan-500 font-extrabold text-xs tracking-widest uppercase mb-4">Monthly Top Player</h3>
-                    <div class="flex items-center gap-4 mb-2">
-                        <img id="monthly-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full border-2 border-cyan-500">
-                        <div>
-                            <p class="text-white font-bold text-lg" id="monthly-name">Waiting...</p>
-                            <p class="text-cyan-500 font-mono text-[10px] uppercase">Rank #1</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-3xl h-[300px] flex flex-col">
-                    <h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">Global Hub Points</h3>
-                    <div id="hub-leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
-                        <div class="flex justify-center mt-8">
-                            <div class="w-6 h-6 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
 
     <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
@@ -465,14 +276,11 @@
         function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
         function verifyPin() { if(document.getElementById('pin-input').value === "23455432") { closePinModal(); document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-modal').classList.add('flex'); } else { document.getElementById('pin-error').classList.remove('hidden'); } }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
-        function openGameModal() { document.getElementById('game-modal').classList.remove('hidden'); document.getElementById('game-modal').classList.add('flex'); if(typeof window.fetchHubLeaderboard === 'function') window.fetchHubLeaderboard(); }
-        function closeGameModal() { document.getElementById('game-modal').classList.add('hidden'); document.getElementById('game-modal').classList.remove('flex'); }
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
@@ -484,46 +292,28 @@
             measurementId: "G-Z5W90V686F"
         };
 
-        let db, auth, provider, currentUser = null;
+        let db;
         window.globalBlogs = []; 
         window.currentEditId = null;
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
-            auth = getAuth(app);
-            provider = new GoogleAuthProvider();
             window.fetchBlogs(); 
-            window.fetchHubLeaderboard(); 
+            window.fetchLeaderboard(); 
         } catch (error) {
             console.error("Firebase Error:", error);
+            document.getElementById('blog-list').innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20 gap-4">
+                    <div class="relative w-12 h-12">
+                        <div class="absolute inset-0 border-4 border-red-500/20 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-red-500 rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-red-500 font-mono text-sm animate-pulse">Network Offline</p>
+                </div>`;
         }
 
-        // --- AUTH FOR HUB ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('hub-login-prompt').classList.add('hidden');
-                document.getElementById('hub-user-info').classList.remove('hidden');
-                document.getElementById('hub-user-name').innerText = user.displayName.split(' ')[0];
-                document.getElementById('hub-user-pfp').src = user.photoURL;
-                // Fetch user specific score here if needed, setting to dummy 500 for UI demo
-                document.getElementById('hub-user-score').innerText = "500"; 
-            } else {
-                currentUser = null;
-                document.getElementById('hub-login-prompt').classList.remove('hidden');
-                document.getElementById('hub-user-info').classList.add('hidden');
-            }
-        });
-
-        document.getElementById('hub-google-login-btn').addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(error => {
-                alert("Login Blocked! Ensure your Vercel URL is added to Firebase Authorized Domains.\n\nError: " + error.message);
-            });
-        });
-        document.getElementById('hub-logout-btn').addEventListener('click', () => signOut(auth));
-
-        // --- HUB LEADERBOARD ---
+        // --- TERMINAL SCORE UPDATE ---
         window.updateTerminalLog = function(scores) {
             const terminal = document.getElementById('terminal-output');
             if(!terminal) return;
@@ -535,59 +325,23 @@
             const top5 = scores.slice(0, 5);
             top5.forEach((s) => {
                 const name = s.displayName || "Unknown";
-                terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Player [${name}] earned ${s.score} Hub Points.</div>`;
+                terminal.innerHTML += `<div><span class="text-blue-500 font-bold">➜</span> <span class="text-emerald-400">~</span> Player [${name}] scored ${s.score}.</div>`;
             });
         }
 
-        window.fetchHubLeaderboard = async function() {
+        // --- FETCH RECENT SCORES ---
+        window.fetchLeaderboard = async function() {
             if(!db) return;
             try {
-                // For a real app, you'd calculate weekly/monthly. We are pulling standard scores to populate UI.
                 const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
                 const snapshot = await getDocs(q);
-                
-                const list = document.getElementById('hub-leaderboard-list');
-                list.innerHTML = '';
-                
-                let rank = 1;
                 let scoresData = [];
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    scoresData.push(data);
-                    
-                    // Assign to Top Players
-                    if(rank === 1) {
-                        document.getElementById('weekly-name').innerText = data.displayName;
-                        if(data.photoURL) document.getElementById('weekly-pfp').src = data.photoURL;
-                    }
-                    if(rank === 2) {
-                        document.getElementById('monthly-name').innerText = data.displayName;
-                        if(data.photoURL) document.getElementById('monthly-pfp').src = data.photoURL;
-                    }
-
-                    // List
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-500 font-bold text-sm w-4">#${rank}</div>
-                                <img src="${data.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-6 h-6 rounded-full">
-                                <p class="text-gray-300 text-xs font-medium">${data.displayName}</p>
-                            </div>
-                            <div class="text-blue-400 font-bold text-sm">${data.score} PTS</div>
-                        </div>
-                    `;
-                    rank++;
-                });
+                snapshot.forEach(doc => { scoresData.push(doc.data()); });
                 window.updateTerminalLog(scoresData);
-                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">Loading logs...</p>';
-            } catch (error) { 
-                console.error("Leaderboard Error:", error); 
-                document.getElementById('hub-leaderboard-list').innerHTML = `<p class="text-red-500 font-mono text-xs text-center">Failed to sync.</p>`;
-            }
+            } catch (error) { console.error("Leaderboard Error:", error); }
         }
 
-        // --- BLOG SYSTEM ---
+        // --- BLOG SYSTEM (EDIT & DELETE INCLUDED) ---
         window.fetchBlogs = async function() {
             if(!db) return;
             try {
@@ -619,6 +373,7 @@
                     let snippet = (tempDiv.textContent || tempDiv.innerText || "").substring(0, 150) + "...";
                     
                     card.innerHTML = `
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/50 to-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="text-xs text-blue-500 mb-3 font-mono tracking-widest uppercase font-bold">${blog.date}</div>
                         <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4 group-hover:text-blue-400 transition-colors">${blog.title}</h3>
                         <p class="text-gray-400 leading-relaxed text-lg">${snippet}</p>
@@ -679,6 +434,7 @@
             const btn = document.getElementById('publish-btn');
             if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
+            
             if(!db) { alert("Database disconnected."); btn.innerText = "FAILED"; return; }
             
             const title = document.getElementById('post-title').value;
@@ -688,6 +444,7 @@
                 setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "Publish Post"; }, 2000); 
                 return; 
             }
+
             try {
                 if(window.currentEditId) {
                     await updateDoc(doc(db, "blogs", window.currentEditId), { title: title, content: content });
@@ -695,11 +452,16 @@
                     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                     await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
                 }
+                
                 btn.style.backgroundColor = "#10b981"; btn.innerText = "SUCCESS!";
                 window.cancelEdit(); 
+                
                 setTimeout(() => {
-                    closeAdminModal(); switchView('blog'); window.fetchBlogs();
-                    btn.style.backgroundColor = ""; btn.innerText = "Publish Post";
+                    closeAdminModal(); 
+                    switchView('blog'); 
+                    window.fetchBlogs();
+                    btn.style.backgroundColor = ""; 
+                    btn.innerText = "Publish Post";
                 }, 1500);
             } catch (err) {
                 btn.style.backgroundColor = "#ef4444"; btn.innerText = "ERROR";
