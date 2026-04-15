@@ -21,6 +21,13 @@
             text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
             font-style: italic;
         }
+        
+        #xp-toast {
+            position: absolute; top: 20%;
+            font-size: 16px; font-weight: bold; color: #10b981;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            opacity: 0; transition: opacity 0.5s;
+        }
 
         /* MENU */
         #menu {
@@ -54,6 +61,7 @@
 
     <div id="ui">
         <div id="score-box">0%</div>
+        <div id="xp-toast">+0 XP Synced to Hub!</div>
 
         <div id="menu" class="visible">
             <h1 class="text-5xl font-black text-white mb-1 italic tracking-tighter" style="text-shadow: 4px 4px 0 #00aa00;">GEOMETRY<br>DASH</h1>
@@ -66,6 +74,10 @@
                     <i data-lucide="play" class="w-10 h-10 fill-white text-white ml-1"></i>
                 </button>
             </div>
+            
+            <button onclick="window.close()" class="mt-8 text-gray-500 hover:text-white text-xs font-mono uppercase tracking-widest underline transition">
+                Return to Arcade Hub
+            </button>
         </div>
     </div>
 
@@ -77,16 +89,17 @@
         const menu = document.getElementById('menu');
         const flash = document.getElementById('flash');
         const deathMsg = document.getElementById('death-msg');
+        const xpToast = document.getElementById('xp-toast');
 
         // --- GD PHYSICS CONFIG ---
-        const GRAVITY = 0.9;         // Heavy, crisp gravity
-        const JUMP_FORCE = -14.5;    // Snappy jump
-        const SPEED = 9;             // Constant scroll speed
+        const GRAVITY = 0.9;         
+        const JUMP_FORCE = -14.5;    
+        const SPEED = 9;             
         let FLOOR = 0;
         let ATTEMPTS = 1;
 
         // COLORS
-        const BG_COLOR = "#0055aa";  // Classic Blue BG
+        const BG_COLOR = "#0055aa";  
         const GRID_COLOR = "rgba(255,255,255,0.1)";
         const FLOOR_COLOR = "#002244";
 
@@ -98,7 +111,7 @@
             player: { 
                 x: 100, y: 0, size: 40, 
                 dy: 0, angle: 0, grounded: false, 
-                trail: [] // Array of past positions
+                trail: [] 
             },
             obstacles: [],
             particles: []
@@ -114,14 +127,13 @@
         window.addEventListener('resize', resize);
 
         function resetGame(e) {
-            if(e) e.stopPropagation(); // Stop click from firing jump immediately
+            if(e) e.stopPropagation(); 
 
             state.running = true;
             state.score = 0;
             state.frames = 0;
             state.bgOffset = 0;
 
-            // Reset Player
             state.player.y = FLOOR - 40;
             state.player.dy = 0;
             state.player.angle = 0;
@@ -133,6 +145,7 @@
             scoreEl.innerText = "0%";
             menu.classList.remove('visible');
             deathMsg.classList.add('hidden');
+            xpToast.style.opacity = 0;
 
             loop();
         }
@@ -148,17 +161,15 @@
         function update() {
             const p = state.player;
             state.frames++;
-            state.bgOffset -= SPEED * 0.5; // Parallax Grid
+            state.bgOffset -= SPEED * 0.5; 
 
             // --- PHYSICS ---
             p.dy += GRAVITY;
             p.y += p.dy;
 
-            // Rotation Logic (Spin in air, snap on ground)
             if(!p.grounded) {
-                p.angle += 0.12; // Spin speed
+                p.angle += 0.12; 
             } else {
-                // Snap to nearest 90 degrees (PI/2)
                 const snap = Math.round(p.angle / (Math.PI/2)) * (Math.PI/2);
                 p.angle = snap; 
             }
@@ -166,7 +177,6 @@
             // Floor Collision
             if(p.y + p.size >= FLOOR) {
                 if(!p.grounded) {
-                    // Just landed
                     spawnSquareParticles(p.x + p.size/2, FLOOR, 5, '#fff');
                 }
                 p.y = FLOOR - p.size;
@@ -177,32 +187,22 @@
             }
 
             // --- TRAIL LOGIC ---
-            // Add current pos to trail
-            if(state.frames % 2 === 0) { // Optimize: add every 2nd frame
+            if(state.frames % 2 === 0) { 
                 p.trail.push({x: p.x, y: p.y, angle: p.angle, life: 1.0});
             }
-            // Update trail life
             for(let i=p.trail.length-1; i>=0; i--) {
-                p.trail[i].x -= SPEED; // Move trail with world? No, visual trail stays relative to screen usually, but player stays still in X.
-                // Actually, in auto-runners, objects move LEFT. Player X is static.
-                // So trail just fades in place.
                 p.trail[i].life -= 0.05;
                 if(p.trail[i].life <= 0) p.trail.splice(i, 1);
             }
 
-            // --- LEVEL GENERATION (Procedural) ---
-            if(state.frames % 60 === 0) { // Every 1 second approx
-                // Random pattern
+            // --- LEVEL GENERATION ---
+            if(state.frames % 60 === 0) { 
                 const rand = Math.random();
-
                 if (rand < 0.3) {
-                    // Single Spike
                     spawnObstacle('spike', 0);
                 } else if (rand < 0.6) {
-                    // Block
                     spawnObstacle('block', 0);
                 } else if (rand < 0.8) {
-                    // Triple Spike (Hard)
                     spawnObstacle('spike', 0);
                     spawnObstacle('spike', 40);
                     spawnObstacle('spike', 80);
@@ -214,7 +214,6 @@
                 const obs = state.obstacles[i];
                 obs.x -= SPEED;
 
-                // Collision Detection (Hitbox Shrink for fairness)
                 const hitX = obs.x + 5;
                 const hitY = obs.y + 5;
                 const hitW = obs.w - 10;
@@ -224,29 +223,24 @@
                 const pY = p.y + 5;
                 const pS = p.size - 10;
 
-                if (pX < hitX + hitW &&
-                    pX + pS > hitX &&
-                    pY < hitY + hitH &&
-                    pY + pS > hitY) {
+                if (pX < hitX + hitW && pX + pS > hitX && pY < hitY + hitH && pY + pS > hitY) {
                     gameOver();
                 }
 
-                // Remove off-screen
                 if(obs.x + obs.w < 0) state.obstacles.splice(i, 1);
             }
 
-            // Score (Based on distance)
+            // Score 
             state.score++;
             if(state.score % 10 === 0) scoreEl.innerText = Math.floor(state.score / 100) + "%";
 
-            // Update Particles
             updateParticles();
         }
 
         function spawnObstacle(type, xOffset) {
             state.obstacles.push({
                 x: canvas.width + xOffset,
-                y: type === 'spike' ? FLOOR - 40 : FLOOR - 40, // Block sits on ground
+                y: type === 'spike' ? FLOOR - 40 : FLOOR - 40,
                 w: 40, h: 40,
                 type: type
             });
@@ -270,7 +264,7 @@
                 p.x += p.vx;
                 p.y += p.vy;
                 p.life -= 0.03;
-                p.size *= 0.95; // Shrink
+                p.size *= 0.95; 
                 if(p.life <= 0) state.particles.splice(i, 1);
             }
         }
@@ -278,69 +272,65 @@
         function gameOver() {
             state.running = false;
 
-            // DEATH EFFECT: Explode player into square particles
-            spawnSquareParticles(state.player.x + 20, state.player.y + 20, 20, '#ffff00'); // Yellow
-            spawnSquareParticles(state.player.x + 20, state.player.y + 20, 20, '#00ffff'); // Cyan
+            // DEATH EFFECT
+            spawnSquareParticles(state.player.x + 20, state.player.y + 20, 20, '#ffff00'); 
+            spawnSquareParticles(state.player.x + 20, state.player.y + 20, 20, '#00ffff'); 
 
-            draw(); // Render one last frame with explosion
+            draw(); 
 
             flash.style.opacity = 1;
             setTimeout(() => flash.style.opacity = 0, 100);
+            
+            // FIREBASE XP TRIGGER
+            const finalXP = Math.floor(state.score / 100);
+            if (window.saveGameScore && finalXP > 0) {
+                window.saveGameScore(finalXP);
+                xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                xpToast.style.opacity = 1;
+            }
 
             setTimeout(() => {
                 ATTEMPTS++;
                 deathMsg.innerText = `Attempt ${ATTEMPTS}`;
                 menu.classList.add('visible');
                 deathMsg.classList.remove('hidden');
-            }, 600);
+            }, 800);
         }
 
         // --- DRAWING ---
         function draw() {
-            // 1. Background (Gradient)
             const grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
             grd.addColorStop(0, BG_COLOR);
             grd.addColorStop(1, "#002244");
             ctx.fillStyle = grd;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. Moving Grid Background
             ctx.strokeStyle = GRID_COLOR;
             ctx.lineWidth = 2;
             const gridSize = 100;
             const offsetX = state.bgOffset % gridSize;
 
             ctx.beginPath();
-            // Vertical Lines
-            for(let x = offsetX; x < canvas.width; x += gridSize) {
-                ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
-            }
-            // Horizontal Lines
-            for(let y = 0; y < canvas.height; y += gridSize) {
-                ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
-            }
+            for(let x = offsetX; x < canvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); }
+            for(let y = 0; y < canvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); }
             ctx.stroke();
 
-            // 3. Floor
             ctx.fillStyle = FLOOR_COLOR;
             ctx.fillRect(0, FLOOR, canvas.width, canvas.height - FLOOR);
-            // Floor Line (Bright)
             ctx.fillStyle = "#fff";
             ctx.fillRect(0, FLOOR, canvas.width, 4);
 
-            // 4. Trail (Ghost Effect)
             state.player.trail.forEach(t => {
                 ctx.save();
                 ctx.translate(t.x + 20, t.y + 20);
                 ctx.rotate(t.angle);
                 ctx.globalAlpha = t.life * 0.5;
-                ctx.fillStyle = "#00ff00"; // Trail color
-                ctx.fillRect(-15, -15, 30, 30); // Slightly smaller
+                ctx.fillStyle = "#00ff00"; 
+                ctx.fillRect(-15, -15, 30, 30); 
                 ctx.restore();
             });
             ctx.globalAlpha = 1;
 
-            // 5. Particles
             state.particles.forEach(p => {
                 ctx.globalAlpha = p.life;
                 ctx.fillStyle = p.color;
@@ -348,38 +338,30 @@
             });
             ctx.globalAlpha = 1;
 
-            // 6. Player (Only draw if running, else invisible because exploded)
             if(state.running) {
                 const p = state.player;
                 ctx.save();
                 ctx.translate(p.x + p.size/2, p.y + p.size/2);
                 ctx.rotate(p.angle);
 
-                // Outer Box (Yellow)
                 ctx.fillStyle = "#ffff00"; 
                 ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
 
-                // Inner Box (Cyan)
                 ctx.fillStyle = "#00ffff"; 
                 const border = 6;
                 ctx.fillRect(-p.size/2 + border, -p.size/2 + border, p.size - border*2, p.size - border*2);
 
-                // Face (The Classic Icon)
                 ctx.fillStyle = "#000";
-                // Eye
                 ctx.fillRect(2, -8, 8, 8);
-                // Mouth
                 ctx.fillRect(2, 6, 8, 4);
 
                 ctx.restore();
             }
 
-            // 7. Obstacles
             state.obstacles.forEach(obs => {
                 if(obs.type === 'spike') {
-                    // Draw Spike
-                    ctx.fillStyle = "#000"; // Black core
-                    ctx.strokeStyle = "#fff"; // White outline
+                    ctx.fillStyle = "#000"; 
+                    ctx.strokeStyle = "#fff"; 
                     ctx.lineWidth = 3;
 
                     ctx.beginPath();
@@ -390,23 +372,19 @@
                     ctx.fill();
                     ctx.stroke();
 
-                    // Inner detail
                     ctx.fillStyle = "#333";
                     ctx.beginPath();
                     ctx.moveTo(obs.x + 10, obs.y + obs.h - 5);
                     ctx.lineTo(obs.x + obs.w/2, obs.y + 15);
                     ctx.lineTo(obs.x + obs.w - 10, obs.y + obs.h - 5);
                     ctx.fill();
-
                 } else {
-                    // Draw Block
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
-                    ctx.strokeStyle = "#00ff00"; // Neon Green outline
+                    ctx.strokeStyle = "#00ff00"; 
                     ctx.lineWidth = 2;
                     ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
                     ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
 
-                    // X detail
                     ctx.beginPath();
                     ctx.moveTo(obs.x, obs.y); ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
                     ctx.moveTo(obs.x + obs.w, obs.y); ctx.lineTo(obs.x, obs.y + obs.h);
@@ -416,7 +394,6 @@
         }
 
         function drawStatic() {
-            // Static Menu Background
             const grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
             grd.addColorStop(0, BG_COLOR);
             grd.addColorStop(1, "#002244");
@@ -431,9 +408,8 @@
 
         // --- INPUT ---
         function jump(e) {
-            // Ignore clicks on button
             if(e.target.closest('#start-btn') || e.target.closest('#menu')) return;
-            if(e.type !== 'keydown') e.preventDefault(); // Stop mobile scroll
+            if(e.type !== 'keydown') e.preventDefault(); 
 
             if(state.running && state.player.grounded) {
                 state.player.dy = JUMP_FORCE;
@@ -446,6 +422,57 @@
         window.addEventListener('keydown', e => { if(e.code === 'Space') jump(e) });
 
         resize();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Error:", error);
+        }
+
+        // Track logged in user
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                currentUser = null;
+            }
+        });
+
+        // Expose save function to the game engine above
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            
+            try {
+                // Increment the user's totalScore by the XP gained from the run
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, {
+                    totalScore: increment(xpGained)
+                });
+                console.log(`Successfully synced ${xpGained} XP to Hub!`);
+            } catch (err) {
+                console.error("Error saving XP to database:", err);
+            }
+        };
     </script>
 </body>
 </html>
