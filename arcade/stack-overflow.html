@@ -42,6 +42,12 @@
         .btn-start:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,255,255,0.5); }
         .btn-start:active { transform: scale(0.95); }
 
+        #xp-toast {
+            position: absolute; top: 5%;
+            font-size: 16px; font-weight: bold; color: #3b82f6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            opacity: 0; transition: opacity 0.5s; z-index: 100;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +55,7 @@
     <canvas id="game"></canvas>
 
     <div id="ui">
+        <div id="xp-toast">+0 XP Synced to Hub!</div>
         <div id="score-board">0</div>
 
         <div id="menu" class="visible">
@@ -58,42 +65,31 @@
                 <p class="text-xs text-gray-400">Precision Architecture</p>
             </div>
             <div id="final-score" class="text-sm text-gray-300 mb-4 hidden">Score: 0</div>
-            <button id="start-btn" class="btn-start" onclick="startGame()">START BUILD</button>
+            <button id="start-btn" class="btn-start block mx-auto" onclick="startGame()">START BUILD</button>
+            <button onclick="window.close()" class="mt-6 text-gray-500 hover:text-white text-[10px] font-mono uppercase tracking-widest underline transition block mx-auto">Return to Hub</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // --- ENGINE CONFIG ---
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score-board');
         const menuEl = document.getElementById('menu');
+        const xpToast = document.getElementById('xp-toast');
 
-        // Colors
-        const COLORS = {
-            bg: '#09090b',
-            base: '#3b82f6'
-        };
+        const COLORS = { bg: '#09090b', base: '#3b82f6' };
 
-        // Game State
         let state = {
-            playing: false,
-            score: 0,
-            blocks: [],
-            current: null,
-            speed: 3,
-            direction: 1, // 1 = right, -1 = left
-            cameraY: 0,
-            hue: 200
+            playing: false, score: 0, blocks: [], current: null,
+            speed: 3, direction: 1, cameraY: 0, hue: 200
         };
 
         const INITIAL_WIDTH = 200;
         const HEIGHT = 30;
         let START_Y = 600;
 
-        // --- RESIZE ---
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -102,22 +98,16 @@
         }
         window.addEventListener('resize', resize);
 
-        // --- GAME LOOP ---
         function startGame() {
-            state.playing = true;
-            state.score = 0;
-            state.blocks = [];
-            state.speed = 4;
-            state.cameraY = 0;
-            state.hue = 200;
+            state.playing = true; state.score = 0; state.blocks = [];
+            state.speed = 4; state.cameraY = 0; state.hue = 200;
 
             scoreEl.innerText = "0";
             scoreEl.style.color = "rgba(255,255,255,0.2)";
             menuEl.classList.remove('visible');
+            xpToast.style.opacity = 0;
 
-            // Base Block
             addBlock(canvas.width/2 - INITIAL_WIDTH/2, START_Y, INITIAL_WIDTH);
-
             spawnNextBlock();
             loop();
         }
@@ -125,23 +115,17 @@
         function spawnNextBlock() {
             const prevBlock = state.blocks[state.blocks.length - 1];
 
-            // --- BUG FIX & LOGIC UPGRADE ---
-            // 1. Alternate sides based on score (Even = Left->Right, Odd = Right->Left)
-            // 2. Force reset direction so it never flies off-screen
-
             if (state.score % 2 === 0) {
-                state.direction = 1; // Move Right
-                var startX = -prevBlock.w; // Start from Left Edge
+                state.direction = 1; 
+                var startX = -prevBlock.w; 
             } else {
-                state.direction = -1; // Move Left
-                var startX = canvas.width; // Start from Right Edge
+                state.direction = -1; 
+                var startX = canvas.width; 
             }
 
             state.current = {
-                x: startX,
-                y: prevBlock.y - HEIGHT,
-                w: prevBlock.w,
-                h: HEIGHT,
+                x: startX, y: prevBlock.y - HEIGHT,
+                w: prevBlock.w, h: HEIGHT,
                 color: `hsl(${state.hue}, 80%, 60%)`
             };
 
@@ -151,28 +135,19 @@
 
         function loop() {
             if (!state.playing) return;
-            update();
-            draw();
+            update(); draw();
             requestAnimationFrame(loop);
         }
 
         function update() {
             if (!state.current) return;
-
-            // Move Block
             state.current.x += state.speed * state.direction;
 
-            // Bounce off walls (Just in case they miss)
-            if (state.current.x > canvas.width) {
-               state.direction = -1;
-            } else if (state.current.x + state.current.w < 0) {
-               state.direction = 1; 
-            }
+            if (state.current.x > canvas.width) { state.direction = -1; } 
+            else if (state.current.x + state.current.w < 0) { state.direction = 1; }
         }
 
-        // --- INPUT ---
         function placeBlock(e) {
-            // Ignore clicks on menu
             if(e && e.target && (e.target.closest('#menu') || e.target.closest('.btn-start'))) return;
             if(e && e.type === 'touchstart') e.preventDefault();
 
@@ -185,7 +160,6 @@
             const overlap = prev.w - Math.abs(dist);
 
             if (overlap > 0) {
-                // Cut the block
                 curr.w = overlap;
                 curr.x = dist > 0 ? curr.x : prev.x;
 
@@ -193,18 +167,13 @@
                 state.score++;
                 scoreEl.innerText = state.score;
 
-                // Flash
                 scoreEl.style.color = "white";
                 setTimeout(() => scoreEl.style.color = "rgba(255,255,255,0.2)", 100);
 
-                // Move Camera
                 const targetY = canvas.height - 300;
-                if (curr.y < targetY) {
-                    state.cameraY += HEIGHT;
-                }
+                if (curr.y < targetY) { state.cameraY += HEIGHT; }
 
                 spawnNextBlock();
-
             } else {
                 gameOver();
             }
@@ -219,16 +188,20 @@
             menuEl.classList.add('visible');
             document.getElementById('final-score').innerText = `Final Height: ${state.score} Blocks`;
             document.getElementById('final-score').classList.remove('hidden');
+
+            // FIREBASE XP TRIGGER (10 XP per block)
+            const finalXP = state.score * 10;
+            if (window.saveGameScore && finalXP > 0) {
+                window.saveGameScore(finalXP);
+                xpToast.innerText = `+${finalXP} XP Synced to Hub!`;
+                xpToast.style.opacity = 1;
+            }
         }
 
         function addBlock(x, y, w) {
-            state.blocks.push({
-                x, y, w, h: HEIGHT,
-                color: COLORS.base
-            });
+            state.blocks.push({ x, y, w, h: HEIGHT, color: COLORS.base });
         }
 
-        // --- RENDER ---
         function draw() {
             ctx.fillStyle = COLORS.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -236,18 +209,15 @@
             ctx.save();
             ctx.translate(0, state.cameraY);
 
-            // Draw Stack
             state.blocks.forEach(b => {
                 ctx.fillStyle = b.color;
                 ctx.shadowBlur = 15; ctx.shadowColor = b.color;
                 ctx.fillRect(b.x, b.y, b.w, b.h);
-                // 3D Highlight
                 ctx.fillStyle = 'rgba(255,255,255,0.3)';
                 ctx.fillRect(b.x, b.y, b.w, 4);
                 ctx.shadowBlur = 0;
             });
 
-            // Draw Current
             if (state.current) {
                 const c = state.current;
                 ctx.fillStyle = c.color;
@@ -256,7 +226,6 @@
                 ctx.fillStyle = 'rgba(255,255,255,0.5)';
                 ctx.fillRect(c.x, c.y, c.w, 4);
             }
-
             ctx.restore();
         }
 
@@ -264,9 +233,41 @@
             ctx.fillStyle = COLORS.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
-
         resize();
+    </script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
+            authDomain: "spidey-a1a4f.firebaseapp.com",
+            projectId: "spidey-a1a4f",
+            storageBucket: "spidey-a1a4f.firebasestorage.app",
+            messagingSenderId: "839659120593",
+            appId: "1:839659120593:web:1141e58eb999b67ebaa2f0",
+            measurementId: "G-Z5W90V686F"
+        };
+
+        let db, auth, currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) { console.error("Firebase Error:", error); }
+
+        onAuthStateChanged(auth, (user) => { currentUser = user ? user : null; });
+
+        window.saveGameScore = async function(xpGained) {
+            if (!currentUser || !db || xpGained <= 0) return;
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { totalScore: increment(xpGained) });
+            } catch (err) { console.error("Error saving XP to database:", err); }
+        };
     </script>
 </body>
 </html>
