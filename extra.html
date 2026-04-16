@@ -184,19 +184,6 @@
                         </div>
                         <p id="mission-1-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">0 / 5000</p>
                     </div>
-                    
-                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-yellow-500"></div>
-                        <div class="flex justify-between items-start mb-2 pl-2">
-                            <span class="text-white font-bold text-xs">Reach Level 5</span>
-                            <span class="text-yellow-400 font-mono text-[10px]">+1000 XP</span>
-                        </div>
-                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
-                            <div id="mission-2-bar" class="bg-yellow-500 h-full progress-fill w-0"></div>
-                        </div>
-                        <p id="mission-2-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">Lvl 1 / 5</p>
-                    </div>
-
                 </div>
             </div>
 
@@ -458,7 +445,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // THE 50+ DYNAMIC BADGE DATABASE
@@ -562,7 +549,6 @@
             db = getFirestore(app);
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
-            // PATCH: Do NOT call fetchGlobalLeaderboard() here. Wait for auth to prevent permission errors.
         } catch (error) { 
             console.error("Firebase Error:", error); 
         }
@@ -574,7 +560,6 @@
             }
         });
 
-        // PATCH: Wait for auth verification before loading the database network
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -676,7 +661,6 @@
                         
                         await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
                         
-                        // PATCHED: Update UI first, so memory updates instantly before fetching leaderboard
                         updateProfileUI(currentUser.uid);
                         fetchGlobalLeaderboard();
 
@@ -688,16 +672,14 @@
                     }
                 }
             } catch(e) {
-                // If it hits this, a JS error or missing HTML caused a crash, or Firebase rejected the write.
-                console.error("Redeem Code Error:", e);
-                window.showToast("ERROR", "Database connection failed.", "", "x-circle");
+                console.error(e);
+                window.showToast("ERROR", "Database connection failed.", "Check Firebase Permissions.", "x-circle");
             }
             
             codeInput.value = "";
             codeInput.disabled = false;
         }
 
-        // PATCHED: Check badges using live local data for the current user
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
@@ -823,7 +805,6 @@
             if (m1Bar) m1Bar.style.width = `${m1Pct}%`;
             if (m1Text) m1Text.innerText = m1Pct === 100 ? "COMPLETED" : `${localXP} / 5000`;
 
-            // PATCHED: Prevent DOM errors by checking if elements exist first
             const m2Pct = Math.min((localLevel / 5) * 100, 100);
             const m2Bar = document.getElementById('mission-2-bar');
             const m2Text = document.getElementById('mission-2-text');
@@ -831,7 +812,7 @@
             if (m2Text) m2Text.innerText = m2Pct === 100 ? "COMPLETED" : `Lvl ${localLevel} / 5`;
         }
 
-        // --- GLOBAL LEADERBOARD FIX ---
+        // --- GLOBAL LEADERBOARD ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
@@ -895,7 +876,7 @@
                 if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
             } catch (error) { 
                 console.error("Leaderboard Error:", error); 
-                list.innerHTML = `<p class="text-red-500 font-mono text-xs text-center mt-6">Failed to load network.</p>`;
+                list.innerHTML = `<p class="text-red-500 font-mono text-[10px] text-center mt-6">DB Error: ${error.message}</p>`;
             }
         }
 
@@ -1075,7 +1056,7 @@
                 document.getElementById('new-code-limit').value = '';
             } catch(e) {
                 console.error(e);
-                window.showToast("ERROR", "Code generation failed.", "", "x-circle");
+                window.showToast("ERROR", "Code generation failed.", "Check Firebase Permissions.", "x-circle");
             }
             btn.innerText = "DEPLOY CODE";
             btn.disabled = false;
