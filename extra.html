@@ -184,6 +184,19 @@
                         </div>
                         <p id="mission-1-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">0 / 5000</p>
                     </div>
+                    
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-yellow-500"></div>
+                        <div class="flex justify-between items-start mb-2 pl-2">
+                            <span class="text-white font-bold text-xs">Reach Level 5</span>
+                            <span class="text-yellow-400 font-mono text-[10px]">+1000 XP</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div id="mission-2-bar" class="bg-yellow-500 h-full progress-fill w-0"></div>
+                        </div>
+                        <p id="mission-2-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">Lvl 1 / 5</p>
+                    </div>
+
                 </div>
             </div>
 
@@ -445,7 +458,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // THE 50+ DYNAMIC BADGE DATABASE
@@ -531,7 +544,6 @@
         let localXP = 0; let localLevel = 1; let userFriends = []; let userRequests = [];
         window.lastClaimed = null; window.currentViewedUser = null; 
 
-        // TOAST LOGIC
         window.showToast = function(title, desc, sub, iconName) {
             const toast = document.getElementById('toast-modal');
             document.getElementById('toast-title').innerText = title || "NOTIFICATION";
@@ -550,6 +562,7 @@
             db = getFirestore(app);
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
+            // PATCH: Do NOT call fetchGlobalLeaderboard() here. Wait for auth to prevent permission errors.
         } catch (error) { 
             console.error("Firebase Error:", error); 
         }
@@ -561,7 +574,7 @@
             }
         });
 
-        // PATCHED: Auth and Fetch logic decoupled to avoid race conditions and Firebase permission errors
+        // PATCH: Wait for auth verification before loading the database network
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -592,7 +605,7 @@
                 if (data.totalScore > localXP && localXP !== 0) {
                     window.showToast("GAME SYNC COMPLETE", `+${data.totalScore - localXP} XP Earned`, "Database updated.", "zap");
                 }
-                localXP = data.totalScore || 0;
+                localXP = Number(data.totalScore) || 0;
                 localLevel = Math.floor(localXP / 500) + 1;
                 window.lastClaimed = data.lastClaimed || null;
                 userFriends = data.friends || [];
@@ -606,7 +619,6 @@
             updateProfileUI(uid);
         }
 
-        // PATCHED: Handles the Access Denied explicitly
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return;
             const today = new Date().toDateString(); 
@@ -659,12 +671,12 @@
                         await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
                         
                         const oldLevel = localLevel;
-                        localXP += data.rewardXp;
+                        localXP = Number(localXP) + Number(data.rewardXp);
                         localLevel = Math.floor(localXP / 500) + 1;
                         
                         await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
                         
-                        // PATCHED: Update Profile UI immediately with new localXP so Badges update instantly!
+                        // PATCHED: Update UI first, so memory updates instantly before fetching leaderboard
                         updateProfileUI(currentUser.uid);
                         fetchGlobalLeaderboard();
 
@@ -676,7 +688,8 @@
                     }
                 }
             } catch(e) {
-                console.error(e);
+                // If it hits this, a JS error or missing HTML caused a crash, or Firebase rejected the write.
+                console.error("Redeem Code Error:", e);
                 window.showToast("ERROR", "Database connection failed.", "", "x-circle");
             }
             
@@ -684,7 +697,7 @@
             codeInput.disabled = false;
         }
 
-        // PATCHED: Ensure we check live localXP for the current user to trigger badges immediately
+        // PATCHED: Check badges using live local data for the current user
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
@@ -805,17 +818,20 @@
 
         function updateMissions() {
             const m1Pct = Math.min((localXP / 5000) * 100, 100);
-            document.getElementById('mission-1-bar').style.width = `${m1Pct}%`;
-            document.getElementById('mission-1-text').innerText = `${localXP} / 5000`;
-            if(m1Pct === 100) document.getElementById('mission-1-text').innerText = "COMPLETED";
+            const m1Bar = document.getElementById('mission-1-bar');
+            const m1Text = document.getElementById('mission-1-text');
+            if (m1Bar) m1Bar.style.width = `${m1Pct}%`;
+            if (m1Text) m1Text.innerText = m1Pct === 100 ? "COMPLETED" : `${localXP} / 5000`;
 
+            // PATCHED: Prevent DOM errors by checking if elements exist first
             const m2Pct = Math.min((localLevel / 5) * 100, 100);
-            document.getElementById('mission-2-bar').style.width = `${m2Pct}%`;
-            document.getElementById('mission-2-text').innerText = `Lvl ${localLevel} / 5`;
-            if(m2Pct === 100) document.getElementById('mission-2-text').innerText = "COMPLETED";
+            const m2Bar = document.getElementById('mission-2-bar');
+            const m2Text = document.getElementById('mission-2-text');
+            if (m2Bar) m2Bar.style.width = `${m2Pct}%`;
+            if (m2Text) m2Text.innerText = m2Pct === 100 ? "COMPLETED" : `Lvl ${localLevel} / 5`;
         }
 
-        // --- PATCHED: GLOBAL LEADERBOARD RACE CONDITION FIX ---
+        // --- GLOBAL LEADERBOARD FIX ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
@@ -899,7 +915,6 @@
             document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
             document.getElementById('pub-lvl').innerText = user.level || 1;
             
-            // PATCHED: Show live XP for current user in modal too
             const displayXp = (uid === currentUser?.uid) ? localXP : (user.totalScore || 0);
             document.getElementById('pub-xp').innerText = displayXp.toLocaleString();
 
