@@ -561,6 +561,7 @@
             }
         });
 
+        // PATCHED: Auth and Fetch logic decoupled to avoid race conditions and Firebase permission errors
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -605,6 +606,7 @@
             updateProfileUI(uid);
         }
 
+        // PATCHED: Handles the Access Denied explicitly
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return;
             const today = new Date().toDateString(); 
@@ -632,7 +634,6 @@
             }
         }
 
-        // --- REDEEM CODE SYSTEM ---
         window.submitRedeemCode = async function() {
             if(!currentUser || !db) return;
             const codeInput = document.getElementById('redeem-input');
@@ -663,6 +664,7 @@
                         
                         await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
                         
+                        // PATCHED: Update Profile UI immediately with new localXP so Badges update instantly!
                         updateProfileUI(currentUser.uid);
                         fetchGlobalLeaderboard();
 
@@ -682,7 +684,7 @@
             codeInput.disabled = false;
         }
 
-        // --- PATCHED BADGE CHECK ---
+        // PATCHED: Ensure we check live localXP for the current user to trigger badges immediately
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
@@ -700,13 +702,14 @@
         }
 
         function updateProfileUI(uid) {
-            document.getElementById('total-points').innerText = localXP;
+            document.getElementById('total-points').innerText = localXP.toLocaleString();
             document.getElementById('user-level').innerText = `LVL ${localLevel}`;
             document.getElementById('friend-count-header').innerText = `(${userFriends.length})`;
 
             let title = "Novice Coder";
             if(localXP >= 1000) title = "S-Rank Hunter"; 
             if(localXP >= 5000) title = "Special Grade Dev"; 
+            if(localXP >= 1000000) title = "Server Deity";
             document.getElementById('user-title').innerText = title;
 
             const unlocked = getUserBadges(currentUser.uid);
@@ -734,7 +737,6 @@
             updateMissions();
         }
 
-        // --- FRIEND REQUEST SYSTEM ---
         async function renderFriendRequests() {
             const reqContainer = document.getElementById('friend-requests-container');
             const reqList = document.getElementById('friend-requests-list');
@@ -813,12 +815,21 @@
             if(m2Pct === 100) document.getElementById('mission-2-text').innerText = "COMPLETED";
         }
 
-        // --- GLOBAL LEADERBOARD (PATCHED ALL USERS FETCH) ---
+        // --- PATCHED: GLOBAL LEADERBOARD RACE CONDITION FIX ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
             if(!db) return;
+            const list = document.getElementById('community-list');
+
+            if (!currentUser) {
+                list.innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
+                return;
+            }
+
             try {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center h-full gap-4"><div class="w-6 h-6 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin"></div></div>`;
+                
                 const snapshot = await getDocs(collection(db, "users"));
                 let allUsers = [];
                 
@@ -832,7 +843,6 @@
                 allUsers.sort((a, b) => b.totalScore - a.totalScore);
                 window.usersData = allUsers.slice(0, 25);
                 
-                const list = document.getElementById('community-list');
                 list.innerHTML = '';
                 
                 let rank = 1;
@@ -860,7 +870,7 @@
                                     <p class="text-red-500 font-mono text-[10px] opacity-0 group-hover:opacity-100 transition">View Profile &rarr;</p>
                                 </div>
                             </div>
-                            <div class="text-white font-black">${data.totalScore}</div>
+                            <div class="text-white font-black">${data.totalScore.toLocaleString()}</div>
                         </div>
                     `;
                     rank++;
@@ -869,7 +879,7 @@
                 if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
             } catch (error) { 
                 console.error("Leaderboard Error:", error); 
-                document.getElementById('community-list').innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
+                list.innerHTML = `<p class="text-red-500 font-mono text-xs text-center mt-6">Failed to load network.</p>`;
             }
         }
 
@@ -888,11 +898,15 @@
             document.getElementById('pub-name').innerText = user.displayName;
             document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
             document.getElementById('pub-lvl').innerText = user.level || 1;
-            document.getElementById('pub-xp').innerText = (user.totalScore || 0).toLocaleString();
+            
+            // PATCHED: Show live XP for current user in modal too
+            const displayXp = (uid === currentUser?.uid) ? localXP : (user.totalScore || 0);
+            document.getElementById('pub-xp').innerText = displayXp.toLocaleString();
 
             let title = "Operative";
-            if(user.totalScore >= 1000) title = "S-Rank Hunter";
-            if(user.totalScore >= 5000) title = "Special Grade";
+            if(displayXp >= 1000) title = "S-Rank Hunter";
+            if(displayXp >= 5000) title = "Special Grade";
+            if(displayXp >= 1000000) title = "Server Deity";
             document.getElementById('pub-title').innerText = title;
 
             const pBadge = document.getElementById('pub-badges');
