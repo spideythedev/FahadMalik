@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syndicate Clubs | SpydeY Network</title>
+    <title>Clubs | SpydeY Network</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -38,12 +38,42 @@
             background-size: 40px 40px;
         }
 
-        /* Chat Message Styles */
         .msg-own { background: rgba(147, 51, 234, 0.2); border: 1px solid rgba(147, 51, 234, 0.5); align-self: flex-end; border-bottom-right-radius: 0; }
         .msg-other { background: #111; border: 1px solid #333; align-self: flex-start; border-bottom-left-radius: 0; }
+
+        .badge-container { position: relative; cursor: pointer; }
+        .badge-tooltip {
+            visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+            background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;
+            padding: 4px 8px; border-radius: 4px; border: 1px solid #333; white-space: nowrap; z-index: 50;
+            transition: 0.2s; pointer-events: none;
+        }
+        .badge-container:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
+        
+        .badge-club-1 { fill: url(#club-gold); filter: drop-shadow(0 0 15px rgba(234, 179, 8, 1)); }
+        .badge-club-top { fill: url(#club-silver); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.8)); }
+
+        #toast-notification {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #10b981; color: #000; padding: 12px 24px; border-radius: 12px;
+            font-weight: bold; font-size: 14px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+            z-index: 10000;
+        }
+        #toast-notification.show { opacity: 1; transform: translate(-50%, 10px); }
     </style>
 </head>
 <body class="bg-grid-purple flex flex-col min-h-screen">
+
+    <div id="toast-notification">Invite Link Copied!</div>
+
+    <svg width="0" height="0" class="absolute">
+        <defs>
+            <linearGradient id="club-gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#a16207"/></linearGradient>
+            <linearGradient id="club-silver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+        </defs>
+        <g id="icon-club"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></g>
+    </svg>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -53,7 +83,7 @@
             
             <div class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.1)]">
                 <div class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(147,51,234,0.8)] animate-pulse"></div>
-                <span class="font-mono text-xs text-purple-300 tracking-widest">SYNDICATE NETWORK</span>
+                <span class="font-mono text-xs text-purple-300 tracking-widest uppercase">Clubs Online</span>
             </div>
         </div>
     </nav>
@@ -71,13 +101,13 @@
                     <p class="text-purple-400 font-mono text-[10px] tracking-widest uppercase mb-4">Total XP: <span id="club-xp" class="text-white font-bold">0</span></p>
                     
                     <div class="w-full flex gap-2 mb-4">
-                        <button class="flex-1 bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2 rounded-lg transition"><i data-lucide="user-plus" class="w-3 h-3 inline"></i> Invite</button>
+                        <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg"><i data-lucide="user-plus" class="w-4 h-4 inline mr-1"></i> Invite Friends</button>
                     </div>
 
                     <div class="w-full text-left">
                         <p class="text-gray-500 font-mono text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mb-3">Live Roster</p>
                         <div id="roster-list" class="space-y-2 overflow-y-auto max-h-[300px] hide-scrollbar">
-                            <div class="text-center text-xs text-gray-500">Syncing members...</div>
+                            <div class="text-center text-xs text-gray-500 py-4">Loading members...</div>
                         </div>
                     </div>
                 </div>
@@ -85,18 +115,18 @@
 
             <div id="no-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden text-center block">
                 <div class="w-16 h-16 mx-auto bg-[#111] rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.2)]">
-                    <i data-lucide="shield-alert" class="text-purple-500 w-8 h-8"></i>
+                    <i data-lucide="shield" class="text-purple-500 w-8 h-8"></i>
                 </div>
-                <h3 class="text-white font-bold text-lg mb-2">No Syndicate Found</h3>
-                <p class="text-gray-400 text-xs mb-6 font-mono" id="auth-status-text">Authenticate to check your network status.</p>
+                <h3 class="text-white font-bold text-lg mb-2">No Club Found</h3>
+                <p class="text-gray-400 text-xs mb-6" id="auth-status-text">Please sign in to view your club status.</p>
                 
-                <div class="bg-black/50 border border-red-500/20 p-3 rounded-xl mb-4">
-                    <p class="text-gray-400 text-[10px] font-mono">Required to Forge:</p>
-                    <p class="text-white font-bold text-sm">2,500 XP <span class="text-red-500" id="xp-status">(Checking Data...)</span></p>
+                <div class="bg-black/50 border border-white/5 p-3 rounded-xl mb-4">
+                    <p class="text-gray-400 text-[10px] font-mono uppercase">Required to Create:</p>
+                    <p class="text-white font-bold text-sm">2,500 XP <span class="text-red-500 text-xs" id="xp-status">(Checking Data...)</span></p>
                 </div>
 
                 <button id="create-club-btn" onclick="openCreateModal()" class="w-full bg-[#111] text-gray-500 border border-gray-800 font-bold py-3 rounded-xl transition-all text-sm mb-2 cursor-not-allowed pointer-events-none">
-                    Forge Syndicate 🔒
+                    Create Club 🔒
                 </button>
             </div>
         </div>
@@ -106,33 +136,33 @@
                 
                 <div class="bg-[#050505] p-4 border-b border-white/10 flex justify-between items-center relative z-10">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="radio" class="text-purple-500 w-5 h-5 animate-pulse"></i>
+                        <i data-lucide="message-square" class="text-purple-500 w-5 h-5"></i>
                         <div>
-                            <h3 class="text-white font-bold">Syndicate Live Comms</h3>
-                            <p class="text-purple-500 font-mono text-[10px] uppercase">Firestore Encrypted Database</p>
+                            <h3 class="text-white font-bold">Club Chat</h3>
+                            <p class="text-gray-500 font-mono text-[10px] uppercase">Private Group Channel</p>
                         </div>
                     </div>
                 </div>
 
                 <div id="chat-box" class="flex-grow p-6 overflow-y-auto space-y-4 flex flex-col relative z-10">
                     <div class="text-center mt-10">
-                        <p class="text-gray-500 text-sm font-mono">Waiting for comms link...</p>
+                        <p class="text-gray-500 text-sm font-mono">Join a club to start chatting.</p>
                     </div>
                 </div>
 
                 <div class="p-4 bg-[#050505] border-t border-white/10 relative z-10">
                     <form id="chat-form" class="flex gap-2">
-                        <input type="text" id="chat-input" placeholder="Transmit message..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 font-mono" autocomplete="off">
+                        <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500" autocomplete="off">
                         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold transition shadow-[0_0_15px_rgba(147,51,234,0.3)]">
                             <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
                     </form>
                 </div>
                 
-                <div id="chat-lock" class="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                <div id="chat-lock" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
                     <i data-lucide="lock" class="text-purple-500 w-12 h-12 mb-4"></i>
-                    <p class="text-white font-bold">Comms Locked</p>
-                    <p class="text-gray-400 text-xs font-mono">Join or Forge a Syndicate to access the database.</p>
+                    <p class="text-white font-bold">Chat Locked</p>
+                    <p class="text-gray-400 text-xs">Join or create a Club to access group chat.</p>
                 </div>
             </div>
         </div>
@@ -140,27 +170,37 @@
         <div class="lg:col-span-3 space-y-6">
             <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
                 <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
-                    <i data-lucide="crosshair" class="text-red-500 w-4 h-4"></i> Syndicate Directives
+                    <i data-lucide="crosshair" class="text-blue-500 w-4 h-4"></i> Team Missions
                 </h3>
                 
                 <div class="space-y-4">
                     <div class="bg-[#111] p-3 rounded-xl border border-white/5 relative overflow-hidden">
                         <div class="absolute left-0 top-0 h-full w-1 bg-green-500"></div>
                         <div class="flex justify-between items-start mb-1 pl-2">
-                            <span class="text-white font-bold text-xs uppercase">Daily Protocol</span>
+                            <span class="text-white font-bold text-xs uppercase">Daily Goal</span>
                             <span class="text-green-400 font-mono text-[9px]">+1K XP</span>
                         </div>
                         <p class="text-gray-400 text-[10px] pl-2">Team scores 10,000 total points.</p>
                     </div>
 
-                    <div class="bg-gradient-to-r from-red-900/30 to-[#111] p-3 rounded-xl border border-red-500/50 relative overflow-hidden shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-red-500 shadow-[0_0_10px_red]"></div>
+                    <div class="bg-gradient-to-r from-purple-900/30 to-[#111] p-3 rounded-xl border border-purple-500/50 relative overflow-hidden shadow-[0_0_15px_rgba(147,51,234,0.1)]">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-purple-500"></div>
                         <div class="flex justify-between items-start mb-1 pl-2">
-                            <span class="text-white font-black text-xs uppercase flex items-center gap-1"><i data-lucide="skull" class="w-3 h-3 text-red-500"></i> Hardcore</span>
-                            <span class="text-red-400 font-mono text-[9px] font-bold">EXCLUSIVE BADGE</span>
+                            <span class="text-white font-black text-xs uppercase flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3 text-purple-500"></i> Hardcore</span>
+                            <span class="text-purple-400 font-mono text-[9px] font-bold">RARE BADGE</span>
                         </div>
                         <p class="text-gray-300 text-[10px] pl-2">Bypass 50,000 Firewalls collectively.</p>
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl flex flex-col h-[400px]">
+                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i data-lucide="trophy" class="text-yellow-500 w-4 h-4"></i> Top Clubs
+                </h3>
+                
+                <div id="club-leaderboard" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
+                    <div class="text-center py-10 text-gray-500 text-xs">Loading rankings...</div>
                 </div>
             </div>
         </div>
@@ -170,21 +210,21 @@
         <div class="bg-[#0a0a0a] border border-purple-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(147,51,234,0.2)] w-full max-w-md relative animate-pop-in">
             <button onclick="closeCreateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
             
-            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Forge Syndicate</h2>
-            <p class="text-gray-400 text-xs font-mono text-center mb-8">Establish your core architecture.</p>
+            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Create Club</h2>
+            <p class="text-gray-400 text-xs text-center mb-8">Setup your team profile.</p>
 
             <form id="forge-form" class="space-y-4">
                 <div>
-                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Syndicate Name</label>
-                    <input type="text" id="club-name-input" required placeholder="Enter name (e.g. Neon Dragons)" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 font-bold">
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Club Name</label>
+                    <input type="text" id="club-name-input" required placeholder="e.g. Neon Dragons" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 font-bold">
                 </div>
                 <div>
-                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Insignia URL (Optional Image)</label>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Icon URL (Optional)</label>
                     <input type="url" id="club-img-input" placeholder="https://..." class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 text-xs font-mono">
                 </div>
                 
                 <button type="submit" id="forge-submit-btn" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] mt-4">
-                    INITIALIZE DATABASE PROTOCOL
+                    Create Club
                 </button>
             </form>
         </div>
@@ -192,7 +232,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -216,22 +256,51 @@
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            loadClubLeaderboard();
         } catch (error) {
             console.error("Firebase Error:", error);
-            document.getElementById('auth-status-text').innerText = "Database connection failed.";
+            document.getElementById('auth-status-text').innerText = "System error connecting to server.";
         }
 
-        // --- 1. AUTH & CHECK USER DATA ---
+        // --- 1. AUTH & CHECK INVITE LINKS ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('auth-status-text').innerText = "Authenticating with database...";
-                await fetchUserAndClub(user.uid);
+                document.getElementById('auth-status-text').innerText = "Loading your profile...";
+                
+                // Check if they clicked an invite link
+                const urlParams = new URLSearchParams(window.location.search);
+                const joinId = urlParams.get('join');
+                
+                if (joinId) {
+                    await handleInviteLink(joinId, user.uid);
+                } else {
+                    await fetchUserAndClub(user.uid);
+                }
             } else {
                 currentUser = null;
-                document.getElementById('auth-status-text').innerText = "You are not logged in. Return to the Arcade Hub.";
+                document.getElementById('auth-status-text').innerText = "Sign in at the Arcade Hub first.";
             }
         });
+
+        async function handleInviteLink(joinId, uid) {
+            document.getElementById('auth-status-text').innerText = "Joining club...";
+            try {
+                // Update User Profile
+                await updateDoc(doc(db, "users", uid), { clubId: joinId });
+                // Update Club Member List
+                await updateDoc(doc(db, "clubs", joinId), { members: arrayUnion(uid) });
+                
+                // Clean the URL so they don't keep joining if they refresh
+                window.history.replaceState(null, null, window.location.pathname);
+                
+                await fetchUserAndClub(uid);
+            } catch (err) {
+                console.error("Invite Error:", err);
+                alert("Failed to join the club. The link might be invalid.");
+                await fetchUserAndClub(uid);
+            }
+        }
 
         async function fetchUserAndClub(uid) {
             const userRef = doc(db, "users", uid);
@@ -241,7 +310,6 @@
                 userData = userSnap.data();
                 const xp = userData.totalScore || 0;
 
-                // Check if they are already in a club
                 if(userData.clubId) {
                     currentClubId = userData.clubId;
                     await loadClubInterface(currentClubId);
@@ -249,23 +317,23 @@
                     // Update Lock UI
                     const createBtn = document.getElementById('create-club-btn');
                     const statusText = document.getElementById('xp-status');
-
-                    document.getElementById('auth-status-text').innerText = "Identity verified. No Syndicate found.";
+                    document.getElementById('auth-status-text').innerText = "You are not in a club.";
 
                     if(xp >= 2500) {
                         createBtn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all text-sm mb-2 shadow-[0_0_15px_rgba(147,51,234,0.3)] pointer-events-auto";
-                        createBtn.innerHTML = "Forge Syndicate <i data-lucide='zap' class='w-4 h-4 inline ml-1'></i>";
+                        createBtn.innerHTML = "Create Club";
                         statusText.innerText = "(Unlocked)";
-                        statusText.className = "text-emerald-500";
-                        lucide.createIcons();
+                        statusText.className = "text-emerald-500 font-bold ml-1";
                     } else {
                         statusText.innerText = `(Need ${2500 - xp} more XP)`;
                     }
                 }
+            } else {
+                document.getElementById('auth-status-text').innerText = "Profile not found. Play games to initialize.";
             }
         }
 
-        // --- 2. CREATE CLUB TO DATABASE ---
+        // --- 2. CREATE CLUB ---
         window.openCreateModal = function() {
             document.getElementById('create-modal').classList.remove('hidden');
             document.getElementById('create-modal').classList.add('flex');
@@ -278,14 +346,13 @@
         document.getElementById('forge-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('forge-submit-btn');
-            btn.innerText = "WRITING TO DATABASE...";
+            btn.innerText = "Creating...";
             btn.classList.add("opacity-50", "cursor-not-allowed");
 
             const name = document.getElementById('club-name-input').value;
             const img = document.getElementById('club-img-input').value || 'https://cdn.discordapp.com/embed/avatars/0.png';
 
             try {
-                // 1. Create the Club Document
                 const clubRef = await addDoc(collection(db, "clubs"), {
                     name: name,
                     image: img,
@@ -295,66 +362,84 @@
                     createdAt: serverTimestamp()
                 });
 
-                // 2. Update the User Document to link them
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    clubId: clubRef.id
-                });
+                await updateDoc(doc(db, "users", currentUser.uid), { clubId: clubRef.id });
 
-                // 3. Load UI
                 closeCreateModal();
                 currentClubId = clubRef.id;
                 await loadClubInterface(currentClubId);
+                loadClubLeaderboard();
 
             } catch(err) {
                 console.error(err);
-                alert("Database Error: Could not forge syndicate.");
-                btn.innerText = "INITIALIZE DATABASE PROTOCOL";
+                alert("Error creating club. Please try again.");
+                btn.innerText = "Create Club";
                 btn.classList.remove("opacity-50", "cursor-not-allowed");
             }
         });
 
-        // --- 3. LOAD CLUB UI & LIVE CHAT ---
+        // --- 3. REAL INvITE LINK ---
+        window.copyInviteLink = function() {
+            if(!currentClubId) return;
+            const link = window.location.origin + window.location.pathname + "?join=" + currentClubId;
+            
+            navigator.clipboard.writeText(link).then(() => {
+                const toast = document.getElementById('toast-notification');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            });
+        }
+
+        // --- 4. LOAD CLUB UI & CHAT ---
         async function loadClubInterface(clubId) {
             document.getElementById('no-club-panel').style.display = 'none';
             document.getElementById('my-club-panel').style.display = 'block';
             document.getElementById('chat-lock').style.display = 'none';
 
-            // Get Club Info
             const clubSnap = await getDoc(doc(db, "clubs", clubId));
             if(!clubSnap.exists()) return;
             const clubData = clubSnap.data();
 
             document.getElementById('club-name').innerText = clubData.name;
             document.getElementById('club-img').src = clubData.image;
-            document.getElementById('club-xp').innerText = clubData.totalXp;
+            document.getElementById('club-xp').innerText = clubData.totalXp.toLocaleString();
 
-            // Render Roster (Basic MVP)
+            // Setup Roster UI (Basic view fetching full profiles is better done server side, but we mock it here with owner info)
             const roster = document.getElementById('roster-list');
-            roster.innerHTML = `
-                <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border border-yellow-500/30">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">👑</div>
-                        <span class="text-white text-xs font-bold">${currentUser.displayName}</span>
-                    </div>
-                    <span class="text-yellow-500 text-[9px] font-mono">YOU</span>
-                </div>
-            `;
+            roster.innerHTML = '';
+            
+            // Loop through members array. In a real app you fetch their user profiles here.
+            // For simplicity, we just list "Member" for others and highlight the owner.
+            clubData.members.forEach(uid => {
+                const isOwner = uid === clubData.ownerUid;
+                const isMe = uid === currentUser.uid;
+                const displayName = isMe ? currentUser.displayName : (isOwner ? "Club Owner" : "Member");
+                const icon = isOwner ? '👑' : '👤';
+                const tag = isOwner ? '<span class="text-yellow-500 text-[9px] font-mono">OWNER</span>' : '';
 
-            // Start Real-Time Chat Listener
+                roster.innerHTML += `
+                    <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${isOwner ? 'border-yellow-500/30' : 'border-white/5'}">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">${icon}</div>
+                            <span class="text-white text-xs font-bold">${displayName} ${isMe ? '(You)' : ''}</span>
+                        </div>
+                        ${tag}
+                    </div>
+                `;
+            });
+
             startChatListener(clubId);
         }
 
         function startChatListener(clubId) {
-            if (unsubscribeChat) unsubscribeChat(); // Clear old listener
+            if (unsubscribeChat) unsubscribeChat();
 
             const q = query(collection(db, `clubs/${clubId}/messages`), orderBy("timestamp", "asc"));
             const chatBox = document.getElementById('chat-box');
 
             unsubscribeChat = onSnapshot(q, (snapshot) => {
                 chatBox.innerHTML = '';
-                
                 if (snapshot.empty) {
-                    chatBox.innerHTML = `<div class="text-center mt-4 text-gray-600 text-xs font-mono">No encrypted comms yet.</div>`;
+                    chatBox.innerHTML = `<div class="text-center mt-4 text-gray-600 text-xs font-mono">No messages yet. Say hello!</div>`;
                     return;
                 }
 
@@ -378,13 +463,11 @@
                         `;
                     }
                 });
-                
-                // Auto scroll to bottom
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
 
-        // --- 4. SEND LIVE CHAT MESSAGE ---
+        // --- 5. SEND CHAT ---
         document.getElementById('chat-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(!currentClubId || !currentUser) return;
@@ -393,7 +476,7 @@
             const text = input.value.trim();
             if(!text) return;
 
-            input.value = ''; // Clear instantly for good UX
+            input.value = '';
 
             try {
                 await addDoc(collection(db, `clubs/${currentClubId}/messages`), {
@@ -406,6 +489,59 @@
                 console.error("Failed to send message", err);
             }
         });
+
+        // --- 6. CLUB LEADERBOARD ---
+        async function loadClubLeaderboard() {
+            if(!db) return;
+            try {
+                const q = query(collection(db, "clubs"), orderBy("totalXp", "desc"), limit(25));
+                const snapshot = await getDocs(q);
+                
+                const list = document.getElementById('club-leaderboard');
+                list.innerHTML = '';
+                
+                let rank = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    let svgClass = "badge-club-top";
+                    let tooltip = `Top #${rank} Club`;
+                    let borderClass = "border-white/10";
+                    let bgClass = "bg-[#111]";
+
+                    if(rank === 1) {
+                        svgClass = "badge-club-1";
+                        tooltip = "No#1 Club";
+                        borderClass = "border-yellow-500/30";
+                        bgClass = "bg-gradient-to-r from-yellow-900/20 to-[#111]";
+                    }
+
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center ${bgClass} p-3 rounded-xl border ${borderClass}">
+                            <div class="flex items-center gap-3">
+                                <div class="badge-container">
+                                    <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="${svgClass}" /></svg>
+                                    <span class="badge-tooltip">${tooltip}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-6 h-6 rounded-full object-cover">
+                                    <div>
+                                        <p class="text-white font-bold text-sm">${data.name}</p>
+                                        <p class="text-gray-500 font-mono text-[9px]">${data.members.length} Members</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${data.totalXp.toLocaleString()}</div>
+                        </div>
+                    `;
+                    rank++;
+                });
+
+                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4">No clubs have been forged yet.</p>';
+            } catch (err) {
+                console.error("Leaderboard Error:", err);
+            }
+        }
     </script>
 </body>
 </html>
