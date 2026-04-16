@@ -88,8 +88,18 @@
         <defs>
             <linearGradient id="club-gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#a16207"/></linearGradient>
             <linearGradient id="club-silver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="bronze-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
+            <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient>
+            <linearGradient id="fire-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="50%" stop-color="#ef4444"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+            <linearGradient id="king-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient>
         </defs>
         <g id="icon-club"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></g>
+        <g id="icon-shield"><path d="M12 2L3 6v6c0 5.5 4.5 10 9 12 4.5-2 9-6.5 9-12V6l-9-4zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></g>
+        <g id="icon-swords"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M2 22l4-4M6 18l-4-4"/><path d="M4 12c0 4 4 8 8 8s8-4 8-8-4-8-8-8-8 4-8 8z" opacity="0.3"/></g>
+        <g id="icon-crown"><path d="M2 4h20v2H2zM2 8l4 10h12l4-10-6 4-4-6-4 6z"/><circle cx="12" cy="14" r="2"/><circle cx="6" cy="14" r="1.5"/><circle cx="18" cy="14" r="1.5"/></g>
+        <g id="icon-skull"><path d="M12 2C7.58 2 4 5.58 4 10c0 3.1 1.76 5.76 4.36 7.08L8 22h8l-.36-4.92C18.24 15.76 20 13.1 20 10c0-4.42-3.58-8-8-8zm-3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM10 16h4v2h-4v-2z"/></g>
+        <g id="icon-king"><path d="M12 2l3 5h5l-4 4 2 6-6-3-6 3 2-6-4-4h5z"/></g>
     </svg>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
@@ -98,7 +108,7 @@
                 &larr; <span class="font-mono text-sm tracking-widest uppercase">Arcade Hub</span>
             </a>
             
-            <div class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.1)]">
+            <div onclick="openPinModal()" class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.1)] cursor-pointer hover:border-red-500 transition">
                 <div class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(147,51,234,0.8)] animate-pulse"></div>
                 <span class="font-mono text-xs text-purple-300 tracking-widest uppercase">Clubs Online</span>
             </div>
@@ -254,10 +264,12 @@
     <div id="profile-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in">
             <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            
             <div class="flex flex-col items-center mt-4">
                 <img id="pub-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-full border-4 border-gray-600 mb-4 shadow-[0_0_20px_rgba(255,255,255,0.2)] object-cover">
-                <h3 class="text-white font-black text-2xl mb-1" id="pub-name">Player</h3>
+                <h3 class="text-white font-black text-2xl mb-1" id="pub-name">Unknown Player</h3>
                 <p class="text-red-400 font-mono text-[10px] uppercase tracking-widest mb-4" id="pub-title">Operative</p>
+                
                 <div class="flex gap-6 mb-6 w-full justify-center">
                     <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl">
                         <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Level</p>
@@ -268,12 +280,22 @@
                         <p class="text-red-400 font-bold text-xl" id="pub-xp">0</p>
                     </div>
                 </div>
+
                 <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-6 text-center">
                     <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
                         <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
                         <button onclick="openGalleryModal(window.currentViewedUser)" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                     </div>
                     <div class="flex flex-wrap gap-2 justify-center" id="pub-badges"></div>
+                </div>
+
+                <div class="flex gap-3 w-full" id="pub-action-buttons">
+                    <button id="add-friend-btn" onclick="sendFriendRequest()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
+                    </button>
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                        <i data-lucide="swords" class="w-4 h-4"></i> Rival
+                    </button>
                 </div>
             </div>
         </div>
@@ -298,13 +320,55 @@
         </div>
     </div>
 
+    <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+            <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-6 flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Admin Login
+            </h3>
+            <input type="password" id="pin-input" placeholder="Enter PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
+            <div class="flex gap-4">
+                <button onclick="closePinModal()" class="flex-1 px-4 py-3 bg-[#111] border border-white/5 text-gray-300 text-sm font-bold rounded-xl hover:text-white transition-colors">Cancel</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Login</button>
+            </div>
+            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Wrong PIN bro.</p>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-[#030303] hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-pop-in">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Code Generator</h2>
+            <p class="text-gray-400 text-xs font-mono text-center mb-8">Create promotional XP codes for the network.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Promo Code</label>
+                    <input type="text" id="new-code-name" placeholder="e.g. SPYDEY2026" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-bold uppercase">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Reward XP</label>
+                    <input type="number" id="new-code-xp" placeholder="e.g. 5000" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-mono">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Max Uses (Optional)</label>
+                    <input type="number" id="new-code-limit" placeholder="Leave blank for infinite uses" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-mono">
+                </div>
+                
+                <button id="create-code-btn" onclick="generateCode()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)] mt-4">
+                    DEPLOY CODE
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-        // --- THE 50+ BADGE DATABASE (Reused for Unified Profiles) ---
+        // THE 50+ DYNAMIC BADGE DATABASE
         const BADGE_DB = [
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
@@ -383,389 +447,171 @@
 
         lucide.createIcons();
 
-        let db, auth, currentUser = null;
-        let userData = null;
-        let currentClubId = null;
-        let unsubscribeChat = null;
-        let unsubscribeClub = null;
-        window.usersData = [];
+        let db, auth, provider, currentUser = null;
+        let localXP = 0; let localLevel = 1; let userFriends = []; let userRequests = [];
+        window.lastClaimed = null; window.currentViewedUser = null; 
 
-        // TOAST LOGIC
-        window.showToast = function(msg, isError = false) {
-            const toast = document.getElementById('toast-notification');
-            toast.innerText = msg;
-            if(isError) toast.classList.add('error'); else toast.classList.remove('error');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        window.showToast = function(title, desc, sub, iconName) {
+            const toast = document.getElementById('toast-modal');
+            document.getElementById('toast-title').innerText = title || "NOTIFICATION";
+            document.getElementById('toast-desc').innerText = desc || "";
+            document.getElementById('toast-sub').innerText = sub || "";
+            if(iconName) {
+                document.getElementById('toast-modal').querySelector('.w-14').innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6 text-white"></i>`;
+                lucide.createIcons();
+            }
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 4000);
         }
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            loadClubLeaderboard();
-        } catch (error) {
-            console.error("Firebase Error:", error);
-            document.getElementById('auth-status-text').innerText = "System error connecting to server.";
+            provider = new GoogleAuthProvider();
+        } catch (error) { 
+            console.error("Firebase Error:", error); 
         }
 
-        // --- 1. AUTH & CHECK INVITE LINKS ---
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible' && currentUser) {
+                loadUserDB(currentUser.uid, currentUser.displayName, currentUser.photoURL);
+                fetchGlobalLeaderboard();
+            }
+        });
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('auth-status-text').innerText = "Loading your profile...";
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                const joinId = urlParams.get('join');
-                
-                if (joinId) {
-                    await handleInviteLink(joinId, user.uid);
-                } else {
-                    await fetchUserAndClub(user.uid);
-                }
+                document.getElementById('login-prompt').classList.add('hidden');
+                document.getElementById('user-profile').classList.remove('hidden');
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-pfp').src = user.photoURL;
+                await loadUserDB(user.uid, user.displayName, user.photoURL);
+                await fetchGlobalLeaderboard(); // Ensure leaderboard loads after auth
             } else {
                 currentUser = null;
-                document.getElementById('auth-status-text').innerText = "Sign in at the Arcade Hub first.";
+                document.getElementById('login-prompt').classList.remove('hidden');
+                document.getElementById('user-profile').classList.add('hidden');
+                await fetchGlobalLeaderboard();
             }
         });
 
-        async function handleInviteLink(joinId, uid) {
-            document.getElementById('auth-status-text').innerText = "Joining club...";
-            try {
-                // Ensure club exists
-                const cSnap = await getDoc(doc(db, "clubs", joinId));
-                if(!cSnap.exists()) throw new Error("Club not found");
+        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-                await updateDoc(doc(db, "users", uid), { clubId: joinId });
-                await updateDoc(doc(db, "clubs", joinId), { members: arrayUnion(uid) });
-                
-                window.history.replaceState(null, null, window.location.pathname); // Clean URL
-                window.showToast("Joined Syndicate successfully!");
-                await fetchUserAndClub(uid);
-            } catch (err) {
-                console.error("Invite Error:", err);
-                window.showToast("Failed to join. Link invalid.", true);
-                window.history.replaceState(null, null, window.location.pathname);
-                await fetchUserAndClub(uid);
-            }
-        }
-
-        async function fetchUserAndClub(uid) {
-            const userRef = doc(db, "users", uid);
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-                userData = userSnap.data();
-                userData.uid = uid;
-                const xp = userData.totalScore || 0;
-
-                if(userData.clubId) {
-                    currentClubId = userData.clubId;
-                    await loadClubInterface(currentClubId);
-                } else {
-                    // Update UI for No Club
-                    const createBtn = document.getElementById('create-club-btn');
-                    const statusText = document.getElementById('xp-status');
-                    document.getElementById('auth-status-text').innerText = "You are not in a club.";
-
-                    if(xp >= 2500) {
-                        createBtn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all text-sm mb-2 shadow-[0_0_15px_rgba(147,51,234,0.3)] pointer-events-auto";
-                        createBtn.innerHTML = "Forge Syndicate <i data-lucide='zap' class='w-4 h-4 inline ml-1'></i>";
-                        statusText.innerText = "(Unlocked)";
-                        statusText.className = "text-emerald-500 font-bold ml-1";
-                    } else {
-                        statusText.innerText = `(Need ${2500 - xp} more XP)`;
-                    }
-                    lucide.createIcons();
-                }
-            } else {
-                document.getElementById('auth-status-text').innerText = "Profile not found. Play games to initialize.";
-            }
-        }
-
-        // --- 2. CREATE CLUB ---
-        window.openCreateModal = function() {
-            document.getElementById('create-modal').classList.remove('hidden');
-            document.getElementById('create-modal').classList.add('flex');
-        }
-        window.closeCreateModal = function() {
-            document.getElementById('create-modal').classList.add('hidden');
-            document.getElementById('create-modal').classList.remove('flex');
-        }
-
-        document.getElementById('forge-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('forge-submit-btn');
-            btn.innerText = "Creating...";
-            btn.classList.add("opacity-50", "cursor-not-allowed");
-
-            const name = document.getElementById('club-name-input').value;
-            const img = document.getElementById('club-img-input').value || 'https://cdn.discordapp.com/embed/avatars/0.png';
-
-            try {
-                const clubRef = await addDoc(collection(db, "clubs"), {
-                    name: name,
-                    image: img,
-                    ownerUid: currentUser.uid,
-                    members: [currentUser.uid],
-                    mods: [],
-                    totalXp: userData.totalScore || 0,
-                    createdAt: serverTimestamp()
-                });
-
-                await updateDoc(doc(db, "users", currentUser.uid), { clubId: clubRef.id });
-
-                closeCreateModal();
-                currentClubId = clubRef.id;
-                window.showToast("Syndicate Forged!");
-                await loadClubInterface(currentClubId);
-                loadClubLeaderboard();
-
-            } catch(err) {
-                console.error(err);
-                window.showToast("Error creating club.", true);
-                btn.innerText = "Create Club";
-                btn.classList.remove("opacity-50", "cursor-not-allowed");
-            }
-        });
-
-        // --- 3. REAL INVITE LINK ---
-        window.copyInviteLink = function() {
-            if(!currentClubId) return;
-            const link = window.location.origin + window.location.pathname + "?join=" + currentClubId;
-            navigator.clipboard.writeText(link).then(() => {
-                window.showToast("Invite Link Copied to Clipboard!");
-            });
-        }
-
-        // --- 4. LOAD CLUB UI, ROSTER, & CHAT ---
-        async function loadClubInterface(clubId) {
-            document.getElementById('no-club-panel').style.display = 'none';
-            document.getElementById('my-club-panel').style.display = 'block';
-            document.getElementById('chat-lock').style.display = 'none';
-
-            if (unsubscribeClub) unsubscribeClub();
-
-            // Real-time listener for Club Data (Roster updates instantly)
-            unsubscribeClub = onSnapshot(doc(db, "clubs", clubId), async (docSnap) => {
-                if(!docSnap.exists()) {
-                    // Club was deleted or kicked
-                    await updateDoc(doc(db, "users", currentUser.uid), { clubId: null });
-                    location.reload();
-                    return;
-                }
-                
-                const clubData = docSnap.data();
-                
-                // If I was kicked
-                if(!clubData.members.includes(currentUser.uid)) {
-                    await updateDoc(doc(db, "users", currentUser.uid), { clubId: null });
-                    alert("You have been removed from the Syndicate.");
-                    location.reload();
-                    return;
-                }
-
-                document.getElementById('club-name').innerText = clubData.name;
-                document.getElementById('club-img').src = clubData.image;
-                document.getElementById('club-xp').innerText = clubData.totalXp.toLocaleString();
-                document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
-
-                const isOwner = clubData.ownerUid === currentUser.uid;
-                const isMod = clubData.mods && clubData.mods.includes(currentUser.uid);
-                const iHavePower = isOwner || isMod;
-
-                // Render Roster
-                const roster = document.getElementById('roster-list');
-                roster.innerHTML = '';
-                
-                // Fetch actual user data for all members to display properly
-                // Note: In production with 50+ members, query 'users' where 'uid' in array.
-                // For simplicity here, we fetch each one
-                for (const memberUid of clubData.members) {
-                    const uSnap = await getDoc(doc(db, "users", memberUid));
-                    if(uSnap.exists()) {
-                        const uData = uSnap.data();
-                        
-                        const memberIsOwner = memberUid === clubData.ownerUid;
-                        const memberIsMod = clubData.mods && clubData.mods.includes(memberUid);
-                        const memberIsMe = memberUid === currentUser.uid;
-                        
-                        let icon = '👤'; let tag = ''; let border = 'border-white/5';
-                        if(memberIsOwner) { icon = '👑'; tag = '<span class="text-yellow-500 text-[9px] font-mono">OWNER</span>'; border = 'border-yellow-500/30'; }
-                        else if(memberIsMod) { icon = '🛡️'; tag = '<span class="text-purple-400 text-[9px] font-mono">MOD</span>'; border = 'border-purple-500/30'; }
-
-                        // Action Buttons Logic
-                        let actionBtns = '';
-                        if(isOwner && !memberIsOwner) {
-                            if(!memberIsMod) actionBtns += `<button onclick="promoteMod('${memberUid}')" class="text-purple-400 hover:text-white bg-purple-500/10 px-2 py-1 rounded text-[9px] font-bold">MOD</button>`;
-                            else actionBtns += `<button onclick="demoteMod('${memberUid}')" class="text-gray-400 hover:text-white bg-gray-500/10 px-2 py-1 rounded text-[9px] font-bold">DEMOTE</button>`;
-                            actionBtns += `<button onclick="kickMember('${memberUid}')" class="text-red-500 hover:text-white bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold ml-1">KICK</button>`;
-                        } else if(isMod && !memberIsOwner && !memberIsMod) {
-                            actionBtns += `<button onclick="kickMember('${memberUid}')" class="text-red-500 hover:text-white bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold ml-1">KICK</button>`;
-                        }
-
-                        roster.innerHTML += `
-                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group cursor-pointer" onclick="openProfileModal('${memberUid}')">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">${icon}</div>
-                                    <span class="text-white text-xs font-bold">${uData.displayName} ${memberIsMe ? '(You)' : ''}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    ${tag}
-                                    <div class="flex opacity-0 group-hover:opacity-100 transition" onclick="event.stopPropagation()">
-                                        ${actionBtns}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            });
-
-            startChatListener(clubId);
-        }
-
-        // --- 5. ROSTER ACTIONS ---
-        window.leaveClub = async function() {
-            if(!confirm("Are you sure you want to leave the Syndicate?")) return;
-            const clubSnap = await getDoc(doc(db, "clubs", currentClubId));
-            if(clubSnap.data().ownerUid === currentUser.uid) return alert("Owners cannot leave. Transfer ownership or destroy club first.");
-            
-            await updateDoc(doc(db, "clubs", currentClubId), { members: arrayRemove(currentUser.uid), mods: arrayRemove(currentUser.uid) });
-            await updateDoc(doc(db, "users", currentUser.uid), { clubId: null });
-            location.reload();
-        }
-
-        window.kickMember = async function(uid) {
-            if(!confirm("Kick operative from Syndicate?")) return;
-            await updateDoc(doc(db, "clubs", currentClubId), { members: arrayRemove(uid), mods: arrayRemove(uid) });
-            await updateDoc(doc(db, "users", uid), { clubId: null });
-            window.showToast("Operative Kicked.");
-        }
-
-        window.promoteMod = async function(uid) {
-            await updateDoc(doc(db, "clubs", currentClubId), { mods: arrayUnion(uid) });
-            window.showToast("Promoted to Mod.");
-        }
-        
-        window.demoteMod = async function(uid) {
-            await updateDoc(doc(db, "clubs", currentClubId), { mods: arrayRemove(uid) });
-            window.showToast("Demoted to Member.");
-        }
-
-        // --- 6. LIVE CHAT ---
-        function startChatListener(clubId) {
-            if (unsubscribeChat) unsubscribeChat();
-
-            const q = query(collection(db, `clubs/${clubId}/messages`), orderBy("timestamp", "asc"));
-            const chatBox = document.getElementById('chat-box');
-
-            unsubscribeChat = onSnapshot(q, (snapshot) => {
-                chatBox.innerHTML = '';
-                if (snapshot.empty) {
-                    chatBox.innerHTML = `<div class="text-center mt-4 text-gray-600 text-xs font-mono">Comms channel open.</div>`;
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    const msg = doc.data();
-                    const isOwn = msg.uid === currentUser.uid;
-
-                    if(isOwn) {
-                        chatBox.innerHTML += `
-                            <div class="flex flex-col msg-own p-3 rounded-2xl max-w-[80%]">
-                                <span class="text-white font-bold text-[10px] mb-1 text-right flex items-center gap-1 justify-end">${msg.displayName}</span>
-                                <p class="text-sm text-white">${msg.text}</p>
-                            </div>
-                        `;
-                    } else {
-                        chatBox.innerHTML += `
-                            <div class="flex flex-col msg-other p-3 rounded-2xl max-w-[80%]">
-                                <span class="text-purple-400 font-bold text-[10px] mb-1 flex items-center gap-1">${msg.displayName}</span>
-                                <p class="text-sm text-gray-200">${msg.text}</p>
-                            </div>
-                        `;
-                    }
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
-
-        document.getElementById('chat-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if(!currentClubId || !currentUser) return;
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if(!text) return;
-
-            input.value = '';
-            try {
-                await addDoc(collection(db, `clubs/${currentClubId}/messages`), {
-                    uid: currentUser.uid,
-                    displayName: currentUser.displayName,
-                    text: text,
-                    timestamp: serverTimestamp()
-                });
-            } catch(err) { console.error(err); }
-        });
-
-        // --- 7. CLUB LEADERBOARD ---
-        async function loadClubLeaderboard() {
+        async function loadUserDB(uid, name, photo) {
             if(!db) return;
-            try {
-                const q = query(collection(db, "clubs"), orderBy("totalXp", "desc"), limit(25));
-                const snapshot = await getDocs(q);
+            const docRef = doc(db, "users", uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.totalScore > localXP && localXP !== 0) {
+                    window.showToast("GAME SYNC COMPLETE", `+${data.totalScore - localXP} XP Earned`, "Database updated.", "zap");
+                }
+                localXP = data.totalScore || 0;
+                localLevel = Math.floor(localXP / 500) + 1;
+                window.lastClaimed = data.lastClaimed || null;
+                userFriends = data.friends || [];
+                userRequests = data.requests || [];
                 
-                const list = document.getElementById('club-leaderboard');
-                list.innerHTML = '';
-                
-                let rank = 1;
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    
-                    let svgClass = "badge-club-top";
-                    let tooltip = `Top #${rank} Club`;
-                    let borderClass = "border-white/10";
-                    let bgClass = "bg-[#111]";
-
-                    if(rank === 1) {
-                        svgClass = "badge-club-1"; tooltip = "No#1 Club"; borderClass = "border-yellow-500/30"; bgClass = "bg-gradient-to-r from-yellow-900/20 to-[#111]";
-                    }
-
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center ${bgClass} p-3 rounded-xl border ${borderClass} mb-2 cursor-pointer hover:border-purple-500/50 transition">
-                            <div class="flex items-center gap-3">
-                                <div class="badge-container">
-                                    <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="${svgClass}" /></svg>
-                                    <span class="badge-tooltip">${tooltip}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-6 h-6 rounded-full object-cover border border-white/20">
-                                    <div>
-                                        <p class="text-white font-bold text-sm">${data.name}</p>
-                                        <p class="text-gray-500 font-mono text-[9px]">${data.members ? data.members.length : 1} Members</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${(data.totalXp || 0).toLocaleString()} XP</div>
-                        </div>
-                    `;
-                    rank++;
-                });
-
-                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4 font-mono">No syndicates forged.</p>';
-            } catch (err) { console.error(err); }
+                if (localLevel !== data.level) await updateDoc(docRef, { level: localLevel });
+            } else {
+                localXP = 0; localLevel = 1; window.lastClaimed = null; userFriends = []; userRequests = [];
+                await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1, lastClaimed: null, friends: [], requests: [] });
+            }
+            updateProfileUI(uid);
         }
 
-        // --- 8. SHARED PROFILES (Clean UI) ---
-        function getUserBadges(uid, userDataObj) {
-            const rank = userDataObj?.currentRank || 999;
-            const xp = userDataObj?.totalScore || 0;
-            const lvl = userDataObj?.level || 1;
-            const friends = userDataObj?.friends?.length || 0;
-            const inClub = !!userDataObj?.clubId;
+        window.claimDailyXP = async function() {
+            if(!currentUser || !db) return;
+            const today = new Date().toDateString(); 
+            
+            // PATCHED: Proper cool-down check
+            if (window.lastClaimed === today) {
+                window.showToast("ACCESS DENIED", "Cooldown Active", "Return tomorrow for more XP.", "clock");
+                return;
+            }
+            
+            const oldLevel = localLevel; 
+            localXP += 250; 
+            localLevel = Math.floor(localXP / 500) + 1; 
+            window.lastClaimed = today; 
 
-            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, inClub: inClub, ownsClub: false };
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
+                updateProfileUI(currentUser.uid); 
+                fetchGlobalLeaderboard();
+
+                if(localLevel > oldLevel) window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding.", "chevron-up");
+                else window.showToast("MISSION COMPLETE", "+250 XP", "Sync successful.", "zap");
+            } catch (err) {
+                console.error(err);
+                window.showToast("SYNC FAILED", "Database write blocked.", "Check Firebase Rules.", "x-circle");
+            }
+        }
+
+        window.submitRedeemCode = async function() {
+            if(!currentUser || !db) return;
+            const codeInput = document.getElementById('redeem-input');
+            const codeStr = codeInput.value.trim().toUpperCase();
+            if(!codeStr) return;
+            
+            codeInput.value = "VERIFYING...";
+            codeInput.disabled = true;
+
+            try {
+                const codeRef = doc(db, "redeem_codes", codeStr);
+                const codeSnap = await getDoc(codeRef);
+
+                if(!codeSnap.exists()) {
+                    window.showToast("INVALID CODE", "Code not found in database.", "", "x-circle");
+                } else {
+                    const data = codeSnap.data();
+                    if(data.usedBy && data.usedBy.includes(currentUser.uid)) {
+                        window.showToast("CODE ALREADY USED", "You have already claimed this.", "", "alert-triangle");
+                    } else if (data.limit !== -1 && data.usedBy && data.usedBy.length >= data.limit) {
+                        window.showToast("CODE EXPIRED", "Usage limit reached.", "", "clock");
+                    } else {
+                        await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
+                        
+                        const oldLevel = localLevel;
+                        localXP += data.rewardXp;
+                        localLevel = Math.floor(localXP / 500) + 1;
+                        
+                        await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
+                        
+                        // PATCHED: Update UI with new localXP so badges trigger instantly
+                        updateProfileUI(currentUser.uid);
+                        fetchGlobalLeaderboard();
+
+                        if(localLevel > oldLevel) {
+                            window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, `+${data.rewardXp} XP Applied.`, "chevron-up");
+                        } else {
+                            window.showToast("CODE REDEEMED", `+${data.rewardXp} XP Added`, "Syndicate balance updated.", "zap");
+                        }
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+                window.showToast("ERROR", "Database connection failed.", "", "x-circle");
+            }
+            
+            codeInput.value = "";
+            codeInput.disabled = false;
+        }
+
+        // PATCHED: Check badges using live local data for the current user
+        function getUserBadges(uid) {
+            const uData = window.usersData?.find(u => u.uid === uid);
+            const rank = uData ? uData.currentRank : 999;
+            
+            const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
+            const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
+            const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
+
+            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, inClub: false, ownsClub: false };
             let unlocked = [];
             BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
             const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
@@ -773,40 +619,232 @@
             return unlocked;
         }
 
-        function renderBadgeHTML(badge, isUnlocked) {
-            const stateClass = isUnlocked ? `tier-${badge.tier}` : 'tier-locked';
-            return `
-                <div class="badge-box w-12 h-12 rounded-2xl ${stateClass}">
-                    <i data-lucide="${badge.icon}" class="w-6 h-6"></i>
-                    <div class="badge-tooltip">
-                        <p class="font-black text-xs text-white">${badge.name}</p>
-                        <p class="text-[9px] text-gray-400">${badge.desc}</p>
-                    </div>
-                </div>
-            `;
+        function updateProfileUI(uid) {
+            document.getElementById('total-points').innerText = localXP;
+            document.getElementById('user-level').innerText = `LVL ${localLevel}`;
+            document.getElementById('friend-count-header').innerText = `(${userFriends.length})`;
+
+            let title = "Novice Coder";
+            if(localXP >= 1000) title = "S-Rank Hunter"; 
+            if(localXP >= 5000) title = "Special Grade Dev"; 
+            document.getElementById('user-title').innerText = title;
+
+            const unlocked = getUserBadges(currentUser.uid);
+            const badgeContainer = document.getElementById('badge-container');
+            badgeContainer.innerHTML = '';
+            
+            if(unlocked.length === 0) {
+                badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet. Grind games!</p>`;
+            } else {
+                const top8 = unlocked.slice(0, 8);
+                top8.forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
+            }
+
+            renderFriendRequests();
+
+            const btn = document.getElementById('claim-xp-btn');
+            if(window.lastClaimed === new Date().toDateString()) {
+                btn.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Network Sync Complete`;
+                btn.className = "w-full bg-[#111] border border-gray-800 text-gray-500 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 opacity-50 cursor-not-allowed";
+            } else {
+                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> Claim Daily XP (+250)`;
+                btn.className = "w-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 hover:text-black text-red-400 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 shadow-[0_0_10px_rgba(239,68,68,0.2)] cursor-pointer";
+            }
+            lucide.createIcons();
+            updateMissions();
+        }
+
+        async function renderFriendRequests() {
+            const reqContainer = document.getElementById('friend-requests-container');
+            const reqList = document.getElementById('friend-requests-list');
+            
+            if (!userRequests || userRequests.length === 0) { reqContainer.classList.add('hidden'); return; }
+            
+            reqContainer.classList.remove('hidden');
+            reqList.innerHTML = '<div class="text-center text-xs text-gray-500 py-2">Loading requests...</div>';
+
+            let htmlString = '';
+            for (const reqUid of userRequests) {
+                const uSnap = await getDoc(doc(db, "users", reqUid));
+                if (uSnap.exists()) {
+                    const uData = uSnap.data();
+                    htmlString += `
+                        <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/10 shadow-lg">
+                            <div class="flex items-center gap-3">
+                                <img src="${uData.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
+                                <span class="text-white text-xs font-bold truncate max-w-[100px]">${uData.displayName}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="acceptFriend('${reqUid}')" class="bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black border border-emerald-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition shadow-[0_0_10px_rgba(16,185,129,0.2)]">Accept</button>
+                                <button onclick="rejectFriend('${reqUid}')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition">Decline</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            reqList.innerHTML = htmlString;
+        }
+
+        window.sendFriendRequest = async function() {
+            if(!currentUser) return;
+            const targetUid = window.currentViewedUser;
+            if(!targetUid || targetUid === currentUser.uid) return;
+
+            const btn = document.getElementById('add-friend-btn');
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>`;
+
+            try {
+                await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
+                btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
+                lucide.createIcons();
+            } catch(e) { console.error(e); btn.innerHTML = `Error`; }
+        }
+
+        window.acceptFriend = async function(reqUid) {
+            if(!currentUser || !db) return;
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
+                await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
+                userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI(); 
+            } catch(e) { console.error(e); }
+        }
+
+        window.rejectFriend = async function(reqUid) {
+            if(!currentUser || !db) return;
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
+                userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI();
+            } catch(e) { console.error(e); }
+        }
+
+        function updateMissions() {
+            const m1Pct = Math.min((localXP / 5000) * 100, 100);
+            document.getElementById('mission-1-bar').style.width = `${m1Pct}%`;
+            document.getElementById('mission-1-text').innerText = `${localXP} / 5000`;
+            if(m1Pct === 100) document.getElementById('mission-1-text').innerText = "COMPLETED";
+
+            const m2Pct = Math.min((localLevel / 5) * 100, 100);
+            document.getElementById('mission-2-bar').style.width = `${m2Pct}%`;
+            document.getElementById('mission-2-text').innerText = `Lvl ${localLevel} / 5`;
+            if(m2Pct === 100) document.getElementById('mission-2-text').innerText = "COMPLETED";
+        }
+
+        // --- PATCHED: GLOBAL LEADERBOARD (FETCHES ALL USERS) ---
+        window.usersData = []; 
+
+        async function fetchGlobalLeaderboard() {
+            if(!db) return;
+            try {
+                const snapshot = await getDocs(collection(db, "users"));
+                let allUsers = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.uid = doc.id;
+                    data.totalScore = data.totalScore || 0; 
+                    allUsers.push(data);
+                });
+
+                allUsers.sort((a, b) => b.totalScore - a.totalScore);
+                window.usersData = allUsers.slice(0, 25);
+                
+                const list = document.getElementById('community-list');
+                list.innerHTML = '';
+                
+                let rank = 1;
+                window.usersData.forEach(data => {
+                    data.currentRank = rank; 
+                    
+                    let rankBadge = `<div class="text-gray-500 font-bold text-sm w-4">#${rank}</div>`;
+                    if(rank === 1) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]">👑</div>`;
+                    if(rank === 2) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(156,163,175,0.8)]">🥈</div>`;
+                    if(rank === 3) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(180,83,9,0.8)]">🥉</div>`;
+
+                    if(rank === 1) { window.topWeeklyUid = data.uid; document.getElementById('weekly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('weekly-pfp').src = data.photoURL; }
+                    if(rank === 2) { window.topMonthlyUid = data.uid; document.getElementById('monthly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('monthly-pfp').src = data.photoURL; }
+
+                    list.innerHTML += `
+                        <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-red-500/50 transition cursor-pointer group">
+                            <div class="flex items-center gap-3">
+                                ${rankBadge}
+                                <div class="relative">
+                                    <img src="${data.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-10 h-10 rounded-full border border-white/10 group-hover:border-red-500 transition object-cover">
+                                    <div class="absolute -bottom-1 -right-1 bg-gray-800 text-white text-[9px] font-bold px-1 rounded border border-gray-600">L${data.level || 1}</div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="text-gray-300 font-bold text-sm group-hover:text-white transition truncate max-w-[120px]">${data.displayName}</p>
+                                    <p class="text-red-500 font-mono text-[10px] opacity-0 group-hover:opacity-100 transition">View Profile &rarr;</p>
+                                </div>
+                            </div>
+                            <div class="text-white font-black">${data.totalScore}</div>
+                        </div>
+                    `;
+                    rank++;
+                });
+
+                if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
+            } catch (error) { 
+                console.error("Leaderboard Error:", error); 
+                document.getElementById('community-list').innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
+            }
         }
 
         window.openProfileModal = async function(uid) {
             if(!uid) return;
-            const uSnap = await getDoc(doc(db, "users", uid));
-            if(!uSnap.exists()) return;
-            const user = uSnap.data();
-            user.uid = uid;
+            if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
+            window.currentViewedUser = uid;
+
+            let user = window.usersData.find(u => u.uid === uid);
+            if (!user) {
+                const uSnap = await getDoc(doc(db, "users", uid));
+                if (uSnap.exists()) { user = uSnap.data(); user.uid = uid; user.currentRank = 999; } 
+                else return alert("User profile corrupted or deleted.");
+            }
             
             document.getElementById('pub-name').innerText = user.displayName;
             document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
             document.getElementById('pub-lvl').innerText = user.level || 1;
             document.getElementById('pub-xp').innerText = (user.totalScore || 0).toLocaleString();
 
+            let title = "Operative";
+            if(user.totalScore >= 1000) title = "S-Rank Hunter";
+            if(user.totalScore >= 5000) title = "Special Grade";
+            document.getElementById('pub-title').innerText = title;
+
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
             
-            const unlocked = getUserBadges(uid, user);
+            const unlocked = getUserBadges(uid);
             if(unlocked.length === 0) {
                 pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`;
             } else {
                 const top6 = unlocked.slice(0, 6);
                 top6.forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true));
+            }
+
+            const fBtn = document.getElementById('add-friend-btn');
+            const rBtn = document.getElementById('add-rival-btn');
+            
+            if(userFriends.includes(uid)) {
+                fBtn.innerHTML = `<i data-lucide="users" class="w-4 h-4"></i> Friends`;
+                fBtn.className = "flex-1 bg-gray-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-default";
+                fBtn.onclick = null;
+            } else {
+                fBtn.innerHTML = `<i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend`;
+                fBtn.className = "flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2";
+                fBtn.onclick = window.sendFriendRequest;
+            }
+            
+            rBtn.innerHTML = `<i data-lucide="swords" class="w-4 h-4"></i> Rival`;
+            rBtn.className = "flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]";
+
+            if(currentUser && uid === currentUser.uid) {
+                document.getElementById('pub-action-buttons').style.display = 'none';
+            } else {
+                document.getElementById('pub-action-buttons').style.display = 'flex';
             }
 
             lucide.createIcons();
@@ -817,6 +855,120 @@
         window.closeProfileModal = function() {
             document.getElementById('profile-modal').classList.add('hidden');
             document.getElementById('profile-modal').classList.remove('flex');
+            window.currentViewedUser = null;
+        }
+
+        window.openGalleryModal = function(uid) {
+            const targetUid = uid || (currentUser ? currentUser.uid : null);
+            if(!targetUid) return;
+
+            let user = window.usersData.find(u => u.uid === targetUid);
+            if(!user && targetUid === currentUser.uid) user = { displayName: currentUser.displayName };
+            
+            document.getElementById('gallery-owner-name').innerText = `${user.displayName}'s Arsenal`;
+            
+            const unlockedBadges = getUserBadges(targetUid);
+            const unlockedIds = unlockedBadges.map(b => b.id);
+            
+            document.getElementById('gallery-unlocked-count').innerText = unlockedBadges.length;
+
+            const categories = ['Experience', 'Progression', 'Ranked', 'Social', 'Games'];
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            categories.forEach(cat => {
+                const catBadges = BADGE_DB.filter(b => b.cat === cat);
+                let html = `
+                    <div>
+                        <h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">${cat}</h3>
+                        <div class="flex flex-wrap gap-4">
+                `;
+                catBadges.forEach(b => {
+                    const hasBadge = unlockedIds.includes(b.id);
+                    html += renderBadgeHTML(b, hasBadge);
+                });
+                html += `</div></div>`;
+                grid.innerHTML += html;
+            });
+
+            lucide.createIcons();
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            document.getElementById('gallery-modal').classList.remove('hidden');
+            document.getElementById('gallery-modal').classList.add('flex');
+        }
+        window.closeGalleryModal = function() {
+            document.getElementById('gallery-modal').classList.add('hidden');
+            document.getElementById('gallery-modal').classList.remove('flex');
+            if(window.currentViewedUser) window.openProfileModal(window.currentViewedUser);
+            else window.openProfileModal('self');
+        }
+
+        window.markRival = function() {
+            if(!currentUser) return alert("You must login to select rivals.");
+            const btn = document.getElementById('add-rival-btn');
+            btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i> Tracked`;
+            btn.className = "flex-1 bg-red-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-colors text-sm flex items-center justify-center gap-2";
+            lucide.createIcons();
+            window.showToast("RIVAL DECLARED", "System Tracking Initiated", "You will be notified of their scores.", "crosshair");
+        }
+
+        // --- SECRET ADMIN: REDEEM CODES ---
+        window.openPinModal = function() {
+            document.getElementById('pin-modal').classList.remove('hidden');
+            document.getElementById('pin-modal').classList.add('flex');
+            document.getElementById('pin-input').value = '';
+            document.getElementById('pin-error').classList.add('hidden');
+        }
+        window.closePinModal = function() {
+            document.getElementById('pin-modal').classList.add('hidden');
+            document.getElementById('pin-modal').classList.remove('flex');
+        }
+        window.verifyPin = function() {
+            if(document.getElementById('pin-input').value === "23455432") {
+                closePinModal();
+                document.getElementById('admin-modal').classList.remove('hidden');
+                document.getElementById('admin-modal').classList.add('flex');
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+        window.closeAdminModal = function() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-modal').classList.remove('flex');
+        }
+
+        window.generateCode = async function() {
+            if(!db || !currentUser) return alert("Admin not verified in DB.");
+            const name = document.getElementById('new-code-name').value.trim().toUpperCase();
+            const xp = parseInt(document.getElementById('new-code-xp').value);
+            const limitVal = document.getElementById('new-code-limit').value;
+            const limit = limitVal ? parseInt(limitVal) : -1; 
+
+            if(!name || !xp) return alert("Code Name and XP required!");
+
+            const btn = document.getElementById('create-code-btn');
+            btn.innerText = "GENERATING PROTOCOL...";
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, "redeem_codes", name), {
+                    rewardXp: xp,
+                    limit: limit,
+                    usedBy: [],
+                    createdBy: currentUser.uid,
+                    createdAt: serverTimestamp()
+                });
+                window.showToast("CODE GENERATED", `Code: ${name}`, `Reward: ${xp} XP`, "check-circle");
+                document.getElementById('new-code-name').value = '';
+                document.getElementById('new-code-xp').value = '';
+                document.getElementById('new-code-limit').value = '';
+            } catch(e) {
+                console.error(e);
+                window.showToast("ERROR", "Code generation failed.", "", "x-circle");
+            }
+            btn.innerText = "DEPLOY CODE";
+            btn.disabled = false;
         }
     </script>
 </body>
