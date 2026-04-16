@@ -1056,4 +1056,11 @@
                 document.getElementById('new-code-limit').value = '';
             } catch(e) {
                 console.error(e);
-                window
+                window.showToast("ERROR", "Code generation failed.", "Check Firebase Permissions.", "x-circle");
+            }
+            btn.innerText = "DEPLOY CODE";
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
