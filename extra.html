@@ -445,7 +445,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // THE 50+ DYNAMIC BADGE DATABASE
@@ -672,8 +672,8 @@
                     }
                 }
             } catch(e) {
-                console.error(e);
-                window.showToast("ERROR", "Database connection failed.", "Check Firebase Permissions.", "x-circle");
+                console.error("Redeem Code Error:", e);
+                window.showToast("ERROR", "Database connection failed.", "", "x-circle");
             }
             
             codeInput.value = "";
@@ -804,15 +804,9 @@
             const m1Text = document.getElementById('mission-1-text');
             if (m1Bar) m1Bar.style.width = `${m1Pct}%`;
             if (m1Text) m1Text.innerText = m1Pct === 100 ? "COMPLETED" : `${localXP} / 5000`;
-
-            const m2Pct = Math.min((localLevel / 5) * 100, 100);
-            const m2Bar = document.getElementById('mission-2-bar');
-            const m2Text = document.getElementById('mission-2-text');
-            if (m2Bar) m2Bar.style.width = `${m2Pct}%`;
-            if (m2Text) m2Text.innerText = m2Pct === 100 ? "COMPLETED" : `Lvl ${localLevel} / 5`;
         }
 
-        // --- GLOBAL LEADERBOARD ---
+        // --- PATCHED: ROBUST GLOBAL LEADERBOARD NULL CHECKS ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
@@ -851,8 +845,14 @@
                     if(rank === 2) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(156,163,175,0.8)]">🥈</div>`;
                     if(rank === 3) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(180,83,9,0.8)]">🥉</div>`;
 
-                    if(rank === 1) { window.topWeeklyUid = data.uid; document.getElementById('weekly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('weekly-pfp').src = data.photoURL; }
-                    if(rank === 2) { window.topMonthlyUid = data.uid; document.getElementById('monthly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('monthly-pfp').src = data.photoURL; }
+                    // DOM Safety Checks
+                    if(rank === 1) { 
+                        window.topWeeklyUid = data.uid; 
+                        const wName = document.getElementById('weekly-name');
+                        const wPfp = document.getElementById('weekly-pfp');
+                        if(wName) wName.innerText = data.displayName; 
+                        if(data.photoURL && wPfp) wPfp.src = data.photoURL; 
+                    }
 
                     list.innerHTML += `
                         <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-red-500/50 transition cursor-pointer group">
@@ -1056,11 +1056,4 @@
                 document.getElementById('new-code-limit').value = '';
             } catch(e) {
                 console.error(e);
-                window.showToast("ERROR", "Code generation failed.", "Check Firebase Permissions.", "x-circle");
-            }
-            btn.innerText = "DEPLOY CODE";
-            btn.disabled = false;
-        }
-    </script>
-</body>
-</html>
+                window
