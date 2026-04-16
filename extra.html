@@ -73,7 +73,7 @@
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <a href="index.html" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-red-400 transition">
+                <a href="javascript:void(0)" onclick="openPinModal()" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-red-400 transition">
                     &larr; <span class="font-mono text-sm tracking-widest uppercase">Return to OS</span>
                 </a>
                 <div class="hidden md:block h-6 w-px bg-white/10"></div>
@@ -120,6 +120,11 @@
                         <div class="w-full bg-[#111] rounded-xl p-3 border border-white/5 mb-4 flex justify-between items-center">
                             <span class="text-gray-500 text-xs font-mono uppercase">Total XP</span>
                             <span id="total-points" class="text-red-400 font-black text-lg">0</span>
+                        </div>
+
+                        <div class="w-full mb-4 flex gap-2">
+                            <input type="text" id="redeem-input" placeholder="ENTER PROMO CODE" class="flex-grow bg-[#111] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-red-500 font-mono text-xs uppercase tracking-widest text-center">
+                            <button onclick="submitRedeemCode()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl font-bold transition shadow-[0_0_10px_rgba(239,68,68,0.3)] text-xs">REDEEM</button>
                         </div>
                         
                         <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-4">
@@ -341,7 +346,7 @@
                     <button id="add-friend-btn" onclick="sendFriendRequest()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
                     </button>
-                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
                         <i data-lucide="swords" class="w-4 h-4"></i> Rival
                     </button>
                 </div>
@@ -368,14 +373,56 @@
         </div>
     </div>
 
+    <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+            <h3 class="text-white font-mono text-sm tracking-widest uppercase mb-6 flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div> Admin Login
+            </h3>
+            <input type="password" id="pin-input" placeholder="Enter PIN" class="w-full bg-[#050505] border border-white/10 text-white font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 mb-6">
+            <div class="flex gap-4">
+                <button onclick="closePinModal()" class="flex-1 px-4 py-3 bg-[#111] border border-white/5 text-gray-300 text-sm font-bold rounded-xl hover:text-white transition-colors">Cancel</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-lg">Login</button>
+            </div>
+            <p id="pin-error" class="text-red-500 text-xs font-mono mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">Wrong PIN bro.</p>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-[#030303] hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-pop-in">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Code Generator</h2>
+            <p class="text-gray-400 text-xs font-mono text-center mb-8">Create promotional XP codes for the network.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Promo Code</label>
+                    <input type="text" id="new-code-name" placeholder="e.g. SPYDEY2026" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-bold uppercase">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Reward XP</label>
+                    <input type="number" id="new-code-xp" placeholder="e.g. 5000" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-mono">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Max Uses (Optional)</label>
+                    <input type="number" id="new-code-limit" placeholder="Leave blank for infinite uses" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 font-mono">
+                </div>
+                
+                <button id="create-code-btn" onclick="generateCode()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)] mt-4">
+                    DEPLOY CODE
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // THE 50+ DYNAMIC BADGE DATABASE
         const BADGE_DB = [
-            // XP MILESTONES
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
             { id: 'xp_3', name: 'Veteran', desc: 'Earn 5,000 XP', icon: 'shield', tier: 'gold', check: (u) => u.xp >= 5000, cat: 'Experience' },
@@ -386,8 +433,6 @@
             { id: 'xp_8', name: 'Domain Expanded', desc: 'Earn 250,000 XP', icon: 'skull', tier: 'mythic', check: (u) => u.xp >= 250000, cat: 'Experience' },
             { id: 'xp_9', name: 'Demi-God', desc: 'Earn 500,000 XP', icon: 'ghost', tier: 'mythic', check: (u) => u.xp >= 500000, cat: 'Experience' },
             { id: 'xp_10', name: 'Server Deity', desc: 'Earn 1,000,000 XP', icon: 'sun', tier: 'mythic', check: (u) => u.xp >= 1000000, cat: 'Experience' },
-            
-            // LEVELS
             { id: 'lvl_1', name: 'Level 5', desc: 'Reach Level 5', icon: 'chevron-up', tier: 'bronze', check: (u) => u.level >= 5, cat: 'Progression' },
             { id: 'lvl_2', name: 'Level 10', desc: 'Reach Level 10', icon: 'chevrons-up', tier: 'silver', check: (u) => u.level >= 10, cat: 'Progression' },
             { id: 'lvl_3', name: 'Level 20', desc: 'Reach Level 20', icon: 'trending-up', tier: 'silver', check: (u) => u.level >= 20, cat: 'Progression' },
@@ -398,8 +443,6 @@
             { id: 'lvl_8', name: 'Level 70', desc: 'Reach Level 70', icon: 'crosshair', tier: 'diamond', check: (u) => u.level >= 70, cat: 'Progression' },
             { id: 'lvl_9', name: 'Level 80', desc: 'Reach Level 80', icon: 'swords', tier: 'mythic', check: (u) => u.level >= 80, cat: 'Progression' },
             { id: 'lvl_10', name: 'Level 100', desc: 'Reach Level 100 MAX', icon: 'infinity', tier: 'mythic', check: (u) => u.level >= 100, cat: 'Progression' },
-
-            // SOCIAL & CLUBS
             { id: 'soc_1', name: 'Social', desc: 'Add 1 Friend', icon: 'user-plus', tier: 'bronze', check: (u) => u.friends >= 1, cat: 'Social' },
             { id: 'soc_2', name: 'Crew', desc: 'Add 5 Friends', icon: 'users', tier: 'silver', check: (u) => u.friends >= 5, cat: 'Social' },
             { id: 'soc_3', name: 'Popular', desc: 'Add 10 Friends', icon: 'heart', tier: 'gold', check: (u) => u.friends >= 10, cat: 'Social' },
@@ -407,11 +450,9 @@
             { id: 'soc_5', name: 'Network Hub', desc: 'Add 50 Friends', icon: 'globe', tier: 'mythic', check: (u) => u.friends >= 50, cat: 'Social' },
             { id: 'soc_6', name: 'Recruit', desc: 'Join a Club', icon: 'shield-check', tier: 'bronze', check: (u) => u.inClub, cat: 'Social' },
             { id: 'soc_7', name: 'Syndicate Leader', desc: 'Own a Club', icon: 'building', tier: 'gold', check: (u) => u.ownsClub, cat: 'Social' },
-            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.friends > 0, cat: 'Social' },
+            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.friends > 0, cat: 'Social' }, 
             { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.friends > 5, cat: 'Social' },
             { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.friends > 10, cat: 'Social' },
-
-            // LEADERBOARD RANKS 
             { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
             { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
             { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
@@ -422,8 +463,6 @@
             { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
             { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
             { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
-
-            // GAMES
             { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
             { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
             { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
@@ -521,9 +560,6 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (data.totalScore > localXP && localXP !== 0) {
-                    window.showToast("GAME SYNC COMPLETE", `+${data.totalScore - localXP} XP Earned`, "Database updated.", "zap");
-                }
                 localXP = data.totalScore || 0;
                 localLevel = Math.floor(localXP / 500) + 1;
                 window.lastClaimed = data.lastClaimed || null;
@@ -553,6 +589,56 @@
             else window.showToast("MISSION COMPLETE", "+250 XP", "Sync successful.", "zap");
         }
 
+        // --- REDEEM CODE SYSTEM ---
+        window.submitRedeemCode = async function() {
+            if(!currentUser || !db) return;
+            const codeInput = document.getElementById('redeem-input');
+            const codeStr = codeInput.value.trim().toUpperCase();
+            if(!codeStr) return;
+            
+            codeInput.value = "VERIFYING...";
+            codeInput.disabled = true;
+
+            try {
+                const codeRef = doc(db, "redeem_codes", codeStr);
+                const codeSnap = await getDoc(codeRef);
+
+                if(!codeSnap.exists()) {
+                    window.showToast("INVALID CODE", "Code not found in database.", "", "x-circle");
+                } else {
+                    const data = codeSnap.data();
+                    if(data.usedBy && data.usedBy.includes(currentUser.uid)) {
+                        window.showToast("CODE ALREADY USED", "You have already claimed this.", "", "alert-triangle");
+                    } else if (data.limit !== -1 && data.usedBy && data.usedBy.length >= data.limit) {
+                        window.showToast("CODE EXPIRED", "Usage limit reached.", "", "clock");
+                    } else {
+                        await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
+                        
+                        const oldLevel = localLevel;
+                        localXP += data.rewardXp;
+                        localLevel = Math.floor(localXP / 500) + 1;
+                        
+                        await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
+                        
+                        updateProfileUI(currentUser.uid);
+                        fetchGlobalLeaderboard();
+
+                        if(localLevel > oldLevel) {
+                            window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, `+${data.rewardXp} XP Applied.`, "chevron-up");
+                        } else {
+                            window.showToast("CODE REDEEMED", `+${data.rewardXp} XP Added`, "Syndicate balance updated.", "zap");
+                        }
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+                window.showToast("ERROR", "Database connection failed.", "", "x-circle");
+            }
+            
+            codeInput.value = "";
+            codeInput.disabled = false;
+        }
+
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
@@ -561,7 +647,6 @@
             const friends = uData?.friends?.length || (uid === currentUser?.uid ? userFriends.length : 0);
 
             const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, inClub: false, ownsClub: false };
-            
             let unlocked = [];
             BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
             const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
@@ -604,7 +689,7 @@
             updateMissions();
         }
 
-        // --- FLAWLESS FRIEND REQUEST ENGINE ---
+        // --- FRIEND REQUEST SYSTEM ---
         async function renderFriendRequests() {
             const reqContainer = document.getElementById('friend-requests-container');
             const reqList = document.getElementById('friend-requests-list');
@@ -642,33 +727,26 @@
             if(!targetUid || targetUid === currentUser.uid) return;
 
             const btn = document.getElementById('add-friend-btn');
-            btn.innerHTML = `<div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>`;
+            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
+            btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
+            lucide.createIcons();
 
-            try {
-                await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
-                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
-                btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
-                lucide.createIcons();
-            } catch(e) { console.error(e); btn.innerHTML = `Error`; }
+            await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
         }
 
         window.acceptFriend = async function(reqUid) {
             if(!currentUser || !db) return;
-            try {
-                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
-                await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
-                userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
-                updateProfileUI(); 
-            } catch(e) { console.error(e); }
+            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
+            await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
+            userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
+            updateProfileUI(); 
         }
 
         window.rejectFriend = async function(reqUid) {
             if(!currentUser || !db) return;
-            try {
-                await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
-                userRequests = userRequests.filter(id => id !== reqUid);
-                updateProfileUI();
-            } catch(e) { console.error(e); }
+            await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
+            userRequests = userRequests.filter(id => id !== reqUid);
+            updateProfileUI();
         }
 
         function updateMissions() {
@@ -683,27 +761,24 @@
             if(m2Pct === 100) document.getElementById('mission-2-text').innerText = "COMPLETED";
         }
 
-        // --- GLOBAL LEADERBOARD (CLIENT-SIDE SORT FIX) ---
+        // --- GLOBAL LEADERBOARD FIX ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
             if(!db) return;
             try {
-                // Fetch ALL users to bypass Firebase's strict orderBy filter
+                // Fetch ALL to bypass missing 'totalScore' fields hiding users
                 const snapshot = await getDocs(collection(db, "users"));
                 let allUsers = [];
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     data.uid = doc.id;
-                    data.totalScore = data.totalScore || 0; // Default missing scores to 0
+                    data.totalScore = data.totalScore || 0; 
                     allUsers.push(data);
                 });
 
-                // Sort clientside safely
                 allUsers.sort((a, b) => b.totalScore - a.totalScore);
-                
-                // Keep only top 25 for UI
                 window.usersData = allUsers.slice(0, 25);
                 
                 const list = document.getElementById('community-list');
@@ -717,6 +792,9 @@
                     if(rank === 1) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]">👑</div>`;
                     if(rank === 2) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(156,163,175,0.8)]">🥈</div>`;
                     if(rank === 3) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(180,83,9,0.8)]">🥉</div>`;
+
+                    if(rank === 1) { window.topWeeklyUid = data.uid; document.getElementById('weekly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('weekly-pfp').src = data.photoURL; }
+                    if(rank === 2) { window.topMonthlyUid = data.uid; document.getElementById('monthly-name').innerText = data.displayName; if(data.photoURL) document.getElementById('monthly-pfp').src = data.photoURL; }
 
                     list.innerHTML += `
                         <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-red-500/50 transition cursor-pointer group">
@@ -760,6 +838,11 @@
             document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
             document.getElementById('pub-lvl').innerText = user.level || 1;
             document.getElementById('pub-xp').innerText = (user.totalScore || 0).toLocaleString();
+
+            let title = "Operative";
+            if(user.totalScore >= 1000) title = "S-Rank Hunter";
+            if(user.totalScore >= 5000) title = "Special Grade";
+            document.getElementById('pub-title').innerText = title;
 
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
@@ -858,6 +941,64 @@
             btn.className = "flex-1 bg-red-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-colors text-sm flex items-center justify-center gap-2";
             lucide.createIcons();
             window.showToast("RIVAL DECLARED", "System Tracking Initiated", "You will be notified of their scores.", "crosshair");
+        }
+
+        // --- SECRET ADMIN: REDEEM CODES ---
+        window.openPinModal = function() {
+            document.getElementById('pin-modal').classList.remove('hidden');
+            document.getElementById('pin-modal').classList.add('flex');
+            document.getElementById('pin-input').value = '';
+            document.getElementById('pin-error').classList.add('hidden');
+        }
+        window.closePinModal = function() {
+            document.getElementById('pin-modal').classList.add('hidden');
+            document.getElementById('pin-modal').classList.remove('flex');
+        }
+        window.verifyPin = function() {
+            if(document.getElementById('pin-input').value === "23455432") {
+                closePinModal();
+                document.getElementById('admin-modal').classList.remove('hidden');
+                document.getElementById('admin-modal').classList.add('flex');
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+        window.closeAdminModal = function() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-modal').classList.remove('flex');
+        }
+
+        window.generateCode = async function() {
+            if(!db || !currentUser) return alert("Admin not verified in DB.");
+            const name = document.getElementById('new-code-name').value.trim().toUpperCase();
+            const xp = parseInt(document.getElementById('new-code-xp').value);
+            const limitVal = document.getElementById('new-code-limit').value;
+            const limit = limitVal ? parseInt(limitVal) : -1; 
+
+            if(!name || !xp) return alert("Code Name and XP required!");
+
+            const btn = document.getElementById('create-code-btn');
+            btn.innerText = "GENERATING PROTOCOL...";
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, "redeem_codes", name), {
+                    rewardXp: xp,
+                    limit: limit,
+                    usedBy: [],
+                    createdBy: currentUser.uid,
+                    createdAt: serverTimestamp()
+                });
+                window.showToast("CODE GENERATED", `Code: ${name}`, `Reward: ${xp} XP`, "check-circle");
+                document.getElementById('new-code-name').value = '';
+                document.getElementById('new-code-xp').value = '';
+                document.getElementById('new-code-limit').value = '';
+            } catch(e) {
+                console.error(e);
+                window.showToast("ERROR", "Code generation failed.", "", "x-circle");
+            }
+            btn.innerText = "DEPLOY CODE";
+            btn.disabled = false;
         }
     </script>
 </body>
