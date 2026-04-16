@@ -373,7 +373,7 @@
                     <button id="add-friend-btn" onclick="sendFriendRequest()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
                     </button>
-                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
                         <i data-lucide="swords" class="w-4 h-4"></i> Rival
                     </button>
                 </div>
@@ -569,12 +569,12 @@
                 document.getElementById('user-name').innerText = user.displayName;
                 document.getElementById('user-pfp').src = user.photoURL;
                 await loadUserDB(user.uid, user.displayName, user.photoURL);
-                await fetchGlobalLeaderboard(); // Ensure this runs AFTER auth
+                await fetchGlobalLeaderboard(); 
             } else {
                 currentUser = null;
                 document.getElementById('login-prompt').classList.remove('hidden');
                 document.getElementById('user-profile').classList.add('hidden');
-                await fetchGlobalLeaderboard(); // Try to fetch publicly if rules allow
+                await fetchGlobalLeaderboard(); 
             }
         });
 
@@ -608,16 +608,28 @@
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return;
             const today = new Date().toDateString(); 
-            if (window.lastClaimed === today) return;
+            
+            if (window.lastClaimed === today) {
+                window.showToast("ACCESS DENIED", "Cooldown Active", "Return tomorrow for more XP.", "clock");
+                return;
+            }
             
             const oldLevel = localLevel; 
-            localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
+            localXP += 250; 
+            localLevel = Math.floor(localXP / 500) + 1; 
+            window.lastClaimed = today; 
 
-            await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
-            updateProfileUI(currentUser.uid); fetchGlobalLeaderboard();
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
+                updateProfileUI(currentUser.uid); 
+                fetchGlobalLeaderboard();
 
-            if(localLevel > oldLevel) window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding.", "chevron-up");
-            else window.showToast("MISSION COMPLETE", "+250 XP", "Sync successful.", "zap");
+                if(localLevel > oldLevel) window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding.", "chevron-up");
+                else window.showToast("MISSION COMPLETE", "+250 XP", "Sync successful.", "zap");
+            } catch (err) {
+                console.error(err);
+                window.showToast("SYNC FAILED", "Database write blocked.", "Check Firebase Rules.", "x-circle");
+            }
         }
 
         // --- REDEEM CODE SYSTEM ---
@@ -675,7 +687,6 @@
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
             
-            // Critical Patch: Prioritize localXP if looking at self, else fallback to uData, else 0.
             const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
             const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
             const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
@@ -808,7 +819,6 @@
         async function fetchGlobalLeaderboard() {
             if(!db) return;
             try {
-                // Fetch ALL to bypass missing 'totalScore' fields hiding users
                 const snapshot = await getDocs(collection(db, "users"));
                 let allUsers = [];
                 
@@ -859,7 +869,6 @@
                 if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
             } catch (error) { 
                 console.error("Leaderboard Error:", error); 
-                // Don't nuke the UI on permission error if not logged in, just show empty
                 document.getElementById('community-list').innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
             }
         }
