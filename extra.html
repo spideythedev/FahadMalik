@@ -70,10 +70,25 @@
 </head>
 <body class="bg-grid flex flex-col min-h-screen">
 
+    <svg width="0" height="0" class="absolute">
+        <defs>
+            <linearGradient id="bronze-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
+            <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient>
+            <linearGradient id="fire-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="50%" stop-color="#ef4444"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+            <linearGradient id="king-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient>
+        </defs>
+        <g id="icon-shield"><path d="M12 2L3 6v6c0 5.5 4.5 10 9 12 4.5-2 9-6.5 9-12V6l-9-4zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></g>
+        <g id="icon-swords"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M2 22l4-4M6 18l-4-4"/><path d="M4 12c0 4 4 8 8 8s8-4 8-8-4-8-8-8-8 4-8 8z" opacity="0.3"/></g>
+        <g id="icon-crown"><path d="M2 4h20v2H2zM2 8l4 10h12l4-10-6 4-4-6-4 6z"/><circle cx="12" cy="14" r="2"/><circle cx="6" cy="14" r="1.5"/><circle cx="18" cy="14" r="1.5"/></g>
+        <g id="icon-skull"><path d="M12 2C7.58 2 4 5.58 4 10c0 3.1 1.76 5.76 4.36 7.08L8 22h8l-.36-4.92C18.24 15.76 20 13.1 20 10c0-4.42-3.58-8-8-8zm-3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM10 16h4v2h-4v-2z"/></g>
+        <g id="icon-king"><path d="M12 2l3 5h5l-4 4 2 6-6-3-6 3 2-6-4-4h5z"/></g>
+    </svg>
+
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <a href="javascript:void(0)" onclick="openPinModal()" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-red-400 transition">
+                <a href="index.html" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-red-400 transition">
                     &larr; <span class="font-mono text-sm tracking-widest uppercase">Return to OS</span>
                 </a>
                 <div class="hidden md:block h-6 w-px bg-white/10"></div>
@@ -82,7 +97,7 @@
                 </a>
             </div>
             
-            <div class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10">
+            <div onclick="openPinModal()" class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 cursor-pointer hover:border-red-500 transition shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                 <span class="font-mono text-[10px] text-gray-500 uppercase hidden md:inline">Server: Tokyo [AP-NE-1]</span>
                 <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse"></div>
                 <span class="font-mono text-xs text-gray-300 tracking-widest">FIRE ARCADE ONLINE</span>
@@ -281,7 +296,19 @@
         </div>
 
         <div class="lg:col-span-3 space-y-6">
-            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl h-[800px] flex flex-col">
+            <div class="bg-gradient-to-br from-yellow-900/30 to-[#0a0a0a] border border-yellow-600/30 p-5 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">👑</div>
+                <h3 class="text-yellow-500 font-extrabold text-[10px] tracking-widest uppercase mb-4">Weekly Top Player</h3>
+                <div class="flex items-center gap-4 mb-1 cursor-pointer" id="weekly-click" onclick="openProfileModal(window.topWeeklyUid)">
+                    <img id="weekly-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full border-2 border-yellow-500 hover:scale-105 transition-transform object-cover">
+                    <div>
+                        <p class="text-white font-bold text-base" id="weekly-name">Waiting...</p>
+                        <p class="text-yellow-500 font-mono text-[10px] uppercase">Global Rank #1</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl h-[530px] flex flex-col">
                 <h3 class="text-white font-bold text-sm tracking-tight mb-1 flex items-center gap-2 border-b border-white/10 pb-3">
                     <i data-lucide="globe" class="text-red-500 w-4 h-4"></i> Global Network
                 </h3>
@@ -346,7 +373,7 @@
                     <button id="add-friend-btn" onclick="sendFriendRequest()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
                     </button>
-                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
                         <i data-lucide="swords" class="w-4 h-4"></i> Rival
                     </button>
                 </div>
@@ -523,7 +550,6 @@
             db = getFirestore(app);
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
-            fetchGlobalLeaderboard();
         } catch (error) { 
             console.error("Firebase Error:", error); 
         }
@@ -543,10 +569,12 @@
                 document.getElementById('user-name').innerText = user.displayName;
                 document.getElementById('user-pfp').src = user.photoURL;
                 await loadUserDB(user.uid, user.displayName, user.photoURL);
+                await fetchGlobalLeaderboard(); // Ensure this runs AFTER auth
             } else {
                 currentUser = null;
                 document.getElementById('login-prompt').classList.remove('hidden');
                 document.getElementById('user-profile').classList.add('hidden');
+                await fetchGlobalLeaderboard(); // Try to fetch publicly if rules allow
             }
         });
 
@@ -560,6 +588,9 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                if (data.totalScore > localXP && localXP !== 0) {
+                    window.showToast("GAME SYNC COMPLETE", `+${data.totalScore - localXP} XP Earned`, "Database updated.", "zap");
+                }
                 localXP = data.totalScore || 0;
                 localLevel = Math.floor(localXP / 500) + 1;
                 window.lastClaimed = data.lastClaimed || null;
@@ -639,12 +670,15 @@
             codeInput.disabled = false;
         }
 
+        // --- PATCHED BADGE CHECK ---
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
-            const xp = uData ? uData.totalScore : (uid === currentUser?.uid ? localXP : 0);
-            const lvl = uData ? uData.level : (uid === currentUser?.uid ? localLevel : 1);
-            const friends = uData?.friends?.length || (uid === currentUser?.uid ? userFriends.length : 0);
+            
+            // Critical Patch: Prioritize localXP if looking at self, else fallback to uData, else 0.
+            const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
+            const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
+            const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
 
             const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, inClub: false, ownsClub: false };
             let unlocked = [];
@@ -727,26 +761,33 @@
             if(!targetUid || targetUid === currentUser.uid) return;
 
             const btn = document.getElementById('add-friend-btn');
-            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
-            btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
-            lucide.createIcons();
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>`;
 
-            await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
+            try {
+                await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
+                btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
+                lucide.createIcons();
+            } catch(e) { console.error(e); btn.innerHTML = `Error`; }
         }
 
         window.acceptFriend = async function(reqUid) {
             if(!currentUser || !db) return;
-            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
-            await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
-            userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
-            updateProfileUI(); 
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
+                await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
+                userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI(); 
+            } catch(e) { console.error(e); }
         }
 
         window.rejectFriend = async function(reqUid) {
             if(!currentUser || !db) return;
-            await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
-            userRequests = userRequests.filter(id => id !== reqUid);
-            updateProfileUI();
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
+                userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI();
+            } catch(e) { console.error(e); }
         }
 
         function updateMissions() {
@@ -761,7 +802,7 @@
             if(m2Pct === 100) document.getElementById('mission-2-text').innerText = "COMPLETED";
         }
 
-        // --- GLOBAL LEADERBOARD FIX ---
+        // --- GLOBAL LEADERBOARD (PATCHED ALL USERS FETCH) ---
         window.usersData = []; 
 
         async function fetchGlobalLeaderboard() {
@@ -818,7 +859,8 @@
                 if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
             } catch (error) { 
                 console.error("Leaderboard Error:", error); 
-                document.getElementById('community-list').innerHTML = `<p class="text-red-500 font-mono text-xs text-center mt-6">Failed to load community.</p>`;
+                // Don't nuke the UI on permission error if not logged in, just show empty
+                document.getElementById('community-list').innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
             }
         }
 
