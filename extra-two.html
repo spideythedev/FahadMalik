@@ -57,23 +57,27 @@
         .tier-mythic { border-color: rgba(239, 68, 68, 1); color: #fca5a5; background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 25px rgba(239, 68, 68, 0.8); }
         .tier-locked { border-color: #333; color: #555; background: #111; filter: grayscale(100%); opacity: 0.5; }
 
-        .badge-box {
-            position: relative; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            border-width: 2px; border-style: solid;
-        }
+        .badge-box { position: relative; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; border-width: 2px; border-style: solid; }
         .badge-box:hover { transform: scale(1.1); z-index: 10; }
         .badge-box:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
 
-        .badge-club-1 { fill: url(#club-gold); filter: drop-shadow(0 0 15px rgba(234, 179, 8, 1)); }
-        .badge-club-top { fill: url(#club-silver); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.8)); }
+        /* SOLID FILL SVGS FOR CLUBS */
+        .svg-gold { fill: url(#gold-grad); filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.8)); }
+        .svg-silver { fill: url(#silver-grad); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.6)); }
+        .svg-copper { fill: url(#copper-grad); filter: drop-shadow(0 0 10px rgba(184, 115, 51, 0.6)); }
+
+        /* THE SERVER DEITY GRADIENTS */
+        .text-gold-grad { background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 10px rgba(252, 246, 186, 0.3); }
+        .text-silver-grad { background: linear-gradient(to right, #8e9eab, #eef2f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-copper-grad { background: linear-gradient(to right, #b87333, #ffcc99, #b87333); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* OPAL - NOT RAINBOW */
+        .text-opal-grad { background: linear-gradient(to right, #e2e2e2, #c9d6ff, #e2e2e2, #fbc2eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(201, 214, 255, 0.6)); }
 
         #toast-notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             background: #10b981; color: #000; padding: 12px 24px; border-radius: 12px;
             font-weight: bold; font-size: 14px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
-            z-index: 10000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; z-index: 10000;
         }
         #toast-notification.show { opacity: 1; transform: translate(-50%, 10px); }
         #toast-notification.error { background: #ef4444; color: #fff; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
@@ -85,10 +89,13 @@
 
     <svg width="0" height="0" class="absolute">
         <defs>
-            <linearGradient id="club-gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#a16207"/></linearGradient>
-            <linearGradient id="club-silver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#a16207"/></linearGradient>
+            <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="copper-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffcc99"/><stop offset="100%" stop-color="#b87333"/></linearGradient>
         </defs>
-        <g id="icon-club"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></g>
+        <g id="solid-crown"><path d="M2 20h20v2H2zM2 5l5 4 5-7 5 7 5-4v13H2z"/></g>
+        <g id="solid-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>
+        <g id="solid-gem"><path d="M6 3h12l4 6-10 13L2 9z"/></g>
     </svg>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
@@ -108,17 +115,20 @@
         
         <div class="lg:col-span-3 space-y-6">
             
-            <div id="my-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <div id="my-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden hidden transition-all">
+                <div id="club-frame" class="absolute top-0 left-0 w-full h-2 bg-purple-500 transition-colors"></div>
                 
-                <div class="flex flex-col items-center text-center relative z-10">
-                    <img id="club-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-20 h-20 rounded-2xl border-2 border-purple-500 shadow-[0_0_20px_rgba(147,51,234,0.4)] mb-3 object-cover">
-                    <h2 id="club-name" class="text-white font-extrabold text-2xl tracking-tight">Loading...</h2>
-                    <p class="text-purple-400 font-mono text-[10px] tracking-widest uppercase mb-4">Total XP: <span id="club-xp" class="text-white font-bold">0</span></p>
+                <div class="flex flex-col items-center text-center relative z-10 pt-2">
+                    <img id="club-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover transition-colors">
+                    <h2 id="club-name" class="font-extrabold text-2xl tracking-tight text-white">Loading...</h2>
+                    <p id="club-desc" class="text-gray-400 text-xs mt-1 mb-3 h-8 overflow-hidden">Forging the ultimate syndicate.</p>
                     
-                    <div class="w-full flex gap-2 mb-4">
-                        <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg"><i data-lucide="user-plus" class="w-4 h-4 inline mr-1"></i> Invite Friends</button>
-                        <button id="leave-club-btn" onclick="leaveClub()" class="bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-3 py-2.5 rounded-lg text-xs font-bold transition"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                    <p class="text-gray-500 font-mono text-[10px] tracking-widest uppercase mb-4 bg-[#111] px-4 py-1.5 rounded-lg border border-white/5">Weekly XP: <span id="club-xp" class="text-white font-bold">0</span></p>
+                    
+                    <div class="w-full flex flex-wrap gap-2 mb-4">
+                        <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg"><i data-lucide="user-plus" class="w-4 h-4 inline mr-1"></i> Invite</button>
+                        <button id="edit-club-btn" onclick="openEditClubModal()" class="hidden flex-1 bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-2.5 rounded-lg text-xs font-bold transition"><i data-lucide="settings" class="w-4 h-4 inline mr-1"></i> Edit</button>
+                        <button id="leave-club-btn" onclick="leaveClub()" class="bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white px-3 py-2.5 rounded-lg text-xs font-bold transition"><i data-lucide="log-out" class="w-4 h-4"></i></button>
                     </div>
 
                     <div class="w-full text-left">
@@ -127,7 +137,7 @@
                             <p class="text-gray-500 font-mono text-[10px]" id="member-count">0/50</p>
                         </div>
                         <div id="roster-list" class="space-y-2 overflow-y-auto max-h-[300px] hide-scrollbar">
-                            <div class="text-center text-xs text-gray-500 py-4">Loading members...</div>
+                            <div class="text-center text-xs text-gray-500 py-4">Syncing members...</div>
                         </div>
                     </div>
                 </div>
@@ -135,13 +145,13 @@
 
             <div id="no-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden text-center block">
                 <div class="w-16 h-16 mx-auto bg-[#111] rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.2)]">
-                    <i data-lucide="shield" class="text-purple-500 w-8 h-8"></i>
+                    <i data-lucide="shield-alert" class="text-purple-500 w-8 h-8"></i>
                 </div>
                 <h3 class="text-white font-bold text-lg mb-2">No Club Found</h3>
                 <p class="text-gray-400 text-xs mb-6" id="auth-status-text">Please sign in to view your club status.</p>
                 
                 <div class="bg-black/50 border border-white/5 p-3 rounded-xl mb-4">
-                    <p class="text-gray-400 text-[10px] font-mono uppercase">Required to Create:</p>
+                    <p class="text-gray-400 text-[10px] font-mono uppercase">Required to Forge:</p>
                     <p class="text-white font-bold text-sm">2,500 XP <span class="text-red-500 text-xs" id="xp-status">(Checking Data...)</span></p>
                 </div>
 
@@ -158,7 +168,7 @@
                     <div class="flex items-center gap-3">
                         <i data-lucide="message-square" class="text-purple-500 w-5 h-5"></i>
                         <div>
-                            <h3 class="text-white font-bold">Club Chat</h3>
+                            <h3 class="text-white font-bold">Syndicate Encrypted Comms</h3>
                             <p class="text-gray-500 font-mono text-[10px] uppercase">Private Group Channel</p>
                         </div>
                     </div>
@@ -172,7 +182,7 @@
 
                 <div class="p-4 bg-[#050505] border-t border-white/10 relative z-10">
                     <form id="chat-form" class="flex gap-2">
-                        <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500" autocomplete="off">
+                        <input type="text" id="chat-input" placeholder="Transmit message to Syndicate..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 font-mono" autocomplete="off">
                         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold transition shadow-[0_0_15px_rgba(147,51,234,0.3)]">
                             <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
@@ -181,8 +191,8 @@
                 
                 <div id="chat-lock" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
                     <i data-lucide="lock" class="text-purple-500 w-12 h-12 mb-4"></i>
-                    <p class="text-white font-bold">Chat Locked</p>
-                    <p class="text-gray-400 text-xs">Join or create a Club to access group chat.</p>
+                    <p class="text-white font-bold">Comms Locked</p>
+                    <p class="text-gray-400 text-xs font-mono">Join or Forge a Syndicate to access the database.</p>
                 </div>
             </div>
         </div>
@@ -215,9 +225,12 @@
             </div>
 
             <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl flex flex-col h-[400px]">
-                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
-                    <i data-lucide="trophy" class="text-yellow-500 w-4 h-4"></i> Top Clubs
-                </h3>
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                    <h3 class="text-white font-bold text-sm tracking-tight flex items-center gap-2">
+                        <i data-lucide="trophy" class="text-yellow-500 w-4 h-4"></i> Top Syndicates
+                    </h3>
+                    <p class="text-gray-500 text-[9px] font-mono uppercase">Weekly Reset</p>
+                </div>
                 
                 <div id="club-leaderboard" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
                     <div class="text-center py-10 text-gray-500 text-xs">Loading rankings...</div>
@@ -229,22 +242,53 @@
     <div id="create-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-purple-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(147,51,234,0.2)] w-full max-w-md relative animate-pop-in">
             <button onclick="closeCreateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
-            
-            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Create Club</h2>
-            <p class="text-gray-400 text-xs text-center mb-8">Setup your team profile.</p>
+            <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Forge Syndicate</h2>
+            <p class="text-gray-400 text-xs text-center font-mono mb-8">Establish your core architecture.</p>
 
             <form id="forge-form" class="space-y-4">
                 <div>
-                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Club Name</label>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Syndicate Name</label>
                     <input type="text" id="club-name-input" required placeholder="e.g. Neon Dragons" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 font-bold">
                 </div>
                 <div>
-                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Icon URL (Optional)</label>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Insignia URL (Optional)</label>
                     <input type="url" id="club-img-input" placeholder="https://..." class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 text-xs font-mono">
                 </div>
-                
                 <button type="submit" id="forge-submit-btn" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] mt-4">
-                    Create Club
+                    INITIALIZE DATABASE
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <h2 class="text-white font-extrabold text-2xl mb-2 text-center">Edit Syndicate</h2>
+            
+            <form id="edit-form" class="space-y-4 mt-6">
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Syndicate Name</label>
+                    <input type="text" id="edit-name" required class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 font-bold">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Profile Image URL</label>
+                    <input type="url" id="edit-img" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs font-mono">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Description</label>
+                    <input type="text" id="edit-desc" maxlength="40" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs">
+                </div>
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Frame Colour (HEX)</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="edit-color-picker" class="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none">
+                        <input type="text" id="edit-color-text" class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none font-mono text-xs">
+                    </div>
+                </div>
+                
+                <button type="submit" id="edit-submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] mt-4">
+                    SAVE CHANGES
                 </button>
             </form>
         </div>
@@ -277,19 +321,63 @@
         </div>
     </div>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
+        // THE 50+ BADGE DB (Reused to keep profiles uniform)
         const BADGE_DB = [
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
             { id: 'xp_3', name: 'Veteran', desc: 'Earn 5,000 XP', icon: 'shield', tier: 'gold', check: (u) => u.xp >= 5000, cat: 'Experience' },
             { id: 'xp_4', name: 'Elite', desc: 'Earn 10,000 XP', icon: 'shield-alert', tier: 'gold', check: (u) => u.xp >= 10000, cat: 'Experience' },
             { id: 'xp_5', name: 'Master', desc: 'Earn 25,000 XP', icon: 'crown', tier: 'diamond', check: (u) => u.xp >= 25000, cat: 'Experience' },
-            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
+            { id: 'xp_6', name: 'Grandmaster', desc: 'Earn 50,000 XP', icon: 'hexagon', tier: 'diamond', check: (u) => u.xp >= 50000, cat: 'Experience' },
+            { id: 'xp_7', name: 'Special Grade', desc: 'Earn 100,000 XP', icon: 'flame', tier: 'mythic', check: (u) => u.xp >= 100000, cat: 'Experience' },
+            { id: 'xp_8', name: 'Domain Expanded', desc: 'Earn 250,000 XP', icon: 'skull', tier: 'mythic', check: (u) => u.xp >= 250000, cat: 'Experience' },
+            { id: 'xp_9', name: 'Demi-God', desc: 'Earn 500,000 XP', icon: 'ghost', tier: 'mythic', check: (u) => u.xp >= 500000, cat: 'Experience' },
+            { id: 'xp_10', name: 'Server Deity', desc: 'Earn 1,000,000 XP', icon: 'sun', tier: 'mythic', check: (u) => u.xp >= 1000000, cat: 'Experience' },
+            { id: 'lvl_1', name: 'Level 5', desc: 'Reach Level 5', icon: 'chevron-up', tier: 'bronze', check: (u) => u.level >= 5, cat: 'Progression' },
+            { id: 'lvl_2', name: 'Level 10', desc: 'Reach Level 10', icon: 'chevrons-up', tier: 'silver', check: (u) => u.level >= 10, cat: 'Progression' },
+            { id: 'lvl_3', name: 'Level 20', desc: 'Reach Level 20', icon: 'trending-up', tier: 'silver', check: (u) => u.level >= 20, cat: 'Progression' },
+            { id: 'lvl_4', name: 'Level 30', desc: 'Reach Level 30', icon: 'star', tier: 'gold', check: (u) => u.level >= 30, cat: 'Progression' },
+            { id: 'lvl_5', name: 'Level 40', desc: 'Reach Level 40', icon: 'star-half', tier: 'gold', check: (u) => u.level >= 40, cat: 'Progression' },
+            { id: 'lvl_6', name: 'Level 50', desc: 'Reach Level 50', icon: 'award', tier: 'diamond', check: (u) => u.level >= 50, cat: 'Progression' },
+            { id: 'lvl_7', name: 'Level 60', desc: 'Reach Level 60', icon: 'medal', tier: 'diamond', check: (u) => u.level >= 60, cat: 'Progression' },
+            { id: 'lvl_8', name: 'Level 70', desc: 'Reach Level 70', icon: 'crosshair', tier: 'diamond', check: (u) => u.level >= 70, cat: 'Progression' },
+            { id: 'lvl_9', name: 'Level 80', desc: 'Reach Level 80', icon: 'swords', tier: 'mythic', check: (u) => u.level >= 80, cat: 'Progression' },
+            { id: 'lvl_10', name: 'Level 100', desc: 'Reach Level 100 MAX', icon: 'infinity', tier: 'mythic', check: (u) => u.level >= 100, cat: 'Progression' },
+            { id: 'soc_1', name: 'Social', desc: 'Add 1 Friend', icon: 'user-plus', tier: 'bronze', check: (u) => u.friends >= 1, cat: 'Social' },
+            { id: 'soc_2', name: 'Crew', desc: 'Add 5 Friends', icon: 'users', tier: 'silver', check: (u) => u.friends >= 5, cat: 'Social' },
+            { id: 'soc_3', name: 'Popular', desc: 'Add 10 Friends', icon: 'heart', tier: 'gold', check: (u) => u.friends >= 10, cat: 'Social' },
+            { id: 'soc_4', name: 'VIP', desc: 'Add 25 Friends', icon: 'gem', tier: 'diamond', check: (u) => u.friends >= 25, cat: 'Social' },
+            { id: 'soc_5', name: 'Network Hub', desc: 'Add 50 Friends', icon: 'globe', tier: 'mythic', check: (u) => u.friends >= 50, cat: 'Social' },
+            { id: 'soc_6', name: 'Recruit', desc: 'Join a Club', icon: 'shield-check', tier: 'bronze', check: (u) => u.inClub, cat: 'Social' },
+            { id: 'soc_7', name: 'Syndicate Leader', desc: 'Own a Club', icon: 'building', tier: 'gold', check: (u) => u.ownsClub, cat: 'Social' },
+            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals >= 1, cat: 'Social' }, 
+            { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.rivals >= 5, cat: 'Social' },
+            { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.rivals >= 10, cat: 'Social' },
+            { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
+            { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
+            { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
+            { id: 'rnk_4', name: 'Top 10', desc: 'Reach Top 10', icon: 'star', tier: 'diamond', check: (u) => u.rank <= 10, cat: 'Ranked' },
+            { id: 'rnk_5', name: 'Top 3', desc: 'Reach Top 3', icon: 'medal', tier: 'diamond', check: (u) => u.rank <= 3, cat: 'Ranked' },
+            { id: 'rnk_6', name: 'Runner Up', desc: 'Reach #2 Global', icon: 'trophy', tier: 'diamond', check: (u) => u.rank === 2, cat: 'Ranked' },
+            { id: 'rnk_7', name: 'Champion', desc: 'Reach #1 Global', icon: 'crown', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
+            { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1 && u.xp >= 500000, cat: 'Ranked' },
+            { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
+            { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
+            { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_4', name: 'Speed Hacker', desc: 'Play TYPE-X', icon: 'keyboard', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_5', name: 'Architect', desc: 'Play Stack Overflow', icon: 'layers', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_6', name: 'Gravity Defier', desc: 'Play Gravity Jet', icon: 'rocket', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_7', name: 'Core Defender', desc: 'Play Cyber Defense', icon: 'shield-alert', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_8', name: 'Geometry God', desc: 'Play Neon Dash', icon: 'square', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_9', name: 'First Death', desc: 'Die in any game', icon: 'skull', tier: 'bronze', check: (u) => true, cat: 'Games' },
+            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all 8 games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
         ];
 
         function renderBadgeHTML(badge, isUnlocked) {
@@ -322,11 +410,29 @@
         let unsubscribeChat = null; let unsubscribeClub = null;
         window.usersData = []; 
 
-        window.showToast = function(title, desc, sub, iconName) {
+        window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast-notification');
-            toast.innerText = title + (desc ? " - " + desc : "");
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            toast.innerText = msg;
+            if(isError) {
+                toast.style.backgroundColor = "#ef4444";
+                toast.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.4)";
+            } else {
+                toast.style.backgroundColor = "#10b981";
+                toast.style.boxShadow = "0 10px 30px rgba(16, 185, 129, 0.4)";
+            }
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 3000);
+        }
+
+        // --- WEEKLY REFRESH TIME ENGINE ---
+        function getCurrentWeekStr() {
+            const d = new Date();
+            const dte = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            const dayNum = dte.getUTCDay() || 7;
+            dte.setUTCDate(dte.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(dte.getUTCFullYear(),0,1));
+            const weekNo = Math.ceil((((dte - yearStart) / 86400000) + 1)/7);
+            return `${dte.getUTCFullYear()}-W${weekNo}`;
         }
 
         try {
@@ -334,24 +440,19 @@
             db = getFirestore(app);
             auth = getAuth(app);
             loadClubLeaderboard();
-        } catch (error) {
-            console.error("Firebase Error:", error);
-            document.getElementById('auth-status-text').innerText = "System error connecting to server.";
+        } catch (error) { 
+            console.error("Firebase Error:", error); 
         }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('auth-status-text').innerText = "Loading your profile...";
-                
                 const urlParams = new URLSearchParams(window.location.search);
                 const joinId = urlParams.get('join');
                 
-                if (joinId) {
-                    await handleInviteLink(joinId, user.uid);
-                } else {
-                    await fetchUserAndClub(user.uid);
-                }
+                if (joinId) { await handleInviteLink(joinId, user.uid); } 
+                else { await fetchUserAndClub(user.uid); }
             } else {
                 currentUser = null;
                 document.getElementById('auth-status-text').innerText = "Sign in at the Arcade Hub first.";
@@ -432,9 +533,11 @@
             const img = document.getElementById('club-img-input').value || 'https://cdn.discordapp.com/embed/avatars/0.png';
 
             try {
+                const currentWeek = getCurrentWeekStr();
                 const clubRef = await addDoc(collection(db, "clubs"), {
                     name: name, image: img, ownerUid: currentUser.uid, members: [currentUser.uid], mods: [],
-                    totalXp: userData.totalScore || 0, createdAt: serverTimestamp()
+                    weeklyXp: 0, currentWeek: currentWeek, topOneCount: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
+                    createdAt: serverTimestamp()
                 });
 
                 await updateDoc(doc(db, "users", currentUser.uid), { clubId: clubRef.id });
@@ -448,6 +551,54 @@
                 console.error(err); window.showToast("Failed to forge.", true);
             }
             btn.innerText = "INITIALIZE DATABASE"; btn.disabled = false;
+        });
+
+        // --- CLUB EDITING UI & LOGIC RESTORED ---
+        window.openEditClubModal = async function() {
+            if(!currentClubId) return;
+            const cSnap = await getDoc(doc(db, "clubs", currentClubId));
+            if(!cSnap.exists()) return;
+            const cData = cSnap.data();
+
+            document.getElementById('edit-name').value = cData.name;
+            document.getElementById('edit-img').value = cData.image;
+            document.getElementById('edit-desc').value = cData.description || "";
+            
+            const color = cData.frameColor || "#9333ea";
+            document.getElementById('edit-color-picker').value = color;
+            document.getElementById('edit-color-text').value = color.toUpperCase();
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            document.getElementById('edit-modal').classList.add('flex');
+        }
+        
+        window.closeEditModal = function() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-modal').classList.remove('flex');
+        }
+
+        // Sync color picker inputs
+        document.getElementById('edit-color-picker').addEventListener('input', (e) => { document.getElementById('edit-color-text').value = e.target.value.toUpperCase(); });
+        document.getElementById('edit-color-text').addEventListener('input', (e) => { 
+            let hex = e.target.value; if(hex.length === 7 && hex.startsWith('#')) document.getElementById('edit-color-picker').value = hex;
+        });
+
+        document.getElementById('edit-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('edit-submit-btn');
+            btn.innerText = "SAVING..."; btn.disabled = true;
+
+            const n = document.getElementById('edit-name').value.trim();
+            const i = document.getElementById('edit-img').value.trim();
+            const d = document.getElementById('edit-desc').value.trim();
+            const c = document.getElementById('edit-color-picker').value;
+
+            try {
+                await updateDoc(doc(db, "clubs", currentClubId), { name: n, image: i, description: d, frameColor: c });
+                window.showToast("Syndicate Updated!");
+                closeEditModal();
+            } catch(err) { window.showToast("Failed to save.", true); }
+            btn.innerText = "SAVE CHANGES"; btn.disabled = false;
         });
 
         async function loadClubInterface(clubId) {
@@ -472,11 +623,27 @@
 
                 document.getElementById('club-name').innerText = clubData.name;
                 document.getElementById('club-img').src = clubData.image;
-                document.getElementById('club-xp').innerText = (clubData.totalXp || 0).toLocaleString();
+                document.getElementById('club-desc').innerText = clubData.description || "Forging the ultimate syndicate.";
+                
+                // Weekly XP UI
+                const currentWeek = getCurrentWeekStr();
+                const displayXp = clubData.currentWeek === currentWeek ? (clubData.weeklyXp || 0) : 0;
+                document.getElementById('club-xp').innerText = displayXp.toLocaleString();
+
+                // Dynamic Frame Color
+                const fColor = clubData.frameColor || "#9333ea";
+                document.getElementById('club-frame').style.backgroundColor = fColor;
+                document.getElementById('club-img').style.borderColor = fColor;
+                document.getElementById('club-img').style.boxShadow = `0 10px 25px ${fColor}40`;
+
                 document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
 
                 const isOwner = clubData.ownerUid === currentUser.uid;
                 const isMod = clubData.mods && clubData.mods.includes(currentUser.uid);
+
+                // Show Edit Button if permitted
+                if(isOwner || isMod) document.getElementById('edit-club-btn').classList.remove('hidden');
+                else document.getElementById('edit-club-btn').classList.add('hidden');
 
                 const roster = document.getElementById('roster-list');
                 roster.innerHTML = '';
@@ -503,7 +670,7 @@
                         }
 
                         roster.innerHTML += `
-                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group cursor-pointer" onclick="openProfileModal('${memberUid}')">
+                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group cursor-pointer hover:bg-gray-900 transition" onclick="openProfileModal('${memberUid}')">
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">${icon}</div>
                                     <span class="text-white text-xs font-bold">${uData.displayName} ${memberIsMe ? '(You)' : ''}</span>
@@ -595,60 +762,82 @@
             } catch(err) { console.error(err); }
         });
 
+        // --- WEEKLY CLUB LEADERBOARD WITH GRADIENTS & SOLID SVGS ---
         async function loadClubLeaderboard() {
             if(!db) return;
             try {
-                const q = query(collection(db, "clubs"), orderBy("totalXp", "desc"), limit(25));
-                const snapshot = await getDocs(q);
-                const list = document.getElementById('club-leaderboard');
-                list.innerHTML = '';
-                let rank = 1;
+                const snapshot = await getDocs(collection(db, "clubs"));
+                let allClubs = [];
+                const currentWeek = getCurrentWeekStr();
+                
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    let svgClass = "badge-club-top"; let tooltip = `Top #${rank} Club`; let borderClass = "border-white/10"; let bgClass = "bg-[#111]";
-                    if(rank === 1) { svgClass = "badge-club-1"; tooltip = "No#1 Club"; borderClass = "border-yellow-500/30"; bgClass = "bg-gradient-to-r from-yellow-900/20 to-[#111]"; }
+                    data.id = doc.id;
+                    // Core reset logic: if week is old, XP is 0 for leaderboard ranking
+                    data.displayWeeklyXp = data.currentWeek === currentWeek ? (data.weeklyXp || 0) : 0;
+                    allClubs.push(data);
+                });
+
+                // Sort by current week's XP
+                allClubs.sort((a, b) => b.displayWeeklyXp - a.displayWeeklyXp);
+                
+                const list = document.getElementById('club-leaderboard');
+                list.innerHTML = '';
+                
+                let rank = 1;
+                allClubs.slice(0, 25).forEach(data => {
+                    let borderClass = "border-white/10"; let bgClass = "bg-[#111]";
+                    
+                    // Defaults for outside top 3
+                    let badgeSvg = `<div class="text-gray-500 font-bold text-sm w-6 text-center">#${rank}</div>`;
+                    let nameClass = "text-white";
+
+                    // DYNAMIC GRADIENTS & SOLID ICONS
+                    if(rank === 1) { 
+                        badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-gold"><use href="#solid-crown" /></svg>`;
+                        borderClass = "border-yellow-500/30"; bgClass = "bg-gradient-to-r from-yellow-900/20 to-[#111]";
+                        
+                        // Check OPAL Rule (3x Top #1)
+                        if(data.topOneCount >= 3) nameClass = "text-opal-grad font-black";
+                        else nameClass = "text-gold-grad font-black";
+                    }
+                    else if(rank === 2) { 
+                        badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-silver"><use href="#solid-shield" /></svg>`;
+                        nameClass = "text-silver-grad font-black";
+                    }
+                    else if(rank === 3) { 
+                        badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-copper"><use href="#solid-gem" /></svg>`;
+                        nameClass = "text-copper-grad font-black";
+                    }
 
                     list.innerHTML += `
-                        <div class="flex justify-between items-center ${bgClass} p-3 rounded-xl border ${borderClass} mb-2">
+                        <div class="flex justify-between items-center ${bgClass} p-3 rounded-xl border ${borderClass} mb-2 transition">
                             <div class="flex items-center gap-3">
                                 <div class="badge-container">
-                                    <svg viewBox="0 0 24 24" class="w-6 h-6"><use href="#icon-club" class="${svgClass}" /></svg>
-                                    <span class="badge-tooltip">${tooltip}</span>
+                                    ${badgeSvg}
+                                    <span class="badge-tooltip">Rank #${rank} Club</span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-6 h-6 rounded-full object-cover border border-white/20">
+                                <div class="flex items-center gap-3">
+                                    <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-lg object-cover border border-white/20 shadow-sm" style="border-color: ${data.frameColor || '#444'}">
                                     <div>
-                                        <p class="text-white font-bold text-sm">${data.name}</p>
+                                        <p class="${nameClass} text-sm tracking-tight">${data.name}</p>
                                         <p class="text-gray-500 font-mono text-[9px]">${data.members ? data.members.length : 1} Members</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${(data.totalXp || 0).toLocaleString()} XP</div>
+                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${data.displayWeeklyXp.toLocaleString()} <span class="text-[9px] text-gray-600 font-mono">XP</span></div>
                         </div>
                     `;
                     rank++;
                 });
-                if(snapshot.empty) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4 font-mono">No syndicates forged.</p>';
+
+                if(allClubs.length === 0) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4 font-mono">No syndicates forged.</p>';
             } catch (err) { console.error(err); }
         }
 
-        function getUserBadges(uid, userDataObj) {
-            const xp = userDataObj?.totalScore || 0;
-            const lvl = userDataObj?.level || 1;
-            const friends = userDataObj?.friends?.length || 0;
-            const statObj = { xp: xp, level: lvl, rank: 999, friends: friends, inClub: false, ownsClub: false };
-            let unlocked = [];
-            BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
-            const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
-            unlocked.sort((a,b) => tierWeight[b.tier] - tierWeight[a.tier]);
-            return unlocked;
-        }
-
+        // --- SHARED PROFILES ---
         window.openProfileModal = async function(uid) {
             if(!uid) return;
-            if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
-            window.currentViewedUser = uid;
-
             const uSnap = await getDoc(doc(db, "users", uid));
             if(!uSnap.exists()) return alert("User profile corrupted or deleted.");
             const user = uSnap.data(); user.uid = uid;
@@ -668,13 +857,18 @@
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
             
-            const unlocked = getUserBadges(uid, user);
-            if(unlocked.length === 0) {
-                pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`;
-            } else {
-                const top6 = unlocked.slice(0, 6);
-                top6.forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true));
-            }
+            const xp = user.totalScore || 0;
+            const lvl = user.level || 1;
+            const friends = user.friends?.length || 0;
+            const rivals = user.rivals?.length || 0;
+            const statObj = { xp: xp, level: lvl, rank: 999, friends: friends, rivals: rivals, inClub: !!user.clubId, ownsClub: false };
+            let unlocked = [];
+            BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
+            const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
+            unlocked.sort((a,b) => tierWeight[b.tier] - tierWeight[a.tier]);
+
+            if(unlocked.length === 0) { pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`; } 
+            else { unlocked.slice(0, 6).forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true)); }
 
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
