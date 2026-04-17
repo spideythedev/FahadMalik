@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fahad Malik | SpydeY</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -22,12 +22,12 @@
             }
         }
     </script>
-    
+
     <style>
         body { background-color: #030303; color: #e5e7eb; -webkit-font-smoothing: antialiased; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         .tech-bg {
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
@@ -36,10 +36,10 @@
                 linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
         }
-        
+
         canvas { outline: none; cursor: grab; }
         canvas:active { cursor: grabbing; }
-        
+
         .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1.25rem; color: #ffffff; letter-spacing: -0.025em; }
         .blog-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #ffffff; border-bottom: 1px solid #1f1f22; padding-bottom: 0.5rem;}
         .blog-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #a1a1aa; font-size: 1.125rem;}
@@ -53,7 +53,7 @@
 
     <nav class="bg-[#030303]/80 backdrop-blur-2xl px-6 py-4 sticky top-0 z-50 border-b border-brand-border flex-none">
         <div class="max-w-6xl mx-auto flex flex-wrap md:flex-nowrap justify-between items-center gap-4">
-            
+
             <div class="flex items-center justify-start">
                 <div onclick="openPinModal()" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 cursor-pointer hover:opacity-80 transition group relative">
                     <img id="nav-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-10 h-10 rounded-xl border border-white/10 object-cover shadow-lg bg-gray-900">
@@ -61,7 +61,7 @@
                     <span class="block sm:hidden">SpydeY</span>
                 </div>
             </div>
-            
+
             <div class="flex justify-center w-full md:w-auto order-3 md:order-2">
                 <div class="flex items-center bg-[#0a0a0a] p-1.5 rounded-xl border border-white/5 shadow-inner overflow-x-auto whitespace-nowrap hide-scrollbar">
                     <button onclick="switchView('main')" id="tab-main" class="px-6 py-2 text-sm font-semibold rounded-lg bg-[#1f1f22] text-white shadow-sm transition-all border border-white/5">Home</button>
@@ -82,7 +82,7 @@
     </nav>
 
     <div id="view-main" class="w-full flex-grow block">
-        
+
         <header class="w-full pt-24 pb-20 px-6 border-b border-brand-border bg-gradient-to-b from-transparent to-[#050505]">
             <div class="max-w-5xl mx-auto text-center">
                 <div class="inline-block mb-6 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-mono font-bold tracking-widest uppercase">
@@ -104,7 +104,7 @@
                     <p class="text-gray-400 mb-8 text-lg leading-relaxed">
                         Drag the 3D map to see the tech I use, or check out the live game scores happening right now.
                     </p>
-                    
+
                     <div class="bg-[#0a0a0a] rounded-2xl p-5 shadow-2xl border border-white/10 relative overflow-hidden mb-6">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
                         <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
@@ -127,7 +127,7 @@
                         <span class="text-xl">🎮</span> PLAY!
                     </a>
                 </div>
-                
+
                 <div class="relative flex justify-center items-center h-[500px] w-full bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
                     <div class="absolute bottom-6 right-6 z-10 text-xs font-mono text-gray-500 bg-black/50 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
                         Drag to rotate
@@ -141,7 +141,7 @@
             <h3 class="text-sm font-mono text-gray-500 mb-8 tracking-widest uppercase flex items-center gap-4">
                 My Projects <div class="h-px bg-brand-border flex-grow"></div>
             </h3>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-[#0a0a0a] p-10 rounded-3xl border border-brand-border hover:border-blue-500/30 transition-all shadow-2xl relative overflow-hidden">
                     <h4 class="text-2xl font-bold text-white mb-4">WebLooM & VertexCreative</h4>
@@ -182,7 +182,7 @@
         <div id="blog-feed-container" class="max-w-4xl mx-auto px-6 py-16 block">
             <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">My Blog</h2>
             <p class="text-lg text-gray-400 mb-12 border-b border-brand-border pb-8">Just my thoughts and code.</p>
-            
+
             <div id="blog-list" class="space-y-6">
                 <div class="flex flex-col items-center justify-center py-20 gap-4">
                     <div class="relative w-12 h-12">
@@ -235,7 +235,7 @@
             </div>
             <button onclick="closeAdminModal()" class="text-xs font-mono text-gray-400 hover:text-white px-4 py-2 border border-white/10 rounded-lg bg-[#111]">CLOSE</button>
         </div>
-        
+
         <div class="flex-grow p-4 md:p-8 w-full flex flex-col gap-4 max-w-5xl mx-auto mb-20">
             <input type="text" id="post-title" placeholder="Title" class="w-full text-3xl md:text-5xl font-extrabold bg-transparent border-b border-white/10 text-white focus:outline-none focus:border-blue-500 pb-4 placeholder-gray-700">
             <div class="text-xs text-blue-500 font-mono tracking-widest uppercase mt-4">HTML Content</div>
@@ -348,30 +348,30 @@
                 const snapshot = await getDocs(collection(db, 'blogs'));
                 window.globalBlogs = []; 
                 snapshot.forEach(doc => { window.globalBlogs.push({ id: doc.id, ...doc.data() }); });
-                
+
                 window.globalBlogs.sort((a, b) => {
                     const tA = a.timestamp ? a.timestamp.toMillis() : 0;
                     const tB = b.timestamp ? b.timestamp.toMillis() : 0;
                     return tB - tA; 
                 });
-                
+
                 const list = document.getElementById('blog-list');
                 list.innerHTML = '';
-                
+
                 if(window.globalBlogs.length === 0) {
                     list.innerHTML = '<div class="bg-[#0a0a0a] p-10 rounded-2xl border border-white/5 text-center"><p class="text-gray-500 font-mono text-sm">No posts yet.</p></div>';
                     window.renderAdminBlogs();
                     return;
                 }
-                
+
                 window.globalBlogs.forEach(blog => {
                     const card = document.createElement('div');
                     card.className = "bg-[#0a0a0a] p-8 md:p-10 rounded-3xl border border-brand-border hover:border-blue-500/30 cursor-pointer group shadow-2xl transition-all relative overflow-hidden";
                     card.onclick = () => window.openPost(blog.id);
-                    
+
                     const tempDiv = document.createElement("div"); tempDiv.innerHTML = blog.content;
                     let snippet = (tempDiv.textContent || tempDiv.innerText || "").substring(0, 150) + "...";
-                    
+
                     card.innerHTML = `
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/50 to-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="text-xs text-blue-500 mb-3 font-mono tracking-widest uppercase font-bold">${blog.date}</div>
@@ -382,7 +382,7 @@
                     list.appendChild(card);
                 });
                 window.renderAdminBlogs();
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Fetch Blogs Error:", err); }
         }
 
         window.renderAdminBlogs = function() {
@@ -434,9 +434,9 @@
             const btn = document.getElementById('publish-btn');
             if (btn.innerText === "PROCESSING...") return; 
             btn.innerText = "PROCESSING...";
-            
+
             if(!db) { alert("Database disconnected."); btn.innerText = "FAILED"; return; }
-            
+
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-html').value;
             if(!title || !content) { 
@@ -452,10 +452,10 @@
                     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                     await addDoc(collection(db, "blogs"), { title: title, content: content, date: dateStr, timestamp: serverTimestamp() });
                 }
-                
+
                 btn.style.backgroundColor = "#10b981"; btn.innerText = "SUCCESS!";
                 window.cancelEdit(); 
-                
+
                 setTimeout(() => {
                     closeAdminModal(); 
                     switchView('blog'); 
@@ -464,11 +464,13 @@
                     btn.innerText = "Publish Post";
                 }, 1500);
             } catch (err) {
-                btn.style.backgroundColor = "#ef4444"; btn.innerText = "ERROR";
+                // PATCHED: Log the exact error to the console so you can see if Firebase is blocking it!
+                console.error("Publish Failed:", err);
+                btn.style.backgroundColor = "#ef4444"; btn.innerText = "DB PERMISSION DENIED";
                 setTimeout(() => { btn.style.backgroundColor = ""; btn.innerText = window.currentEditId ? "UPDATE POST" : "Publish Post"; }, 3000);
             }
         }
-        
+
         const pubBtn = document.getElementById('publish-btn');
         if(pubBtn) { pubBtn.addEventListener('pointerdown', function(e) { e.preventDefault(); window.publishPost(); }); }
 
@@ -535,7 +537,7 @@
                 controls.enablePan = false; controls.minDistance = 8; controls.maxDistance = 30;
 
                 const mainGroup = new THREE.Group();
-                
+
                 const particleGeo = new THREE.BufferGeometry();
                 const posArray = new Float32Array(200 * 3);
                 for(let i=0; i<200*3; i++) posArray[i] = (Math.random() - 0.5) * 40; 
@@ -547,7 +549,7 @@
                 const linePoints = [];
                 const nodes = [new THREE.Vector3(0, 0, 0)];
                 const radials = 12, rings = 6, maxRadius = 9;
-                
+
                 for (let r = 1; r <= rings; r++) {
                     const radius = (r / rings) * maxRadius;
                     for (let i = 0; i < radials; i++) {
@@ -586,11 +588,11 @@
                     const radialPos = (i * 3) % radials; 
                     const nodeIndex = 1 + (ringLevel - 1) * radials + radialPos;
                     const pos = nodes[nodeIndex];
-                    
+
                     const dot = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3b82f6 }));
                     dot.position.copy(pos); 
                     mainGroup.add(dot);
-                    
+
                     const sprite = createTextSprite(tech);
                     sprite.position.copy(pos).add(pos.clone().normalize().multiplyScalar(1.2));
                     mainGroup.add(sprite);
