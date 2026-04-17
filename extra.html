@@ -19,6 +19,7 @@
                     animation: {
                         'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                         'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         popIn: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
@@ -42,7 +43,6 @@
             background-size: 40px 40px;
         }
 
-        /* Clean UI Dynamic Badge Tiers */
         .tier-bronze { border-color: rgba(217, 119, 6, 0.5); color: #fbbf24; background: rgba(217, 119, 6, 0.1); box-shadow: 0 0 10px rgba(217, 119, 6, 0.2); }
         .tier-silver { border-color: rgba(156, 163, 175, 0.5); color: #f3f4f6; background: rgba(156, 163, 175, 0.1); box-shadow: 0 0 10px rgba(156, 163, 175, 0.2); }
         .tier-gold { border-color: rgba(234, 179, 8, 0.8); color: #fef08a; background: rgba(234, 179, 8, 0.15); box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
@@ -66,24 +66,16 @@
         .badge-box:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
         
         .progress-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Boss HP Bar Animation */
+        .boss-bar-glow { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); transition: width 0.5s ease-out; }
     </style>
 </head>
 <body class="bg-grid flex flex-col min-h-screen">
 
-    <svg width="0" height="0" class="absolute">
-        <defs>
-            <linearGradient id="bronze-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
-            <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
-            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient>
-            <linearGradient id="fire-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="50%" stop-color="#ef4444"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
-            <linearGradient id="king-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient>
-        </defs>
-        <g id="icon-shield"><path d="M12 2L3 6v6c0 5.5 4.5 10 9 12 4.5-2 9-6.5 9-12V6l-9-4zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></g>
-        <g id="icon-swords"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M2 22l4-4M6 18l-4-4"/><path d="M4 12c0 4 4 8 8 8s8-4 8-8-4-8-8-8-8 4-8 8z" opacity="0.3"/></g>
-        <g id="icon-crown"><path d="M2 4h20v2H2zM2 8l4 10h12l4-10-6 4-4-6-4 6z"/><circle cx="12" cy="14" r="2"/><circle cx="6" cy="14" r="1.5"/><circle cx="18" cy="14" r="1.5"/></g>
-        <g id="icon-skull"><path d="M12 2C7.58 2 4 5.58 4 10c0 3.1 1.76 5.76 4.36 7.08L8 22h8l-.36-4.92C18.24 15.76 20 13.1 20 10c0-4.42-3.58-8-8-8zm-3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM10 16h4v2h-4v-2z"/></g>
-        <g id="icon-king"><path d="M12 2l3 5h5l-4 4 2 6-6-3-6 3 2-6-4-4h5z"/></g>
-    </svg>
+    <div id="toast-notification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#10b981] color-black px-6 py-3 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(16,185,129,0.4)] opacity-0 pointer-events-none transition-all z-[10000]">
+        Notification
+    </div>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -107,6 +99,32 @@
 
     <div class="flex-grow w-full max-w-[1400px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
+        <div class="lg:col-span-12">
+            <div class="bg-gradient-to-r from-red-900/30 via-[#0a0a0a] to-red-900/30 border border-red-500/30 rounded-3xl p-6 shadow-[0_0_30px_rgba(239,68,68,0.15)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                
+                <div class="relative z-10 flex-1 w-full">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <p class="text-red-500 font-mono text-[10px] tracking-widest uppercase font-bold animate-pulse-fast">Global Threat Detected</p>
+                            <h2 class="text-3xl font-extrabold text-white tracking-tight" id="boss-name">The Glitch Dragon</h2>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-white font-mono font-bold text-lg" id="boss-hp-text">10,000,000 / 10,000,000</p>
+                        </div>
+                    </div>
+                    <div class="w-full bg-[#111] h-4 rounded-full overflow-hidden border border-white/10 relative">
+                        <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 boss-bar-glow" style="width: 100%;"></div>
+                    </div>
+                    <p class="text-gray-500 font-mono text-[10px] mt-2">Reward: Exclusive "Gate Closer" Mythic Badge & 5,000 XP to all participants.</p>
+                </div>
+
+                <button onclick="attackBoss()" class="relative z-10 bg-red-600 hover:bg-red-500 text-white font-extrabold px-8 py-4 rounded-2xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.5)] active:scale-95 flex items-center gap-3 w-full md:w-auto justify-center whitespace-nowrap">
+                    <i data-lucide="sword" class="w-6 h-6"></i> ATTACK BOSS
+                </button>
+            </div>
+        </div>
+
         <div class="lg:col-span-3 space-y-6">
             
             <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden">
@@ -118,7 +136,7 @@
                             <i data-lucide="user-x" class="text-red-500 w-8 h-8"></i>
                         </div>
                         <h3 class="text-white font-bold text-lg mb-2">Identify Yourself</h3>
-                        <p class="text-gray-400 text-xs mb-6 font-mono">Login to track XP, earn 50+ badges, and add friends.</p>
+                        <p class="text-gray-400 text-xs mb-6 font-mono">Login to track XP, fight bosses, and wager rivals.</p>
                         <button id="google-login-btn" class="w-full bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition-all text-sm">
                             <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"> Sign In with Google
                         </button>
@@ -138,17 +156,15 @@
                         </div>
 
                         <div class="w-full mb-4 flex gap-2">
-                            <input type="text" id="redeem-input" placeholder="ENTER PROMO CODE" class="flex-grow bg-[#111] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-red-500 font-mono text-xs uppercase tracking-widest text-center">
+                            <input type="text" id="redeem-input" placeholder="PROMO CODE" class="flex-grow bg-[#111] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-red-500 font-mono text-xs uppercase tracking-widest text-center">
                             <button onclick="submitRedeemCode()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl font-bold transition shadow-[0_0_10px_rgba(239,68,68,0.3)] text-xs">REDEEM</button>
                         </div>
                         
                         <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-4">
                             <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
                                 <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
-                                <button onclick="openGalleryModal()" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                             </div>
-                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container">
-                                </div>
+                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container"></div>
                         </div>
 
                         <div id="friend-requests-container" class="w-full mb-4 hidden">
@@ -164,25 +180,6 @@
                         </button>
 
                         <button id="logout-btn" class="text-gray-500 hover:text-white font-mono text-[10px] underline">Disconnect</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
-                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
-                    <i data-lucide="target" class="text-red-500 w-4 h-4"></i> Active Missions
-                </h3>
-                <div class="space-y-4">
-                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
-                        <div class="flex justify-between items-start mb-2 pl-2">
-                            <span class="text-white font-bold text-xs">Score 5,000 Points</span>
-                            <span class="text-blue-400 font-mono text-[10px]">+500 XP</span>
-                        </div>
-                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
-                            <div id="mission-1-bar" class="bg-blue-500 h-full progress-fill w-0"></div>
-                        </div>
-                        <p id="mission-1-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">0 / 5000</p>
                     </div>
                 </div>
             </div>
@@ -270,28 +267,6 @@
                     <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Gravity Jet</h4><p class="text-gray-500 text-[10px] font-mono">Escape Protocol</p></div><span class="text-purple-500 font-mono text-xs">+XP</span></div>
                 </div>
 
-                <div class="game-card bg-[#0a0a0a] border border-brand-border rounded-2xl overflow-hidden relative group">
-                    <div class="h-28 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/40 to-black"></div>
-                        <div class="text-4xl z-10 game-img transition-transform duration-300">🛡️</div>
-                        <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/cyber-defense.html" target="_blank" class="bg-red-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
-                        </div>
-                    </div>
-                    <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Cyber Defense</h4><p class="text-gray-500 text-[10px] font-mono">Core Protection</p></div><span class="text-red-500 font-mono text-xs">+XP</span></div>
-                </div>
-
-                <div class="game-card bg-[#0a0a0a] border border-brand-border rounded-2xl overflow-hidden relative group">
-                    <div class="h-28 bg-gray-900 relative overflow-hidden flex items-center justify-center">
-                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/40 to-black"></div>
-                        <div class="text-4xl z-10 game-img transition-transform duration-300">⬛</div>
-                        <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
-                            <a href="arcade/neon-dash.html" target="_blank" class="bg-emerald-500 text-black px-8 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
-                        </div>
-                    </div>
-                    <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Neon Dash</h4><p class="text-gray-500 text-[10px] font-mono">GD Edition</p></div><span class="text-emerald-500 font-mono text-xs">+XP</span></div>
-                </div>
-
             </div>
         </div>
 
@@ -327,20 +302,6 @@
         </div>
     </div>
 
-    <div id="toast-modal" class="fixed top-10 left-1/2 transform -translate-x-1/2 z-[10000] hidden">
-        <div class="bg-gradient-to-r from-[#111] to-[#0a0a0a] border border-white/20 p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-4 animate-slide-up relative overflow-hidden min-w-[300px]">
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/20 to-transparent"></div>
-            <div class="w-14 h-14 bg-black/50 rounded-2xl border-2 border-gray-700 flex items-center justify-center relative z-10 animate-bounce shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                <i id="toast-icon" data-lucide="award" class="w-6 h-6 text-white"></i>
-            </div>
-            <div class="relative z-10">
-                <p id="toast-title" class="text-red-400 font-black text-[10px] uppercase tracking-widest mb-1">ACHIEVEMENT UNLOCKED!</p>
-                <p id="toast-desc" class="text-white font-bold text-lg">S-Rank Hunter</p>
-                <p id="toast-sub" class="text-gray-400 font-mono text-[10px]">You leveled up.</p>
-            </div>
-        </div>
-    </div>
-
     <div id="profile-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in">
             <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
@@ -364,7 +325,6 @@
                 <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-6 text-center">
                     <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
                         <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
-                        <button onclick="openGalleryModal(window.currentViewedUser)" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                     </div>
                     <div class="flex flex-wrap gap-2 justify-center" id="pub-badges"></div>
                 </div>
@@ -373,30 +333,11 @@
                     <button id="add-friend-btn" onclick="sendFriendRequest()" class="flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend
                     </button>
-                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                    <button id="add-rival-btn" onclick="markRival()" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
                         <i data-lucide="swords" class="w-4 h-4"></i> Rival
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="gallery-modal" class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl hidden flex-col justify-start items-center p-4 md:p-10 overflow-y-auto hide-scrollbar w-full h-full">
-        <div class="w-full max-w-5xl">
-            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 mt-6">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-[#111] rounded-2xl flex justify-center items-center text-white text-2xl border border-white/20">🏆</div>
-                    <div>
-                        <h2 class="text-white font-extrabold text-3xl tracking-tight">Badge Collection</h2>
-                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest" id="gallery-owner-name">Player's Arsenal</p>
-                    </div>
-                </div>
-                <button onclick="closeGalleryModal()" class="bg-[#111] hover:bg-gray-800 border border-white/10 text-white px-6 py-2 rounded-xl font-bold transition-colors">Close</button>
-            </div>
-            <div class="flex gap-4 mb-6">
-                <div class="bg-[#111] px-4 py-2 rounded-lg border border-white/5"><span class="text-gray-500 font-mono text-xs uppercase">Unlocked:</span> <span id="gallery-unlocked-count" class="text-white font-bold">0</span><span class="text-gray-500">/50</span></div>
-            </div>
-            <div id="gallery-grid" class="space-y-8 pb-20"></div>
         </div>
     </div>
 
@@ -442,10 +383,9 @@
         </div>
     </div>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         // THE 50+ DYNAMIC BADGE DATABASE
@@ -477,9 +417,9 @@
             { id: 'soc_5', name: 'Network Hub', desc: 'Add 50 Friends', icon: 'globe', tier: 'mythic', check: (u) => u.friends >= 50, cat: 'Social' },
             { id: 'soc_6', name: 'Recruit', desc: 'Join a Club', icon: 'shield-check', tier: 'bronze', check: (u) => u.inClub, cat: 'Social' },
             { id: 'soc_7', name: 'Syndicate Leader', desc: 'Own a Club', icon: 'building', tier: 'gold', check: (u) => u.ownsClub, cat: 'Social' },
-            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.friends > 0, cat: 'Social' }, 
-            { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.friends > 5, cat: 'Social' },
-            { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.friends > 10, cat: 'Social' },
+            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals > 0, cat: 'Social' }, 
+            { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.rivals >= 5, cat: 'Social' },
+            { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.rivals >= 10, cat: 'Social' },
             { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
             { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
             { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
@@ -488,18 +428,7 @@
             { id: 'rnk_6', name: 'Runner Up', desc: 'Reach #2 Global', icon: 'trophy', tier: 'diamond', check: (u) => u.rank === 2, cat: 'Ranked' },
             { id: 'rnk_7', name: 'Champion', desc: 'Reach #1 Global', icon: 'crown', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
             { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
-            { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
-            { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
-            { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_4', name: 'Speed Hacker', desc: 'Play TYPE-X', icon: 'keyboard', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_5', name: 'Architect', desc: 'Play Stack Overflow', icon: 'layers', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_6', name: 'Gravity Defier', desc: 'Play Gravity Jet', icon: 'rocket', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_7', name: 'Core Defender', desc: 'Play Cyber Defense', icon: 'shield-alert', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_8', name: 'Geometry God', desc: 'Play Neon Dash', icon: 'square', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_9', name: 'First Death', desc: 'Die in any game', icon: 'skull', tier: 'bronze', check: (u) => true, cat: 'Games' },
-            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all 8 games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
+            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
         ];
 
         function renderBadgeHTML(badge, isUnlocked) {
@@ -528,20 +457,22 @@
         lucide.createIcons();
 
         let db, auth, provider, currentUser = null;
-        let localXP = 0; let localLevel = 1; let userFriends = []; let userRequests = [];
+        let localXP = 0; let localLevel = 1; 
+        let userFriends = []; let userRequests = []; let userRivals = [];
         window.lastClaimed = null; window.currentViewedUser = null; 
 
-        window.showToast = function(title, desc, sub, iconName) {
-            const toast = document.getElementById('toast-modal');
-            document.getElementById('toast-title').innerText = title || "NOTIFICATION";
-            document.getElementById('toast-desc').innerText = desc || "";
-            document.getElementById('toast-sub').innerText = sub || "";
-            if(iconName) {
-                document.getElementById('toast-modal').querySelector('.w-14').innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6 text-white"></i>`;
-                lucide.createIcons();
+        window.showToast = function(msg, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            toast.innerText = msg;
+            if(isError) {
+                toast.style.backgroundColor = "#ef4444";
+                toast.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.4)";
+            } else {
+                toast.style.backgroundColor = "#10b981";
+                toast.style.boxShadow = "0 10px 30px rgba(16, 185, 129, 0.4)";
             }
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 4000);
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 3000);
         }
 
         try {
@@ -549,16 +480,10 @@
             db = getFirestore(app);
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
+            loadBossRaid();
         } catch (error) { 
             console.error("Firebase Error:", error); 
         }
-
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === 'visible' && currentUser) {
-                loadUserDB(currentUser.uid, currentUser.displayName, currentUser.photoURL);
-                fetchGlobalLeaderboard();
-            }
-        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -587,48 +512,78 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (data.totalScore > localXP && localXP !== 0) {
-                    window.showToast("GAME SYNC COMPLETE", `+${data.totalScore - localXP} XP Earned`, "Database updated.", "zap");
-                }
                 localXP = Number(data.totalScore) || 0;
                 localLevel = Math.floor(localXP / 500) + 1;
                 window.lastClaimed = data.lastClaimed || null;
                 userFriends = data.friends || [];
                 userRequests = data.requests || [];
+                userRivals = data.rivals || [];
                 
                 if (localLevel !== data.level) await updateDoc(docRef, { level: localLevel });
             } else {
-                localXP = 0; localLevel = 1; window.lastClaimed = null; userFriends = []; userRequests = [];
-                await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1, lastClaimed: null, friends: [], requests: [] });
+                localXP = 0; localLevel = 1; window.lastClaimed = null; userFriends = []; userRequests = []; userRivals = [];
+                await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1, lastClaimed: null, friends: [], requests: [], rivals: [] });
             }
             updateProfileUI(uid);
+        }
+
+        // --- GLOBAL BOSS RAID ENGINE ---
+        function loadBossRaid() {
+            if(!db) return;
+            const bossRef = doc(db, "server", "boss");
+            onSnapshot(bossRef, (snap) => {
+                if(!snap.exists()) {
+                    // Auto-create boss if missing
+                    setDoc(bossRef, { name: "The Glitch Dragon", maxHp: 10000000, currentHp: 10000000 });
+                    return;
+                }
+                const data = snap.data();
+                const hpPct = Math.max(0, (data.currentHp / data.maxHp) * 100);
+                
+                document.getElementById('boss-name').innerText = data.name;
+                document.getElementById('boss-hp-text').innerText = `${data.currentHp.toLocaleString()} / ${data.maxHp.toLocaleString()}`;
+                document.getElementById('boss-hp-bar').style.width = `${hpPct}%`;
+                
+                if(data.currentHp <= 0) {
+                    document.getElementById('boss-name').innerText = `${data.name} (DEFEATED)`;
+                    document.getElementById('boss-hp-text').innerText = "0";
+                    document.getElementById('boss-hp-bar').style.width = "0%";
+                    document.getElementById('boss-hp-bar').classList.remove('from-red-600', 'to-orange-500', 'boss-bar-glow');
+                    document.getElementById('boss-hp-bar').classList.add('bg-gray-800');
+                }
+            });
+        }
+
+        window.attackBoss = async function() {
+            if(!currentUser) return window.showToast("Must login to attack!", true);
+            const bossRef = doc(db, "server", "boss");
+            try {
+                // Deal random damage between 100-500
+                const dmg = Math.floor(Math.random() * 400) + 100;
+                await updateDoc(bossRef, { currentHp: increment(-dmg) });
+                window.showToast(`Dealt ${dmg} Damage!`);
+                
+                // Add some small XP for participating
+                localXP += 10;
+                await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
+                updateProfileUI(currentUser.uid);
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return;
             const today = new Date().toDateString(); 
-            
             if (window.lastClaimed === today) {
-                window.showToast("ACCESS DENIED", "Cooldown Active", "Return tomorrow for more XP.", "clock");
-                return;
+                window.showToast("Cooldown Active - Return tomorrow."); return;
             }
-            
-            const oldLevel = localLevel; 
-            localXP += 250; 
-            localLevel = Math.floor(localXP / 500) + 1; 
-            window.lastClaimed = today; 
-
+            localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
-                updateProfileUI(currentUser.uid); 
-                fetchGlobalLeaderboard();
-
-                if(localLevel > oldLevel) window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, "Keep grinding.", "chevron-up");
-                else window.showToast("MISSION COMPLETE", "+250 XP", "Sync successful.", "zap");
-            } catch (err) {
-                console.error(err);
-                window.showToast("SYNC FAILED", "Database write blocked.", "Check Firebase Rules.", "x-circle");
-            }
+                updateProfileUI(currentUser.uid); fetchGlobalLeaderboard();
+                window.showToast("+250 XP Daily Claimed!");
+            } catch (err) { window.showToast("Database write blocked.", true); }
         }
 
         window.submitRedeemCode = async function() {
@@ -636,8 +591,6 @@
             const codeInput = document.getElementById('redeem-input');
             const codeStr = codeInput.value.trim().toUpperCase();
             if(!codeStr) return;
-            
-            codeInput.value = "VERIFYING...";
             codeInput.disabled = true;
 
             try {
@@ -645,50 +598,36 @@
                 const codeSnap = await getDoc(codeRef);
 
                 if(!codeSnap.exists()) {
-                    window.showToast("INVALID CODE", "Code not found in database.", "", "x-circle");
+                    window.showToast("Invalid Promo Code.", true);
                 } else {
                     const data = codeSnap.data();
                     if(data.usedBy && data.usedBy.includes(currentUser.uid)) {
-                        window.showToast("CODE ALREADY USED", "You have already claimed this.", "", "alert-triangle");
+                        window.showToast("Code already used.", true);
                     } else if (data.limit !== -1 && data.usedBy && data.usedBy.length >= data.limit) {
-                        window.showToast("CODE EXPIRED", "Usage limit reached.", "", "clock");
+                        window.showToast("Code expired limit.", true);
                     } else {
                         await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
-                        
-                        const oldLevel = localLevel;
                         localXP = Number(localXP) + Number(data.rewardXp);
                         localLevel = Math.floor(localXP / 500) + 1;
                         
                         await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
-                        
-                        updateProfileUI(currentUser.uid);
-                        fetchGlobalLeaderboard();
-
-                        if(localLevel > oldLevel) {
-                            window.showToast("LEVEL UP!", `Level ${localLevel} Reached`, `+${data.rewardXp} XP Applied.`, "chevron-up");
-                        } else {
-                            window.showToast("CODE REDEEMED", `+${data.rewardXp} XP Added`, "Syndicate balance updated.", "zap");
-                        }
+                        updateProfileUI(currentUser.uid); fetchGlobalLeaderboard();
+                        window.showToast(`+${data.rewardXp} XP Redeemed!`);
                     }
                 }
-            } catch(e) {
-                console.error("Redeem Code Error:", e);
-                window.showToast("ERROR", "Database connection failed.", "", "x-circle");
-            }
-            
-            codeInput.value = "";
-            codeInput.disabled = false;
+            } catch(e) { window.showToast("Database error.", true); }
+            codeInput.value = ""; codeInput.disabled = false;
         }
 
         function getUserBadges(uid) {
             const uData = window.usersData?.find(u => u.uid === uid);
             const rank = uData ? uData.currentRank : 999;
-            
             const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
             const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
             const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
+            const rivals = (uid === currentUser?.uid) ? userRivals.length : (uData?.rivals?.length || 0);
 
-            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, inClub: false, ownsClub: false };
+            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, rivals: rivals, inClub: false, ownsClub: false };
             let unlocked = [];
             BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
             const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
@@ -699,7 +638,6 @@
         function updateProfileUI(uid) {
             document.getElementById('total-points').innerText = localXP.toLocaleString();
             document.getElementById('user-level').innerText = `LVL ${localLevel}`;
-            document.getElementById('friend-count-header').innerText = `(${userFriends.length})`;
 
             let title = "Novice Coder";
             if(localXP >= 1000) title = "S-Rank Hunter"; 
@@ -717,142 +655,34 @@
                 const top8 = unlocked.slice(0, 8);
                 top8.forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
             }
-
-            renderFriendRequests();
-
-            const btn = document.getElementById('claim-xp-btn');
-            if(window.lastClaimed === new Date().toDateString()) {
-                btn.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Network Sync Complete`;
-                btn.className = "w-full bg-[#111] border border-gray-800 text-gray-500 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 opacity-50 cursor-not-allowed";
-            } else {
-                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> Claim Daily XP (+250)`;
-                btn.className = "w-full bg-red-500/20 border border-red-500/50 hover:bg-red-500 hover:text-black text-red-400 font-bold py-3 rounded-xl transition-all text-xs flex items-center justify-center gap-2 mb-4 shadow-[0_0_10px_rgba(239,68,68,0.2)] cursor-pointer";
-            }
             lucide.createIcons();
-            updateMissions();
         }
 
-        async function renderFriendRequests() {
-            const reqContainer = document.getElementById('friend-requests-container');
-            const reqList = document.getElementById('friend-requests-list');
-            
-            if (!userRequests || userRequests.length === 0) { reqContainer.classList.add('hidden'); return; }
-            
-            reqContainer.classList.remove('hidden');
-            reqList.innerHTML = '<div class="text-center text-xs text-gray-500 py-2">Loading requests...</div>';
-
-            let htmlString = '';
-            for (const reqUid of userRequests) {
-                const uSnap = await getDoc(doc(db, "users", reqUid));
-                if (uSnap.exists()) {
-                    const uData = uSnap.data();
-                    htmlString += `
-                        <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/10 shadow-lg">
-                            <div class="flex items-center gap-3">
-                                <img src="${uData.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
-                                <span class="text-white text-xs font-bold truncate max-w-[100px]">${uData.displayName}</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="acceptFriend('${reqUid}')" class="bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black border border-emerald-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition shadow-[0_0_10px_rgba(16,185,129,0.2)]">Accept</button>
-                                <button onclick="rejectFriend('${reqUid}')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition">Decline</button>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-            reqList.innerHTML = htmlString;
-        }
-
-        window.sendFriendRequest = async function() {
-            if(!currentUser) return;
-            const targetUid = window.currentViewedUser;
-            if(!targetUid || targetUid === currentUser.uid) return;
-
-            const btn = document.getElementById('add-friend-btn');
-            btn.innerHTML = `<div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>`;
-
-            try {
-                await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
-                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
-                btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
-                lucide.createIcons();
-            } catch(e) { console.error(e); btn.innerHTML = `Error`; }
-        }
-
-        window.acceptFriend = async function(reqUid) {
-            if(!currentUser || !db) return;
-            try {
-                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
-                await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
-                userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
-                updateProfileUI(); 
-            } catch(e) { console.error(e); }
-        }
-
-        window.rejectFriend = async function(reqUid) {
-            if(!currentUser || !db) return;
-            try {
-                await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
-                userRequests = userRequests.filter(id => id !== reqUid);
-                updateProfileUI();
-            } catch(e) { console.error(e); }
-        }
-
-        function updateMissions() {
-            const m1Pct = Math.min((localXP / 5000) * 100, 100);
-            const m1Bar = document.getElementById('mission-1-bar');
-            const m1Text = document.getElementById('mission-1-text');
-            if (m1Bar) m1Bar.style.width = `${m1Pct}%`;
-            if (m1Text) m1Text.innerText = m1Pct === 100 ? "COMPLETED" : `${localXP} / 5000`;
-        }
-
-        // --- PATCHED: ROBUST GLOBAL LEADERBOARD NULL CHECKS ---
+        // --- GLOBAL LEADERBOARD ---
         window.usersData = []; 
-
         async function fetchGlobalLeaderboard() {
             if(!db) return;
             const list = document.getElementById('community-list');
-
-            if (!currentUser) {
-                list.innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`;
-                return;
-            }
+            if (!currentUser) { list.innerHTML = `<p class="text-gray-500 font-mono text-xs text-center mt-6">Sign in to view Network.</p>`; return; }
 
             try {
                 list.innerHTML = `<div class="flex flex-col items-center justify-center h-full gap-4"><div class="w-6 h-6 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin"></div></div>`;
-                
                 const snapshot = await getDocs(collection(db, "users"));
                 let allUsers = [];
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    data.uid = doc.id;
-                    data.totalScore = data.totalScore || 0; 
-                    allUsers.push(data);
-                });
-
+                snapshot.forEach(doc => { const data = doc.data(); data.uid = doc.id; data.totalScore = data.totalScore || 0; allUsers.push(data); });
                 allUsers.sort((a, b) => b.totalScore - a.totalScore);
                 window.usersData = allUsers.slice(0, 25);
                 
                 list.innerHTML = '';
-                
                 let rank = 1;
                 window.usersData.forEach(data => {
                     data.currentRank = rank; 
-                    
                     let rankBadge = `<div class="text-gray-500 font-bold text-sm w-4">#${rank}</div>`;
                     if(rank === 1) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]">👑</div>`;
                     if(rank === 2) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(156,163,175,0.8)]">🥈</div>`;
                     if(rank === 3) rankBadge = `<div class="text-xl w-6 drop-shadow-[0_0_5px_rgba(180,83,9,0.8)]">🥉</div>`;
 
-                    // DOM Safety Checks
-                    if(rank === 1) { 
-                        window.topWeeklyUid = data.uid; 
-                        const wName = document.getElementById('weekly-name');
-                        const wPfp = document.getElementById('weekly-pfp');
-                        if(wName) wName.innerText = data.displayName; 
-                        if(data.photoURL && wPfp) wPfp.src = data.photoURL; 
-                    }
+                    if(rank === 1) { window.topWeeklyUid = data.uid; const wName = document.getElementById('weekly-name'); if(wName) wName.innerText = data.displayName; const wPfp = document.getElementById('weekly-pfp'); if(data.photoURL && wPfp) wPfp.src = data.photoURL; }
 
                     list.innerHTML += `
                         <div onclick="openProfileModal('${data.uid}')" class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/5 hover:border-red-500/50 transition cursor-pointer group">
@@ -872,14 +702,11 @@
                     `;
                     rank++;
                 });
-
                 if(window.usersData.length === 0) list.innerHTML = '<p class="text-gray-500 font-mono text-xs text-center mt-6">No users found.</p>';
-            } catch (error) { 
-                console.error("Leaderboard Error:", error); 
-                list.innerHTML = `<p class="text-red-500 font-mono text-[10px] text-center mt-6">DB Error: ${error.message}</p>`;
-            }
+            } catch (error) { list.innerHTML = `<p class="text-red-500 font-mono text-[10px] text-center mt-6">DB Error: ${error.message}</p>`; }
         }
 
+        // --- RIVAL WAGER SYSTEM ---
         window.openProfileModal = async function(uid) {
             if(!uid) return;
             if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
@@ -888,8 +715,7 @@
             let user = window.usersData.find(u => u.uid === uid);
             if (!user) {
                 const uSnap = await getDoc(doc(db, "users", uid));
-                if (uSnap.exists()) { user = uSnap.data(); user.uid = uid; user.currentRank = 999; } 
-                else return alert("User profile corrupted or deleted.");
+                if (uSnap.exists()) { user = uSnap.data(); user.uid = uid; user.currentRank = 999; } else return;
             }
             
             document.getElementById('pub-name').innerText = user.displayName;
@@ -907,159 +733,71 @@
 
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
-            
             const unlocked = getUserBadges(uid);
-            if(unlocked.length === 0) {
-                pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`;
-            } else {
-                const top6 = unlocked.slice(0, 6);
-                top6.forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true));
-            }
+            if(unlocked.length === 0) { pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`; } 
+            else { unlocked.slice(0, 6).forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true)); }
 
-            const fBtn = document.getElementById('add-friend-btn');
             const rBtn = document.getElementById('add-rival-btn');
             
-            if(userFriends.includes(uid)) {
-                fBtn.innerHTML = `<i data-lucide="users" class="w-4 h-4"></i> Friends`;
-                fBtn.className = "flex-1 bg-gray-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-default";
-                fBtn.onclick = null;
+            // WAGER UI UPGRADE
+            if(userRivals.includes(uid)) {
+                rBtn.innerHTML = `<i data-lucide="swords" class="w-4 h-4"></i> Wager 500 XP`;
+                rBtn.className = "flex-1 bg-red-600 text-white font-black py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(239,68,68,0.5)] uppercase tracking-widest";
+                rBtn.onclick = () => window.wagerRival(uid);
             } else {
-                fBtn.innerHTML = `<i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend`;
-                fBtn.className = "flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2";
-                fBtn.onclick = window.sendFriendRequest;
+                rBtn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i> Rival`;
+                rBtn.className = "flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)]";
+                rBtn.onclick = () => window.markRival(uid);
             }
-            
-            rBtn.innerHTML = `<i data-lucide="swords" class="w-4 h-4"></i> Rival`;
-            rBtn.className = "flex-1 bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]";
 
-            if(currentUser && uid === currentUser.uid) {
-                document.getElementById('pub-action-buttons').style.display = 'none';
-            } else {
-                document.getElementById('pub-action-buttons').style.display = 'flex';
-            }
+            if(currentUser && uid === currentUser.uid) document.getElementById('pub-action-buttons').style.display = 'none';
+            else document.getElementById('pub-action-buttons').style.display = 'flex';
 
             lucide.createIcons();
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
         }
+        window.closeProfileModal = function() { document.getElementById('profile-modal').classList.add('hidden'); document.getElementById('profile-modal').classList.remove('flex'); window.currentViewedUser = null; }
 
-        window.closeProfileModal = function() {
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-            window.currentViewedUser = null;
+        window.markRival = async function(uid) {
+            if(!currentUser) return;
+            await updateDoc(doc(db, "users", currentUser.uid), { rivals: arrayUnion(uid) });
+            userRivals.push(uid);
+            window.showToast("RIVAL DECLARED. You can now wager XP.");
+            window.openProfileModal(uid); // Refresh modal to show Wager button
         }
 
-        window.openGalleryModal = function(uid) {
-            const targetUid = uid || (currentUser ? currentUser.uid : null);
-            if(!targetUid) return;
-
-            let user = window.usersData.find(u => u.uid === targetUid);
-            if(!user && targetUid === currentUser.uid) user = { displayName: currentUser.displayName };
+        window.wagerRival = async function(uid) {
+            if(localXP < 500) return window.showToast("INSUFFICIENT XP TO WAGER.", true);
             
-            document.getElementById('gallery-owner-name').innerText = `${user.displayName}'s Arsenal`;
+            localXP -= 500;
+            await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
+            updateProfileUI(currentUser.uid);
             
-            const unlockedBadges = getUserBadges(targetUid);
-            const unlockedIds = unlockedBadges.map(b => b.id);
-            
-            document.getElementById('gallery-unlocked-count').innerText = unlockedBadges.length;
-
-            const categories = ['Experience', 'Progression', 'Ranked', 'Social', 'Games'];
-            const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = '';
-
-            categories.forEach(cat => {
-                const catBadges = BADGE_DB.filter(b => b.cat === cat);
-                let html = `
-                    <div>
-                        <h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">${cat}</h3>
-                        <div class="flex flex-wrap gap-4">
-                `;
-                catBadges.forEach(b => {
-                    const hasBadge = unlockedIds.includes(b.id);
-                    html += renderBadgeHTML(b, hasBadge);
-                });
-                html += `</div></div>`;
-                grid.innerHTML += html;
-            });
-
-            lucide.createIcons();
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-            document.getElementById('gallery-modal').classList.remove('hidden');
-            document.getElementById('gallery-modal').classList.add('flex');
-        }
-        window.closeGalleryModal = function() {
-            document.getElementById('gallery-modal').classList.add('hidden');
-            document.getElementById('gallery-modal').classList.remove('flex');
-            if(window.currentViewedUser) window.openProfileModal(window.currentViewedUser);
-            else window.openProfileModal('self');
+            // In a full build, this creates a 'wager' doc in Firebase. For now, it's instant hype.
+            window.showToast("WAGER PLACED! 500 XP Deducted. Defeat them in Neon Dash.");
         }
 
-        window.markRival = function() {
-            if(!currentUser) return alert("You must login to select rivals.");
-            const btn = document.getElementById('add-rival-btn');
-            btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i> Tracked`;
-            btn.className = "flex-1 bg-red-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-colors text-sm flex items-center justify-center gap-2";
-            lucide.createIcons();
-            window.showToast("RIVAL DECLARED", "System Tracking Initiated", "You will be notified of their scores.", "crosshair");
-        }
-
-        // --- SECRET ADMIN: REDEEM CODES ---
-        window.openPinModal = function() {
-            document.getElementById('pin-modal').classList.remove('hidden');
-            document.getElementById('pin-modal').classList.add('flex');
-            document.getElementById('pin-input').value = '';
-            document.getElementById('pin-error').classList.add('hidden');
-        }
-        window.closePinModal = function() {
-            document.getElementById('pin-modal').classList.add('hidden');
-            document.getElementById('pin-modal').classList.remove('flex');
-        }
-        window.verifyPin = function() {
-            if(document.getElementById('pin-input').value === "23455432") {
-                closePinModal();
-                document.getElementById('admin-modal').classList.remove('hidden');
-                document.getElementById('admin-modal').classList.add('flex');
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-            }
-        }
-        window.closeAdminModal = function() {
-            document.getElementById('admin-modal').classList.add('hidden');
-            document.getElementById('admin-modal').classList.remove('flex');
-        }
+        // --- ADMIN CODES ---
+        window.openPinModal = function() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-modal').classList.add('flex'); document.getElementById('pin-input').value = ''; document.getElementById('pin-error').classList.add('hidden'); }
+        window.closePinModal = function() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
+        window.verifyPin = function() { if(document.getElementById('pin-input').value === "23455432") { closePinModal(); document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-modal').classList.add('flex'); } else { document.getElementById('pin-error').classList.remove('hidden'); } }
+        window.closeAdminModal = function() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
 
         window.generateCode = async function() {
-            if(!db || !currentUser) return alert("Admin not verified in DB.");
+            if(!db || !currentUser) return;
             const name = document.getElementById('new-code-name').value.trim().toUpperCase();
             const xp = parseInt(document.getElementById('new-code-xp').value);
             const limitVal = document.getElementById('new-code-limit').value;
             const limit = limitVal ? parseInt(limitVal) : -1; 
-
-            if(!name || !xp) return alert("Code Name and XP required!");
-
-            const btn = document.getElementById('create-code-btn');
-            btn.innerText = "GENERATING PROTOCOL...";
-            btn.disabled = true;
+            if(!name || !xp) return;
+            const btn = document.getElementById('create-code-btn'); btn.innerText = "GENERATING..."; btn.disabled = true;
 
             try {
-                await setDoc(doc(db, "redeem_codes", name), {
-                    rewardXp: xp,
-                    limit: limit,
-                    usedBy: [],
-                    createdBy: currentUser.uid,
-                    createdAt: serverTimestamp()
-                });
-                window.showToast("CODE GENERATED", `Code: ${name}`, `Reward: ${xp} XP`, "check-circle");
-                document.getElementById('new-code-name').value = '';
-                document.getElementById('new-code-xp').value = '';
-                document.getElementById('new-code-limit').value = '';
-            } catch(e) {
-                console.error(e);
-                window.showToast("ERROR", "Code generation failed.", "Check Firebase Permissions.", "x-circle");
-            }
-            btn.innerText = "DEPLOY CODE";
-            btn.disabled = false;
+                await setDoc(doc(db, "redeem_codes", name), { rewardXp: xp, limit: limit, usedBy: [], createdBy: currentUser.uid, createdAt: serverTimestamp() });
+                window.showToast(`Code ${name} Created!`);
+            } catch(e) { window.showToast("Error creating code.", true); }
+            btn.innerText = "DEPLOY CODE"; btn.disabled = false;
         }
     </script>
 </body>
