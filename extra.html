@@ -43,6 +43,7 @@
             background-size: 40px 40px;
         }
 
+        /* Clean UI Dynamic Badge Tiers */
         .tier-bronze { border-color: rgba(217, 119, 6, 0.5); color: #fbbf24; background: rgba(217, 119, 6, 0.1); box-shadow: 0 0 10px rgba(217, 119, 6, 0.2); }
         .tier-silver { border-color: rgba(156, 163, 175, 0.5); color: #f3f4f6; background: rgba(156, 163, 175, 0.1); box-shadow: 0 0 10px rgba(156, 163, 175, 0.2); }
         .tier-gold { border-color: rgba(234, 179, 8, 0.8); color: #fef08a; background: rgba(234, 179, 8, 0.15); box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
@@ -73,8 +74,9 @@
 </head>
 <body class="bg-grid flex flex-col min-h-screen">
 
-    <div id="toast-notification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#10b981] color-black px-6 py-3 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(16,185,129,0.4)] opacity-0 pointer-events-none transition-all z-[10000]">
-        Notification
+    <div id="toast-notification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#10b981] color-black px-6 py-3 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(16,185,129,0.4)] opacity-0 pointer-events-none transition-all z-[10000] flex items-center gap-3">
+        <i id="toast-icon" data-lucide="bell" class="w-5 h-5 text-black"></i>
+        <span id="toast-message">Notification</span>
     </div>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
@@ -163,8 +165,10 @@
                         <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-4">
                             <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
                                 <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
+                                <button onclick="openGalleryModal()" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                             </div>
-                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container"></div>
+                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container">
+                                </div>
                         </div>
 
                         <div id="friend-requests-container" class="w-full mb-4 hidden">
@@ -180,6 +184,36 @@
                         </button>
 
                         <button id="logout-btn" class="text-gray-500 hover:text-white font-mono text-[10px] underline">Disconnect</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
+                <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i data-lucide="target" class="text-red-500 w-4 h-4"></i> Active Missions
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
+                        <div class="flex justify-between items-start mb-2 pl-2">
+                            <span class="text-white font-bold text-xs">Score 5,000 Points</span>
+                            <span class="text-blue-400 font-mono text-[10px]">+500 XP</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div id="mission-1-bar" class="bg-blue-500 h-full progress-fill w-0"></div>
+                        </div>
+                        <p id="mission-1-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">0 / 5000</p>
+                    </div>
+                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1 bg-yellow-500"></div>
+                        <div class="flex justify-between items-start mb-2 pl-2">
+                            <span class="text-white font-bold text-xs">Reach Level 5</span>
+                            <span class="text-yellow-400 font-mono text-[10px]">+1000 XP</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
+                            <div id="mission-2-bar" class="bg-yellow-500 h-full progress-fill w-0"></div>
+                        </div>
+                        <p id="mission-2-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">Lvl 1 / 5</p>
                     </div>
                 </div>
             </div>
@@ -267,6 +301,28 @@
                     <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Gravity Jet</h4><p class="text-gray-500 text-[10px] font-mono">Escape Protocol</p></div><span class="text-purple-500 font-mono text-xs">+XP</span></div>
                 </div>
 
+                <div class="game-card bg-[#0a0a0a] border border-brand-border rounded-2xl overflow-hidden relative group">
+                    <div class="h-28 bg-gray-900 relative overflow-hidden flex items-center justify-center">
+                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/40 to-black"></div>
+                        <div class="text-4xl z-10 game-img transition-transform duration-300">🛡️</div>
+                        <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
+                            <a href="arcade/cyber-defense.html" target="_blank" class="bg-red-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                        </div>
+                    </div>
+                    <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Cyber Defense</h4><p class="text-gray-500 text-[10px] font-mono">Core Protection</p></div><span class="text-red-500 font-mono text-xs">+XP</span></div>
+                </div>
+
+                <div class="game-card bg-[#0a0a0a] border border-brand-border rounded-2xl overflow-hidden relative group">
+                    <div class="h-28 bg-gray-900 relative overflow-hidden flex items-center justify-center">
+                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/40 to-black"></div>
+                        <div class="text-4xl z-10 game-img transition-transform duration-300">⬛</div>
+                        <div class="game-overlay absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 transition-opacity z-20 backdrop-blur-sm">
+                            <a href="arcade/neon-dash.html" target="_blank" class="bg-emerald-500 text-black px-8 py-2.5 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:scale-105 transition-transform">PLAY SOLO</a>
+                        </div>
+                    </div>
+                    <div class="p-3 border-t border-white/5 flex justify-between items-center"><div><h4 class="text-white font-bold text-sm">Neon Dash</h4><p class="text-gray-500 text-[10px] font-mono">GD Edition</p></div><span class="text-emerald-500 font-mono text-xs">+XP</span></div>
+                </div>
+
             </div>
         </div>
 
@@ -325,6 +381,7 @@
                 <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-6 text-center">
                     <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
                         <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
+                        <button onclick="openGalleryModal(window.currentViewedUser)" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                     </div>
                     <div class="flex flex-wrap gap-2 justify-center" id="pub-badges"></div>
                 </div>
@@ -383,12 +440,31 @@
         </div>
     </div>
 
+    <div id="gallery-modal" class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl hidden flex-col justify-start items-center p-4 md:p-10 overflow-y-auto hide-scrollbar w-full h-full">
+        <div class="w-full max-w-5xl">
+            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 mt-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#111] rounded-2xl flex justify-center items-center text-white text-2xl border border-white/20">🏆</div>
+                    <div>
+                        <h2 class="text-white font-extrabold text-3xl tracking-tight">Badge Collection</h2>
+                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest" id="gallery-owner-name">Player's Arsenal</p>
+                    </div>
+                </div>
+                <button onclick="closeGalleryModal()" class="bg-[#111] hover:bg-gray-800 border border-white/10 text-white px-6 py-2 rounded-xl font-bold transition-colors">Close</button>
+            </div>
+            <div class="flex gap-4 mb-6">
+                <div class="bg-[#111] px-4 py-2 rounded-lg border border-white/5"><span class="text-gray-500 font-mono text-xs uppercase">Unlocked:</span> <span id="gallery-unlocked-count" class="text-white font-bold">0</span><span class="text-gray-500">/50</span></div>
+            </div>
+            <div id="gallery-grid" class="space-y-8 pb-20"></div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-        // THE 50+ DYNAMIC BADGE DATABASE
+        // THE FULL 50+ DYNAMIC BADGE DATABASE RESTORED!
         const BADGE_DB = [
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
@@ -400,6 +476,7 @@
             { id: 'xp_8', name: 'Domain Expanded', desc: 'Earn 250,000 XP', icon: 'skull', tier: 'mythic', check: (u) => u.xp >= 250000, cat: 'Experience' },
             { id: 'xp_9', name: 'Demi-God', desc: 'Earn 500,000 XP', icon: 'ghost', tier: 'mythic', check: (u) => u.xp >= 500000, cat: 'Experience' },
             { id: 'xp_10', name: 'Server Deity', desc: 'Earn 1,000,000 XP', icon: 'sun', tier: 'mythic', check: (u) => u.xp >= 1000000, cat: 'Experience' },
+            
             { id: 'lvl_1', name: 'Level 5', desc: 'Reach Level 5', icon: 'chevron-up', tier: 'bronze', check: (u) => u.level >= 5, cat: 'Progression' },
             { id: 'lvl_2', name: 'Level 10', desc: 'Reach Level 10', icon: 'chevrons-up', tier: 'silver', check: (u) => u.level >= 10, cat: 'Progression' },
             { id: 'lvl_3', name: 'Level 20', desc: 'Reach Level 20', icon: 'trending-up', tier: 'silver', check: (u) => u.level >= 20, cat: 'Progression' },
@@ -410,6 +487,7 @@
             { id: 'lvl_8', name: 'Level 70', desc: 'Reach Level 70', icon: 'crosshair', tier: 'diamond', check: (u) => u.level >= 70, cat: 'Progression' },
             { id: 'lvl_9', name: 'Level 80', desc: 'Reach Level 80', icon: 'swords', tier: 'mythic', check: (u) => u.level >= 80, cat: 'Progression' },
             { id: 'lvl_10', name: 'Level 100', desc: 'Reach Level 100 MAX', icon: 'infinity', tier: 'mythic', check: (u) => u.level >= 100, cat: 'Progression' },
+            
             { id: 'soc_1', name: 'Social', desc: 'Add 1 Friend', icon: 'user-plus', tier: 'bronze', check: (u) => u.friends >= 1, cat: 'Social' },
             { id: 'soc_2', name: 'Crew', desc: 'Add 5 Friends', icon: 'users', tier: 'silver', check: (u) => u.friends >= 5, cat: 'Social' },
             { id: 'soc_3', name: 'Popular', desc: 'Add 10 Friends', icon: 'heart', tier: 'gold', check: (u) => u.friends >= 10, cat: 'Social' },
@@ -417,9 +495,10 @@
             { id: 'soc_5', name: 'Network Hub', desc: 'Add 50 Friends', icon: 'globe', tier: 'mythic', check: (u) => u.friends >= 50, cat: 'Social' },
             { id: 'soc_6', name: 'Recruit', desc: 'Join a Club', icon: 'shield-check', tier: 'bronze', check: (u) => u.inClub, cat: 'Social' },
             { id: 'soc_7', name: 'Syndicate Leader', desc: 'Own a Club', icon: 'building', tier: 'gold', check: (u) => u.ownsClub, cat: 'Social' },
-            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals > 0, cat: 'Social' }, 
+            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals >= 1, cat: 'Social' }, 
             { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.rivals >= 5, cat: 'Social' },
             { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.rivals >= 10, cat: 'Social' },
+            
             { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
             { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
             { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
@@ -427,8 +506,20 @@
             { id: 'rnk_5', name: 'Top 3', desc: 'Reach Top 3', icon: 'medal', tier: 'diamond', check: (u) => u.rank <= 3, cat: 'Ranked' },
             { id: 'rnk_6', name: 'Runner Up', desc: 'Reach #2 Global', icon: 'trophy', tier: 'diamond', check: (u) => u.rank === 2, cat: 'Ranked' },
             { id: 'rnk_7', name: 'Champion', desc: 'Reach #1 Global', icon: 'crown', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
-            { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
-            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
+            { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1 && u.xp >= 500000, cat: 'Ranked' },
+            { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
+            { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
+            
+            { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_4', name: 'Speed Hacker', desc: 'Play TYPE-X', icon: 'keyboard', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_5', name: 'Architect', desc: 'Play Stack Overflow', icon: 'layers', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_6', name: 'Gravity Defier', desc: 'Play Gravity Jet', icon: 'rocket', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_7', name: 'Core Defender', desc: 'Play Cyber Defense', icon: 'shield-alert', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_8', name: 'Geometry God', desc: 'Play Neon Dash', icon: 'square', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
+            { id: 'gm_9', name: 'First Death', desc: 'Die in any game', icon: 'skull', tier: 'bronze', check: (u) => true, cat: 'Games' },
+            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all 8 games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
         ];
 
         function renderBadgeHTML(badge, isUnlocked) {
@@ -463,14 +554,17 @@
 
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast-notification');
-            toast.innerText = msg;
+            document.getElementById('toast-message').innerText = msg;
             if(isError) {
-                toast.style.backgroundColor = "#ef4444";
-                toast.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.4)";
+                toast.classList.replace('bg-[#10b981]', 'bg-[#ef4444]');
+                toast.classList.replace('shadow-[0_10px_30px_rgba(16,185,129,0.4)]', 'shadow-[0_10px_30px_rgba(239,68,68,0.4)]');
+                document.getElementById('toast-icon').setAttribute('data-lucide', 'x-circle');
             } else {
-                toast.style.backgroundColor = "#10b981";
-                toast.style.boxShadow = "0 10px 30px rgba(16, 185, 129, 0.4)";
+                toast.classList.replace('bg-[#ef4444]', 'bg-[#10b981]');
+                toast.classList.replace('shadow-[0_10px_30px_rgba(239,68,68,0.4)]', 'shadow-[0_10px_30px_rgba(16,185,129,0.4)]');
+                document.getElementById('toast-icon').setAttribute('data-lucide', 'bell');
             }
+            lucide.createIcons();
             toast.classList.remove('opacity-0');
             setTimeout(() => toast.classList.add('opacity-0'), 3000);
         }
@@ -527,13 +621,11 @@
             updateProfileUI(uid);
         }
 
-        // --- GLOBAL BOSS RAID ENGINE ---
         function loadBossRaid() {
             if(!db) return;
             const bossRef = doc(db, "server", "boss");
             onSnapshot(bossRef, (snap) => {
                 if(!snap.exists()) {
-                    // Auto-create boss if missing
                     setDoc(bossRef, { name: "The Glitch Dragon", maxHp: 10000000, currentHp: 10000000 });
                     return;
                 }
@@ -558,25 +650,20 @@
             if(!currentUser) return window.showToast("Must login to attack!", true);
             const bossRef = doc(db, "server", "boss");
             try {
-                // Deal random damage between 100-500
                 const dmg = Math.floor(Math.random() * 400) + 100;
                 await updateDoc(bossRef, { currentHp: increment(-dmg) });
                 window.showToast(`Dealt ${dmg} Damage!`);
-                
-                // Add some small XP for participating
                 localXP += 10;
                 await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
                 updateProfileUI(currentUser.uid);
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) { console.error(e); }
         }
 
         window.claimDailyXP = async function() {
             if(!currentUser || !db) return;
             const today = new Date().toDateString(); 
             if (window.lastClaimed === today) {
-                window.showToast("Cooldown Active - Return tomorrow."); return;
+                window.showToast("Cooldown Active - Return tomorrow.", true); return;
             }
             localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
             try {
@@ -764,7 +851,7 @@
             await updateDoc(doc(db, "users", currentUser.uid), { rivals: arrayUnion(uid) });
             userRivals.push(uid);
             window.showToast("RIVAL DECLARED. You can now wager XP.");
-            window.openProfileModal(uid); // Refresh modal to show Wager button
+            window.openProfileModal(uid); 
         }
 
         window.wagerRival = async function(uid) {
@@ -773,19 +860,59 @@
             localXP -= 500;
             await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
             updateProfileUI(currentUser.uid);
-            
-            // In a full build, this creates a 'wager' doc in Firebase. For now, it's instant hype.
-            window.showToast("WAGER PLACED! 500 XP Deducted. Defeat them in Neon Dash.");
+            window.showToast("WAGER PLACED! 500 XP Deducted.");
         }
 
-        // --- ADMIN CODES ---
+        // --- ADMIN CODES & GALLERY MODAL ---
+        window.openGalleryModal = function(uid) {
+            const targetUid = uid || (currentUser ? currentUser.uid : null);
+            if(!targetUid) return;
+
+            let user = window.usersData.find(u => u.uid === targetUid);
+            if(!user && targetUid === currentUser.uid) user = { displayName: currentUser.displayName };
+            
+            document.getElementById('gallery-owner-name').innerText = `${user.displayName}'s Arsenal`;
+            
+            const unlockedBadges = getUserBadges(targetUid);
+            const unlockedIds = unlockedBadges.map(b => b.id);
+            
+            document.getElementById('gallery-unlocked-count').innerText = unlockedBadges.length;
+
+            const categories = ['Experience', 'Progression', 'Ranked', 'Social', 'Games'];
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            categories.forEach(cat => {
+                const catBadges = BADGE_DB.filter(b => b.cat === cat);
+                let html = `<div><h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">${cat}</h3><div class="flex flex-wrap gap-4">`;
+                catBadges.forEach(b => {
+                    const hasBadge = unlockedIds.includes(b.id);
+                    html += renderBadgeHTML(b, hasBadge);
+                });
+                html += `</div></div>`;
+                grid.innerHTML += html;
+            });
+
+            lucide.createIcons();
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            document.getElementById('gallery-modal').classList.remove('hidden');
+            document.getElementById('gallery-modal').classList.add('flex');
+        }
+        window.closeGalleryModal = function() {
+            document.getElementById('gallery-modal').classList.add('hidden');
+            document.getElementById('gallery-modal').classList.remove('flex');
+            if(window.currentViewedUser) window.openProfileModal(window.currentViewedUser);
+            else window.openProfileModal('self');
+        }
+
         window.openPinModal = function() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-modal').classList.add('flex'); document.getElementById('pin-input').value = ''; document.getElementById('pin-error').classList.add('hidden'); }
         window.closePinModal = function() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
         window.verifyPin = function() { if(document.getElementById('pin-input').value === "23455432") { closePinModal(); document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-modal').classList.add('flex'); } else { document.getElementById('pin-error').classList.remove('hidden'); } }
         window.closeAdminModal = function() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
 
         window.generateCode = async function() {
-            if(!db || !currentUser) return;
+            if(!db || !currentUser) return alert("Admin not verified in DB.");
             const name = document.getElementById('new-code-name').value.trim().toUpperCase();
             const xp = parseInt(document.getElementById('new-code-xp').value);
             const limitVal = document.getElementById('new-code-limit').value;
