@@ -85,7 +85,10 @@
 </head>
 <body class="bg-grid-purple flex flex-col min-h-screen">
 
-    <div id="toast-notification">Notification</div>
+    <div id="toast-notification" class="flex items-center gap-3">
+        <i id="toast-icon" data-lucide="bell" class="w-5 h-5 text-black"></i>
+        <span id="toast-message">Notification</span>
+    </div>
 
     <svg width="0" height="0" class="absolute">
         <defs>
@@ -124,7 +127,16 @@
                     <span id="club-type-badge" class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-widest mt-1 mb-2 border border-white/20">TYPE</span>
                     <p id="club-desc" class="text-gray-400 text-xs mb-3 h-8 overflow-hidden">Forging the ultimate syndicate.</p>
                     
-                    <p class="text-gray-500 font-mono text-[10px] tracking-widest uppercase mb-4 bg-[#111] px-4 py-1.5 rounded-lg border border-white/5">Weekly XP: <span id="club-xp" class="text-white font-bold">0</span></p>
+                    <div class="flex gap-2 w-full mb-4">
+                        <div class="flex-1 bg-[#111] px-2 py-1.5 rounded-lg border border-white/5">
+                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Weekly</p>
+                            <p id="club-weekly-xp" class="text-white font-bold text-sm">0</p>
+                        </div>
+                        <div class="flex-1 bg-[#111] px-2 py-1.5 rounded-lg border border-white/5">
+                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Total</p>
+                            <p id="club-xp" class="text-purple-400 font-bold text-sm">0</p>
+                        </div>
+                    </div>
                     
                     <div class="w-full flex flex-wrap gap-2 mb-4">
                         <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg flex items-center justify-center gap-1"><i data-lucide="user-plus" class="w-4 h-4"></i> Invite</button>
@@ -369,13 +381,11 @@
         </div>
     </div>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-        // THE 50+ BADGE DB
         const BADGE_DB = [
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
@@ -458,17 +468,23 @@
         let userData = null; let currentClubId = null; 
         let unsubscribeChat = null; let unsubscribeClub = null;
         window.usersData = []; 
+        let localXP = 0; let localLevel = 1; 
+        let userFriends = []; let userRequests = []; let userRivals = [];
+        window.lastClaimed = null; window.currentViewedUser = null;
 
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast-notification');
-            toast.innerText = msg;
+            document.getElementById('toast-message').innerText = msg;
             if(isError) {
-                toast.style.backgroundColor = "#ef4444";
-                toast.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.4)";
+                toast.classList.replace('bg-[#10b981]', 'bg-[#ef4444]');
+                toast.classList.replace('shadow-[0_10px_30px_rgba(16,185,129,0.4)]', 'shadow-[0_10px_30px_rgba(239,68,68,0.4)]');
+                document.getElementById('toast-icon').setAttribute('data-lucide', 'x-circle');
             } else {
-                toast.style.backgroundColor = "#10b981";
-                toast.style.boxShadow = "0 10px 30px rgba(16, 185, 129, 0.4)";
+                toast.classList.replace('bg-[#ef4444]', 'bg-[#10b981]');
+                toast.classList.replace('shadow-[0_10px_30px_rgba(239,68,68,0.4)]', 'shadow-[0_10px_30px_rgba(16,185,129,0.4)]');
+                document.getElementById('toast-icon').setAttribute('data-lucide', 'bell');
             }
+            lucide.createIcons();
             toast.classList.remove('opacity-0');
             setTimeout(() => toast.classList.add('opacity-0'), 3000);
         }
@@ -513,6 +529,28 @@
             }
         });
 
+        // 🔥 THE XP SYNC ENGINE 🔥
+        // This pushes local personal XP straight to the Club Vault!
+        async function syncClubXP(amount) {
+            if(!currentClubId || !db) return;
+            try {
+                const clubRef = doc(db, "clubs", currentClubId);
+                const cSnap = await getDoc(clubRef);
+                if(cSnap.exists()) {
+                    const cData = cSnap.data();
+                    const currentWeek = getCurrentWeekStr();
+                    let newWeekly = (cData.currentWeek === currentWeek) ? (cData.weeklyXp || 0) + amount : amount;
+                    let newTotal = (cData.totalXp || 0) + amount;
+                    
+                    await updateDoc(clubRef, { 
+                        totalXp: newTotal, 
+                        weeklyXp: newWeekly, 
+                        currentWeek: currentWeek 
+                    });
+                }
+            } catch(e) { console.error("Club XP Sync Error", e); }
+        }
+
         async function fetchUserAndClub(uid) {
             const userRef = doc(db, "users", uid);
             const userSnap = await getDoc(userRef);
@@ -520,7 +558,12 @@
             if (userSnap.exists()) {
                 userData = userSnap.data();
                 userData.uid = uid;
-                const xp = userData.totalScore || 0;
+                
+                localXP = Number(userData.totalScore) || 0;
+                localLevel = Math.floor(localXP / 500) + 1;
+                userFriends = userData.friends || [];
+                userRequests = userData.requests || [];
+                userRivals = userData.rivals || [];
 
                 if(userData.clubId) {
                     currentClubId = userData.clubId;
@@ -534,18 +577,16 @@
                     const statusText = document.getElementById('xp-status');
                     document.getElementById('auth-status-text').innerText = "You are not in a club.";
 
-                    if(xp >= 2500) {
+                    if(localXP >= 2500) {
                         createBtn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all text-sm mb-2 shadow-[0_0_15px_rgba(147,51,234,0.3)] pointer-events-auto";
                         createBtn.innerHTML = "Forge Syndicate <i data-lucide='zap' class='w-4 h-4 inline ml-1'></i>";
                         statusText.innerText = "(Unlocked)";
                         statusText.className = "text-emerald-500 font-bold ml-1";
                     } else {
-                        statusText.innerText = `(Need ${2500 - xp} more XP)`;
+                        statusText.innerText = `(Need ${2500 - localXP} more XP)`;
                     }
                     lucide.createIcons();
                 }
-            } else {
-                document.getElementById('auth-status-text').innerText = "Profile not found. Play games to initialize.";
             }
         }
 
@@ -556,12 +597,10 @@
                 if(!cSnap.exists()) throw new Error("Club not found");
                 const cData = cSnap.data();
 
-                // Private Club Check
                 if (cData.type === 'private') {
                     if (!token || !(cData.oneTimeTokens || []).includes(token)) {
                         throw new Error("Invalid or expired one-time invite token.");
                     }
-                    // Destroy token upon use
                     await updateDoc(doc(db, "clubs", joinId), { oneTimeTokens: arrayRemove(token) });
                 }
 
@@ -600,7 +639,7 @@
                 const currentWeek = getCurrentWeekStr();
                 const clubRef = await addDoc(collection(db, "clubs"), {
                     name: name, image: img, ownerUid: currentUser.uid, members: [currentUser.uid], mods: [],
-                    weeklyXp: 0, currentWeek: currentWeek, topOneCount: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
+                    weeklyXp: 0, totalXp: 0, currentWeek: currentWeek, topOneCount: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
                     type: type, oneTimeTokens: [],
                     createdAt: serverTimestamp()
                 });
@@ -618,7 +657,6 @@
             btn.innerText = "INITIALIZE DATABASE"; btn.disabled = false;
         });
 
-        // --- CLUB EDITING UI & LOGIC RESTORED ---
         window.openEditClubModal = async function() {
             if(!currentClubId) return;
             const cSnap = await getDoc(doc(db, "clubs", currentClubId));
@@ -700,7 +738,8 @@
 
                 const currentWeek = getCurrentWeekStr();
                 const displayXp = clubData.currentWeek === currentWeek ? (clubData.weeklyXp || 0) : 0;
-                document.getElementById('club-xp').innerText = displayXp.toLocaleString();
+                document.getElementById('club-weekly-xp').innerText = displayXp.toLocaleString();
+                document.getElementById('club-xp').innerText = (clubData.totalXp || 0).toLocaleString();
 
                 const fColor = clubData.frameColor || "#9333ea";
                 document.getElementById('club-frame').style.backgroundColor = fColor;
@@ -760,7 +799,6 @@
             startChatListener(clubId);
         }
 
-        // --- ONE-TIME USE SECURE LINK GENERATOR ---
         window.copyInviteLink = async function() {
             if(!currentClubId) return;
             const cSnap = await getDoc(doc(db, "clubs", currentClubId));
@@ -846,6 +884,58 @@
             } catch(err) { console.error(err); }
         });
 
+        // --- NEW: SYNC XP FUNCTIONS HERE ---
+        window.claimDailyXP = async function() {
+            if(!currentUser || !db) return;
+            const today = new Date().toDateString(); 
+            if (window.lastClaimed === today) {
+                window.showToast("Cooldown Active - Return tomorrow.", true); return;
+            }
+            localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
+                await syncClubXP(250); // SYNC XP TO CLUB
+                updateProfileUI(); fetchGlobalLeaderboard();
+                window.showToast("+250 XP Daily Claimed!");
+            } catch (err) { window.showToast("Database write blocked.", true); }
+        }
+
+        window.submitRedeemCode = async function() {
+            if(!currentUser || !db) return;
+            const codeInput = document.getElementById('redeem-input');
+            const codeStr = codeInput.value.trim().toUpperCase();
+            if(!codeStr) return;
+            codeInput.disabled = true;
+
+            try {
+                const codeRef = doc(db, "redeem_codes", codeStr);
+                const codeSnap = await getDoc(codeRef);
+
+                if(!codeSnap.exists()) {
+                    window.showToast("Invalid Promo Code.", true);
+                } else {
+                    const data = codeSnap.data();
+                    if(data.usedBy && data.usedBy.includes(currentUser.uid)) {
+                        window.showToast("Code already used.", true);
+                    } else if (data.limit !== -1 && data.usedBy && data.usedBy.length >= data.limit) {
+                        window.showToast("Code expired limit.", true);
+                    } else {
+                        await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
+                        const reward = Number(data.rewardXp);
+                        localXP = Number(localXP) + reward;
+                        localLevel = Math.floor(localXP / 500) + 1;
+                        
+                        await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
+                        await syncClubXP(reward); // SYNC XP TO CLUB
+                        
+                        updateProfileUI(); fetchGlobalLeaderboard();
+                        window.showToast(`+${reward} XP Redeemed!`);
+                    }
+                }
+            } catch(e) { window.showToast("Database error.", true); }
+            codeInput.value = ""; codeInput.disabled = false;
+        }
+
         // --- WEEKLY CLUB LEADERBOARD WITH GRADIENTS & SOLID SVGS ---
         async function loadClubLeaderboard() {
             if(!db) return;
@@ -887,7 +977,6 @@
                         nameClass = "text-copper-grad font-black";
                     }
 
-                    // ADDED CLICK TO OPEN CLUB PROFILE MODAL
                     list.innerHTML += `
                         <div onclick="openClubProfileModal('${data.id}')" class="flex justify-between items-center ${bgClass} p-3 rounded-xl border ${borderClass} mb-2 transition cursor-pointer hover:border-blue-500/50">
                             <div class="flex items-center gap-3">
@@ -913,7 +1002,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- NEW: CLUB PROFILE MODAL (FOR LEADERBOARD CLICKS) ---
         window.openClubProfileModal = async function(clubId) {
             const cSnap = await getDoc(doc(db, "clubs", clubId));
             if(!cSnap.exists()) return window.showToast("Syndicate data corrupted.", true);
@@ -940,7 +1028,6 @@
 
             const btn = document.getElementById('cp-join-btn');
             
-            // Interaction Logic
             if(userData && userData.clubId) {
                 btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> ALREADY IN A SYNDICATE`;
                 btn.className = "w-full bg-gray-800 text-gray-500 font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2";
@@ -959,7 +1046,6 @@
             document.getElementById('club-profile-modal').classList.add('flex');
             lucide.createIcons();
         }
-
         window.closeClubProfileModal = function() {
             document.getElementById('club-profile-modal').classList.add('hidden');
             document.getElementById('club-profile-modal').classList.remove('flex');
@@ -981,6 +1067,40 @@
         }
 
         // --- SHARED PROFILES ---
+        function getUserBadges(uid) {
+            const uData = window.usersData?.find(u => u.uid === uid);
+            const rank = uData ? uData.currentRank : 999;
+            const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
+            const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
+            const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
+            const rivals = (uid === currentUser?.uid) ? userRivals.length : (uData?.rivals?.length || 0);
+
+            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, rivals: rivals, inClub: false, ownsClub: false };
+            let unlocked = [];
+            BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
+            const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
+            unlocked.sort((a,b) => tierWeight[b.tier] - tierWeight[a.tier]);
+            return unlocked;
+        }
+
+        function updateProfileUI() {
+            document.getElementById('total-points').innerText = localXP.toLocaleString();
+            document.getElementById('user-level').innerText = `LVL ${localLevel}`;
+            let title = "Novice Coder";
+            if(localXP >= 1000) title = "S-Rank Hunter"; 
+            if(localXP >= 5000) title = "Special Grade Dev"; 
+            if(localXP >= 1000000) title = "Server Deity";
+            document.getElementById('user-title').innerText = title;
+            const unlocked = getUserBadges(currentUser?.uid);
+            const badgeContainer = document.getElementById('badge-container');
+            if(badgeContainer) {
+                badgeContainer.innerHTML = '';
+                if(unlocked.length === 0) badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet.</p>`;
+                else unlocked.slice(0, 8).forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
+            }
+            lucide.createIcons();
+        }
+
         window.openProfileModal = async function(uid) {
             if(!uid) return;
             if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
@@ -993,9 +1113,10 @@
             document.getElementById('pub-name').innerText = user.displayName;
             document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
             document.getElementById('pub-lvl').innerText = user.level || 1;
-            document.getElementById('pub-xp').innerText = (user.totalScore || 0).toLocaleString();
+            
+            const displayXp = (uid === currentUser?.uid) ? localXP : (user.totalScore || 0);
+            document.getElementById('pub-xp').innerText = displayXp.toLocaleString();
 
-            const displayXp = user.totalScore || 0;
             let title = "Operative";
             if(displayXp >= 1000) title = "S-Rank Hunter";
             if(displayXp >= 5000) title = "Special Grade";
@@ -1005,7 +1126,7 @@
             const pBadge = document.getElementById('pub-badges');
             pBadge.innerHTML = '';
             
-            const unlocked = getUserBadges(uid, user);
+            const unlocked = getUserBadges(uid);
             if(unlocked.length === 0) { pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`; } 
             else { unlocked.slice(0, 6).forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true)); }
 
@@ -1016,6 +1137,48 @@
         window.closeProfileModal = function() {
             document.getElementById('profile-modal').classList.add('hidden');
             document.getElementById('profile-modal').classList.remove('flex');
+        }
+
+        window.openGalleryModal = function(uid) {
+            const targetUid = uid || (currentUser ? currentUser.uid : null);
+            if(!targetUid) return;
+
+            let user = window.usersData.find(u => u.uid === targetUid);
+            if(!user && targetUid === currentUser.uid) user = { displayName: currentUser.displayName };
+            
+            document.getElementById('gallery-owner-name').innerText = `${user.displayName}'s Arsenal`;
+            
+            const unlockedBadges = getUserBadges(targetUid);
+            const unlockedIds = unlockedBadges.map(b => b.id);
+            
+            document.getElementById('gallery-unlocked-count').innerText = unlockedBadges.length;
+
+            const categories = ['Experience', 'Progression', 'Ranked', 'Social', 'Games'];
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            categories.forEach(cat => {
+                const catBadges = BADGE_DB.filter(b => b.cat === cat);
+                let html = `<div><h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">${cat}</h3><div class="flex flex-wrap gap-4">`;
+                catBadges.forEach(b => {
+                    const hasBadge = unlockedIds.includes(b.id);
+                    html += renderBadgeHTML(b, hasBadge);
+                });
+                html += `</div></div>`;
+                grid.innerHTML += html;
+            });
+
+            lucide.createIcons();
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            document.getElementById('gallery-modal').classList.remove('hidden');
+            document.getElementById('gallery-modal').classList.add('flex');
+        }
+        window.closeGalleryModal = function() {
+            document.getElementById('gallery-modal').classList.add('hidden');
+            document.getElementById('gallery-modal').classList.remove('flex');
+            if(window.currentViewedUser) window.openProfileModal(window.currentViewedUser);
+            else window.openProfileModal('self');
         }
     </script>
 </body>
