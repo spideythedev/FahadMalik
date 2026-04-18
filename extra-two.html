@@ -67,11 +67,12 @@
         .svg-silver { fill: url(#silver-grad); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.6)); }
         .svg-copper { fill: url(#copper-grad); filter: drop-shadow(0 0 10px rgba(184, 115, 51, 0.6)); }
 
-        /* THE SERVER DEITY GRADIENTS */
+        /* THE SERVER DEITY GRADIENTS (Now reusable as global classes) */
         .text-gold-grad { background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 10px rgba(252, 246, 186, 0.3); }
         .text-silver-grad { background: linear-gradient(to right, #8e9eab, #eef2f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-copper-grad { background: linear-gradient(to right, #b87333, #ffcc99, #b87333); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-opal-grad { background: linear-gradient(to right, #e2e2e2, #c9d6ff, #e2e2e2, #fbc2eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(201, 214, 255, 0.6)); }
+        .text-white-solid { color: #ffffff; }
 
         #toast-notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
@@ -123,7 +124,9 @@
                 
                 <div class="flex flex-col items-center text-center relative z-10 pt-2">
                     <img id="club-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover transition-colors">
-                    <h2 id="club-name" class="font-extrabold text-2xl tracking-tight text-white flex items-center gap-2">Loading...</h2>
+                    
+                    <h2 id="club-name" class="font-extrabold text-2xl tracking-tight text-white-solid flex items-center gap-2 transition-all">Loading...</h2>
+                    
                     <span id="club-type-badge" class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-widest mt-1 mb-2 border border-white/20">TYPE</span>
                     <p id="club-desc" class="text-gray-400 text-xs mb-3 h-8 overflow-hidden">Forging the ultimate syndicate.</p>
                     
@@ -330,7 +333,9 @@
             
             <div class="flex flex-col items-center mt-4">
                 <img id="cp-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover">
-                <h3 class="text-white font-black text-2xl mb-1 text-center" id="cp-name">Club Name</h3>
+                
+                <h3 class="font-black text-2xl mb-1 text-center text-white-solid transition-all" id="cp-name">Club Name</h3>
+                
                 <span id="cp-type" class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-widest mb-2 border border-white/20">TYPE</span>
                 <p class="text-gray-400 text-sm text-center mb-6 px-4" id="cp-desc">Club Description</p>
                 
@@ -354,103 +359,11 @@
         </div>
     </div>
 
-    <div id="profile-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
-        <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in">
-            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
-            <div class="flex flex-col items-center mt-4">
-                <img id="pub-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-full border-4 border-gray-600 mb-4 shadow-[0_0_20px_rgba(255,255,255,0.2)] object-cover">
-                <h3 class="text-white font-black text-2xl mb-1" id="pub-name">Player</h3>
-                <p class="text-red-400 font-mono text-[10px] uppercase tracking-widest mb-4" id="pub-title">Operative</p>
-                <div class="flex gap-6 mb-6 w-full justify-center">
-                    <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Level</p>
-                        <p class="text-white font-bold text-xl" id="pub-lvl">1</p>
-                    </div>
-                    <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Total XP</p>
-                        <p class="text-red-400 font-bold text-xl" id="pub-xp">0</p>
-                    </div>
-                </div>
-                <div class="w-full bg-[#111] rounded-xl p-4 border border-white/5 mb-6 text-center">
-                    <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 justify-center" id="pub-badges"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-
-        const BADGE_DB = [
-            { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
-            { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
-            { id: 'xp_3', name: 'Veteran', desc: 'Earn 5,000 XP', icon: 'shield', tier: 'gold', check: (u) => u.xp >= 5000, cat: 'Experience' },
-            { id: 'xp_4', name: 'Elite', desc: 'Earn 10,000 XP', icon: 'shield-alert', tier: 'gold', check: (u) => u.xp >= 10000, cat: 'Experience' },
-            { id: 'xp_5', name: 'Master', desc: 'Earn 25,000 XP', icon: 'crown', tier: 'diamond', check: (u) => u.xp >= 25000, cat: 'Experience' },
-            { id: 'xp_6', name: 'Grandmaster', desc: 'Earn 50,000 XP', icon: 'hexagon', tier: 'diamond', check: (u) => u.xp >= 50000, cat: 'Experience' },
-            { id: 'xp_7', name: 'Special Grade', desc: 'Earn 100,000 XP', icon: 'flame', tier: 'mythic', check: (u) => u.xp >= 100000, cat: 'Experience' },
-            { id: 'xp_8', name: 'Domain Expanded', desc: 'Earn 250,000 XP', icon: 'skull', tier: 'mythic', check: (u) => u.xp >= 250000, cat: 'Experience' },
-            { id: 'xp_9', name: 'Demi-God', desc: 'Earn 500,000 XP', icon: 'ghost', tier: 'mythic', check: (u) => u.xp >= 500000, cat: 'Experience' },
-            { id: 'xp_10', name: 'Server Deity', desc: 'Earn 1,000,000 XP', icon: 'sun', tier: 'mythic', check: (u) => u.xp >= 1000000, cat: 'Experience' },
-            { id: 'lvl_1', name: 'Level 5', desc: 'Reach Level 5', icon: 'chevron-up', tier: 'bronze', check: (u) => u.level >= 5, cat: 'Progression' },
-            { id: 'lvl_2', name: 'Level 10', desc: 'Reach Level 10', icon: 'chevrons-up', tier: 'silver', check: (u) => u.level >= 10, cat: 'Progression' },
-            { id: 'lvl_3', name: 'Level 20', desc: 'Reach Level 20', icon: 'trending-up', tier: 'silver', check: (u) => u.level >= 20, cat: 'Progression' },
-            { id: 'lvl_4', name: 'Level 30', desc: 'Reach Level 30', icon: 'star', tier: 'gold', check: (u) => u.level >= 30, cat: 'Progression' },
-            { id: 'lvl_5', name: 'Level 40', desc: 'Reach Level 40', icon: 'star-half', tier: 'gold', check: (u) => u.level >= 40, cat: 'Progression' },
-            { id: 'lvl_6', name: 'Level 50', desc: 'Reach Level 50', icon: 'award', tier: 'diamond', check: (u) => u.level >= 50, cat: 'Progression' },
-            { id: 'lvl_7', name: 'Level 60', desc: 'Reach Level 60', icon: 'medal', tier: 'diamond', check: (u) => u.level >= 60, cat: 'Progression' },
-            { id: 'lvl_8', name: 'Level 70', desc: 'Reach Level 70', icon: 'crosshair', tier: 'diamond', check: (u) => u.level >= 70, cat: 'Progression' },
-            { id: 'lvl_9', name: 'Level 80', desc: 'Reach Level 80', icon: 'swords', tier: 'mythic', check: (u) => u.level >= 80, cat: 'Progression' },
-            { id: 'lvl_10', name: 'Level 100', desc: 'Reach Level 100 MAX', icon: 'infinity', tier: 'mythic', check: (u) => u.level >= 100, cat: 'Progression' },
-            { id: 'soc_1', name: 'Social', desc: 'Add 1 Friend', icon: 'user-plus', tier: 'bronze', check: (u) => u.friends >= 1, cat: 'Social' },
-            { id: 'soc_2', name: 'Crew', desc: 'Add 5 Friends', icon: 'users', tier: 'silver', check: (u) => u.friends >= 5, cat: 'Social' },
-            { id: 'soc_3', name: 'Popular', desc: 'Add 10 Friends', icon: 'heart', tier: 'gold', check: (u) => u.friends >= 10, cat: 'Social' },
-            { id: 'soc_4', name: 'VIP', desc: 'Add 25 Friends', icon: 'gem', tier: 'diamond', check: (u) => u.friends >= 25, cat: 'Social' },
-            { id: 'soc_5', name: 'Network Hub', desc: 'Add 50 Friends', icon: 'globe', tier: 'mythic', check: (u) => u.friends >= 50, cat: 'Social' },
-            { id: 'soc_6', name: 'Recruit', desc: 'Join a Club', icon: 'shield-check', tier: 'bronze', check: (u) => u.inClub, cat: 'Social' },
-            { id: 'soc_7', name: 'Syndicate Leader', desc: 'Own a Club', icon: 'building', tier: 'gold', check: (u) => u.ownsClub, cat: 'Social' },
-            { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals >= 1, cat: 'Social' }, 
-            { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.rivals >= 5, cat: 'Social' },
-            { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.rivals >= 10, cat: 'Social' },
-            { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
-            { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
-            { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
-            { id: 'rnk_4', name: 'Top 10', desc: 'Reach Top 10', icon: 'star', tier: 'diamond', check: (u) => u.rank <= 10, cat: 'Ranked' },
-            { id: 'rnk_5', name: 'Top 3', desc: 'Reach Top 3', icon: 'medal', tier: 'diamond', check: (u) => u.rank <= 3, cat: 'Ranked' },
-            { id: 'rnk_6', name: 'Runner Up', desc: 'Reach #2 Global', icon: 'trophy', tier: 'diamond', check: (u) => u.rank === 2, cat: 'Ranked' },
-            { id: 'rnk_7', name: 'Champion', desc: 'Reach #1 Global', icon: 'crown', tier: 'mythic', check: (u) => u.rank === 1, cat: 'Ranked' },
-            { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1 && u.xp >= 500000, cat: 'Ranked' },
-            { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
-            { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
-            { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_4', name: 'Speed Hacker', desc: 'Play TYPE-X', icon: 'keyboard', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_5', name: 'Architect', desc: 'Play Stack Overflow', icon: 'layers', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_6', name: 'Gravity Defier', desc: 'Play Gravity Jet', icon: 'rocket', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_7', name: 'Core Defender', desc: 'Play Cyber Defense', icon: 'shield-alert', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_8', name: 'Geometry God', desc: 'Play Neon Dash', icon: 'square', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
-            { id: 'gm_9', name: 'First Death', desc: 'Die in any game', icon: 'skull', tier: 'bronze', check: (u) => true, cat: 'Games' },
-            { id: 'gm_10', name: 'Arcade Rat', desc: 'Play all 8 games', icon: 'gamepad-2', tier: 'gold', check: (u) => u.xp >= 1000, cat: 'Games' }
-        ];
-
-        function renderBadgeHTML(badge, isUnlocked) {
-            const stateClass = isUnlocked ? `tier-${badge.tier}` : 'tier-locked';
-            return `
-                <div class="badge-box w-12 h-12 rounded-2xl ${stateClass}">
-                    <i data-lucide="${badge.icon}" class="w-6 h-6"></i>
-                    <div class="badge-tooltip">
-                        <p class="font-black text-xs text-white">${badge.name}</p>
-                        <p class="text-[9px] text-gray-400">${badge.desc}</p>
-                    </div>
-                </div>
-            `;
-        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyAVUklgrJBjuimFJyAeOBbiS6hln2-4sVc",
@@ -467,10 +380,41 @@
         let db, auth, currentUser = null;
         let userData = null; let currentClubId = null; 
         let unsubscribeChat = null; let unsubscribeClub = null;
-        window.usersData = []; 
-        let localXP = 0; let localLevel = 1; 
-        let userFriends = []; let userRequests = []; let userRivals = [];
-        window.lastClaimed = null; window.currentViewedUser = null;
+        
+        // GLOBAL CLUBS DATA CACHE FOR GRADIENTS
+        window.clubsData = []; 
+        window.currentViewedClubId = null;
+
+        // GLOBAL GRADIENT ENGINE
+        function getClubGradientClass(clubId) {
+            const rankIndex = window.clubsData.findIndex(c => c.id === clubId);
+            if (rankIndex === -1) return "text-white-solid";
+            
+            const rank = rankIndex + 1;
+            const club = window.clubsData[rankIndex];
+            
+            if (rank === 1) return (club.topOneCount >= 3) ? "text-opal-grad" : "text-gold-grad";
+            if (rank === 2) return "text-silver-grad";
+            if (rank === 3) return "text-copper-grad";
+            return "text-white-solid";
+        }
+
+        function updateClubNameColors() {
+            // Update My Club Panel (if rendered)
+            if (currentClubId) {
+                const myClubEl = document.getElementById('club-name');
+                if (myClubEl) {
+                    myClubEl.className = "font-extrabold text-2xl tracking-tight flex items-center gap-2 transition-all " + getClubGradientClass(currentClubId);
+                }
+            }
+            // Update Modal Profile (if open)
+            if (window.currentViewedClubId) {
+                const modalClubEl = document.getElementById('cp-name');
+                if (modalClubEl) {
+                    modalClubEl.className = "font-black text-2xl mb-1 text-center transition-all " + getClubGradientClass(window.currentViewedClubId);
+                }
+            }
+        }
 
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast-notification');
@@ -529,8 +473,6 @@
             }
         });
 
-        // 🔥 THE XP SYNC ENGINE 🔥
-        // This pushes local personal XP straight to the Club Vault!
         async function syncClubXP(amount) {
             if(!currentClubId || !db) return;
             try {
@@ -558,12 +500,7 @@
             if (userSnap.exists()) {
                 userData = userSnap.data();
                 userData.uid = uid;
-                
-                localXP = Number(userData.totalScore) || 0;
-                localLevel = Math.floor(localXP / 500) + 1;
-                userFriends = userData.friends || [];
-                userRequests = userData.requests || [];
-                userRivals = userData.rivals || [];
+                const localXP = Number(userData.totalScore) || 0;
 
                 if(userData.clubId) {
                     currentClubId = userData.clubId;
@@ -746,6 +683,9 @@
                 document.getElementById('club-img').style.borderColor = fColor;
                 document.getElementById('club-img').style.boxShadow = `0 10px 25px ${fColor}40`;
 
+                // APPLY GRADIENTS GLOBALLY
+                updateClubNameColors();
+
                 document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
 
                 const isOwner = clubData.ownerUid === currentUser.uid;
@@ -778,8 +718,9 @@
                             actionBtns += `<button onclick="kickMember('${memberUid}')" class="text-red-500 hover:text-white bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold ml-1">KICK</button>`;
                         }
 
+                        // Removed openProfileModal from here to avoid missing user profiles in cache for clubs
                         roster.innerHTML += `
-                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group cursor-pointer hover:bg-gray-900 transition" onclick="openProfileModal('${memberUid}')">
+                            <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group transition">
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">${icon}</div>
                                     <span class="text-white text-xs font-bold">${uData.displayName} ${memberIsMe ? '(You)' : ''}</span>
@@ -884,59 +825,7 @@
             } catch(err) { console.error(err); }
         });
 
-        // --- NEW: SYNC XP FUNCTIONS HERE ---
-        window.claimDailyXP = async function() {
-            if(!currentUser || !db) return;
-            const today = new Date().toDateString(); 
-            if (window.lastClaimed === today) {
-                window.showToast("Cooldown Active - Return tomorrow.", true); return;
-            }
-            localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
-            try {
-                await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
-                await syncClubXP(250); // SYNC XP TO CLUB
-                updateProfileUI(); fetchGlobalLeaderboard();
-                window.showToast("+250 XP Daily Claimed!");
-            } catch (err) { window.showToast("Database write blocked.", true); }
-        }
-
-        window.submitRedeemCode = async function() {
-            if(!currentUser || !db) return;
-            const codeInput = document.getElementById('redeem-input');
-            const codeStr = codeInput.value.trim().toUpperCase();
-            if(!codeStr) return;
-            codeInput.disabled = true;
-
-            try {
-                const codeRef = doc(db, "redeem_codes", codeStr);
-                const codeSnap = await getDoc(codeRef);
-
-                if(!codeSnap.exists()) {
-                    window.showToast("Invalid Promo Code.", true);
-                } else {
-                    const data = codeSnap.data();
-                    if(data.usedBy && data.usedBy.includes(currentUser.uid)) {
-                        window.showToast("Code already used.", true);
-                    } else if (data.limit !== -1 && data.usedBy && data.usedBy.length >= data.limit) {
-                        window.showToast("Code expired limit.", true);
-                    } else {
-                        await updateDoc(codeRef, { usedBy: arrayUnion(currentUser.uid) });
-                        const reward = Number(data.rewardXp);
-                        localXP = Number(localXP) + reward;
-                        localLevel = Math.floor(localXP / 500) + 1;
-                        
-                        await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
-                        await syncClubXP(reward); // SYNC XP TO CLUB
-                        
-                        updateProfileUI(); fetchGlobalLeaderboard();
-                        window.showToast(`+${reward} XP Redeemed!`);
-                    }
-                }
-            } catch(e) { window.showToast("Database error.", true); }
-            codeInput.value = ""; codeInput.disabled = false;
-        }
-
-        // --- WEEKLY CLUB LEADERBOARD WITH GRADIENTS & SOLID SVGS ---
+        // --- WEEKLY CLUB LEADERBOARD WITH GLOBALLY STORED RANKINGS ---
         async function loadClubLeaderboard() {
             if(!db) return;
             try {
@@ -953,6 +842,9 @@
 
                 allClubs.sort((a, b) => b.displayWeeklyXp - a.displayWeeklyXp);
                 
+                // STORE GLOBALLY FOR THE GRADIENT ENGINE
+                window.clubsData = allClubs; 
+
                 const list = document.getElementById('club-leaderboard');
                 list.innerHTML = '';
                 
@@ -960,21 +852,17 @@
                 allClubs.slice(0, 25).forEach(data => {
                     let borderClass = "border-white/10"; let bgClass = "bg-[#111]";
                     let badgeSvg = `<div class="text-gray-500 font-bold text-sm w-6 text-center">#${rank}</div>`;
-                    let nameClass = "text-white";
+                    let nameClass = getClubGradientClass(data.id); // Re-use the gradient engine here!
 
                     if(rank === 1) { 
                         badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-gold"><use href="#solid-crown" /></svg>`;
                         borderClass = "border-yellow-500/30"; bgClass = "bg-gradient-to-r from-yellow-900/20 to-[#111]";
-                        if(data.topOneCount >= 3) nameClass = "text-opal-grad font-black";
-                        else nameClass = "text-gold-grad font-black";
                     }
                     else if(rank === 2) { 
                         badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-silver"><use href="#solid-shield" /></svg>`;
-                        nameClass = "text-silver-grad font-black";
                     }
                     else if(rank === 3) { 
                         badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-copper"><use href="#solid-gem" /></svg>`;
-                        nameClass = "text-copper-grad font-black";
                     }
 
                     list.innerHTML += `
@@ -987,7 +875,7 @@
                                 <div class="flex items-center gap-3">
                                     <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-lg object-cover border border-white/20 shadow-sm" style="border-color: ${data.frameColor || '#444'}">
                                     <div>
-                                        <p class="${nameClass} text-sm tracking-tight">${data.name}</p>
+                                        <p class="${nameClass} text-sm tracking-tight transition-all">${data.name}</p>
                                         <p class="text-gray-500 font-mono text-[9px]">${data.members ? data.members.length : 1} Members</p>
                                     </div>
                                 </div>
@@ -999,10 +887,16 @@
                 });
 
                 if(allClubs.length === 0) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4 font-mono">No syndicates forged.</p>';
+
+                // Force gradient updates if panels are already loaded
+                updateClubNameColors();
+
             } catch (err) { console.error(err); }
         }
 
         window.openClubProfileModal = async function(clubId) {
+            window.currentViewedClubId = clubId;
+
             const cSnap = await getDoc(doc(db, "clubs", clubId));
             if(!cSnap.exists()) return window.showToast("Syndicate data corrupted.", true);
             const cData = cSnap.data();
@@ -1042,13 +936,18 @@
                 btn.onclick = () => window.joinFromProfile(clubId);
             }
 
+            // TRIGGER GRADIENT APPLICATION ON THE MODAL
+            updateClubNameColors();
+
             document.getElementById('club-profile-modal').classList.remove('hidden');
             document.getElementById('club-profile-modal').classList.add('flex');
             lucide.createIcons();
         }
+
         window.closeClubProfileModal = function() {
             document.getElementById('club-profile-modal').classList.add('hidden');
             document.getElementById('club-profile-modal').classList.remove('flex');
+            window.currentViewedClubId = null;
         }
 
         window.joinFromProfile = async function(clubId) {
@@ -1064,121 +963,6 @@
                 window.showToast("Failed to join.", true);
                 document.getElementById('cp-join-btn').innerText = "JOIN SYNDICATE";
             }
-        }
-
-        // --- SHARED PROFILES ---
-        function getUserBadges(uid) {
-            const uData = window.usersData?.find(u => u.uid === uid);
-            const rank = uData ? uData.currentRank : 999;
-            const xp = (uid === currentUser?.uid) ? localXP : (uData?.totalScore || 0);
-            const lvl = (uid === currentUser?.uid) ? localLevel : (uData?.level || 1);
-            const friends = (uid === currentUser?.uid) ? userFriends.length : (uData?.friends?.length || 0);
-            const rivals = (uid === currentUser?.uid) ? userRivals.length : (uData?.rivals?.length || 0);
-
-            const statObj = { xp: xp, level: lvl, rank: rank, friends: friends, rivals: rivals, inClub: false, ownsClub: false };
-            let unlocked = [];
-            BADGE_DB.forEach(b => { if(b.check(statObj)) unlocked.push(b); });
-            const tierWeight = { mythic: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
-            unlocked.sort((a,b) => tierWeight[b.tier] - tierWeight[a.tier]);
-            return unlocked;
-        }
-
-        function updateProfileUI() {
-            document.getElementById('total-points').innerText = localXP.toLocaleString();
-            document.getElementById('user-level').innerText = `LVL ${localLevel}`;
-            let title = "Novice Coder";
-            if(localXP >= 1000) title = "S-Rank Hunter"; 
-            if(localXP >= 5000) title = "Special Grade Dev"; 
-            if(localXP >= 1000000) title = "Server Deity";
-            document.getElementById('user-title').innerText = title;
-            const unlocked = getUserBadges(currentUser?.uid);
-            const badgeContainer = document.getElementById('badge-container');
-            if(badgeContainer) {
-                badgeContainer.innerHTML = '';
-                if(unlocked.length === 0) badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet.</p>`;
-                else unlocked.slice(0, 8).forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
-            }
-            lucide.createIcons();
-        }
-
-        window.openProfileModal = async function(uid) {
-            if(!uid) return;
-            if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
-            window.currentViewedUser = uid;
-
-            const uSnap = await getDoc(doc(db, "users", uid));
-            if(!uSnap.exists()) return alert("User profile corrupted or deleted.");
-            const user = uSnap.data(); user.uid = uid;
-            
-            document.getElementById('pub-name').innerText = user.displayName;
-            document.getElementById('pub-pfp').src = user.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png';
-            document.getElementById('pub-lvl').innerText = user.level || 1;
-            
-            const displayXp = (uid === currentUser?.uid) ? localXP : (user.totalScore || 0);
-            document.getElementById('pub-xp').innerText = displayXp.toLocaleString();
-
-            let title = "Operative";
-            if(displayXp >= 1000) title = "S-Rank Hunter";
-            if(displayXp >= 5000) title = "Special Grade";
-            if(displayXp >= 1000000) title = "Server Deity";
-            document.getElementById('pub-title').innerText = title;
-
-            const pBadge = document.getElementById('pub-badges');
-            pBadge.innerHTML = '';
-            
-            const unlocked = getUserBadges(uid);
-            if(unlocked.length === 0) { pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`; } 
-            else { unlocked.slice(0, 6).forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true)); }
-
-            document.getElementById('profile-modal').classList.remove('hidden');
-            document.getElementById('profile-modal').classList.add('flex');
-            lucide.createIcons();
-        }
-        window.closeProfileModal = function() {
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-        }
-
-        window.openGalleryModal = function(uid) {
-            const targetUid = uid || (currentUser ? currentUser.uid : null);
-            if(!targetUid) return;
-
-            let user = window.usersData.find(u => u.uid === targetUid);
-            if(!user && targetUid === currentUser.uid) user = { displayName: currentUser.displayName };
-            
-            document.getElementById('gallery-owner-name').innerText = `${user.displayName}'s Arsenal`;
-            
-            const unlockedBadges = getUserBadges(targetUid);
-            const unlockedIds = unlockedBadges.map(b => b.id);
-            
-            document.getElementById('gallery-unlocked-count').innerText = unlockedBadges.length;
-
-            const categories = ['Experience', 'Progression', 'Ranked', 'Social', 'Games'];
-            const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = '';
-
-            categories.forEach(cat => {
-                const catBadges = BADGE_DB.filter(b => b.cat === cat);
-                let html = `<div><h3 class="text-white font-bold text-sm tracking-widest uppercase mb-4 border-b border-white/10 pb-2">${cat}</h3><div class="flex flex-wrap gap-4">`;
-                catBadges.forEach(b => {
-                    const hasBadge = unlockedIds.includes(b.id);
-                    html += renderBadgeHTML(b, hasBadge);
-                });
-                html += `</div></div>`;
-                grid.innerHTML += html;
-            });
-
-            lucide.createIcons();
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-            document.getElementById('gallery-modal').classList.remove('hidden');
-            document.getElementById('gallery-modal').classList.add('flex');
-        }
-        window.closeGalleryModal = function() {
-            document.getElementById('gallery-modal').classList.add('hidden');
-            document.getElementById('gallery-modal').classList.remove('flex');
-            if(window.currentViewedUser) window.openProfileModal(window.currentViewedUser);
-            else window.openProfileModal('self');
         }
     </script>
 </body>
