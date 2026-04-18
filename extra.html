@@ -43,7 +43,6 @@
             background-size: 40px 40px;
         }
 
-        /* Clean UI Dynamic Badge Tiers */
         .tier-bronze { border-color: rgba(217, 119, 6, 0.5); color: #fbbf24; background: rgba(217, 119, 6, 0.1); box-shadow: 0 0 10px rgba(217, 119, 6, 0.2); }
         .tier-silver { border-color: rgba(156, 163, 175, 0.5); color: #f3f4f6; background: rgba(156, 163, 175, 0.1); box-shadow: 0 0 10px rgba(156, 163, 175, 0.2); }
         .tier-gold { border-color: rgba(234, 179, 8, 0.8); color: #fef08a; background: rgba(234, 179, 8, 0.15); box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
@@ -51,11 +50,7 @@
         .tier-mythic { border-color: rgba(239, 68, 68, 1); color: #fca5a5; background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 25px rgba(239, 68, 68, 0.8); }
         .tier-locked { border-color: #333; color: #555; background: #111; filter: grayscale(100%); opacity: 0.5; }
 
-        .badge-box {
-            position: relative; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            border-width: 2px; border-style: solid;
-        }
+        .badge-box { position: relative; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; border-width: 2px; border-style: solid; }
         .badge-box:hover { transform: scale(1.1); z-index: 10; }
         
         .badge-tooltip {
@@ -67,17 +62,25 @@
         .badge-box:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
         
         .progress-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        /* Boss HP Bar Animation */
         .boss-bar-glow { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); transition: width 0.5s ease-out; }
     </style>
 </head>
 <body class="bg-grid flex flex-col min-h-screen">
 
-    <div id="toast-notification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#10b981] color-black px-6 py-3 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(16,185,129,0.4)] opacity-0 pointer-events-none transition-all z-[10000] flex items-center gap-3">
+    <div id="toast-notification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#10b981] text-black px-6 py-3 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(16,185,129,0.4)] opacity-0 pointer-events-none transition-all z-[10000] flex items-center gap-3">
         <i id="toast-icon" data-lucide="bell" class="w-5 h-5 text-black"></i>
         <span id="toast-message">Notification</span>
     </div>
+
+    <svg width="0" height="0" class="absolute">
+        <defs>
+            <linearGradient id="bronze-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
+            <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient>
+            <linearGradient id="fire-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="50%" stop-color="#ef4444"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+            <linearGradient id="king-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient>
+        </defs>
+    </svg>
 
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -167,8 +170,7 @@
                                 <p class="text-gray-500 text-[10px] uppercase font-mono tracking-widest">Top Badges</p>
                                 <button onclick="openGalleryModal()" class="text-blue-400 hover:text-blue-300 text-[10px] font-mono tracking-widest uppercase">Gallery &rarr;</button>
                             </div>
-                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container">
-                                </div>
+                            <div class="flex flex-wrap gap-2 justify-center" id="badge-container"></div>
                         </div>
 
                         <div id="friend-requests-container" class="w-full mb-4 hidden">
@@ -203,17 +205,6 @@
                             <div id="mission-1-bar" class="bg-blue-500 h-full progress-fill w-0"></div>
                         </div>
                         <p id="mission-1-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">0 / 5000</p>
-                    </div>
-                    <div class="bg-[#111] p-3 rounded-xl border border-white/5 group relative overflow-hidden">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-yellow-500"></div>
-                        <div class="flex justify-between items-start mb-2 pl-2">
-                            <span class="text-white font-bold text-xs">Reach Level 5</span>
-                            <span class="text-yellow-400 font-mono text-[10px]">+1000 XP</span>
-                        </div>
-                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden ml-2 w-[calc(100%-8px)]">
-                            <div id="mission-2-bar" class="bg-yellow-500 h-full progress-fill w-0"></div>
-                        </div>
-                        <p id="mission-2-text" class="text-gray-500 text-[9px] font-mono mt-2 ml-2">Lvl 1 / 5</p>
                     </div>
                 </div>
             </div>
@@ -398,6 +389,25 @@
         </div>
     </div>
 
+    <div id="gallery-modal" class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl hidden flex-col justify-start items-center p-4 md:p-10 overflow-y-auto hide-scrollbar w-full h-full">
+        <div class="w-full max-w-5xl">
+            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 mt-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#111] rounded-2xl flex justify-center items-center text-white text-2xl border border-white/20">🏆</div>
+                    <div>
+                        <h2 class="text-white font-extrabold text-3xl tracking-tight">Badge Collection</h2>
+                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest" id="gallery-owner-name">Player's Arsenal</p>
+                    </div>
+                </div>
+                <button onclick="closeGalleryModal()" class="bg-[#111] hover:bg-gray-800 border border-white/10 text-white px-6 py-2 rounded-xl font-bold transition-colors">Close</button>
+            </div>
+            <div class="flex gap-4 mb-6">
+                <div class="bg-[#111] px-4 py-2 rounded-lg border border-white/5"><span class="text-gray-500 font-mono text-xs uppercase">Unlocked:</span> <span id="gallery-unlocked-count" class="text-white font-bold">0</span><span class="text-gray-500">/50</span></div>
+            </div>
+            <div id="gallery-grid" class="space-y-8 pb-20"></div>
+        </div>
+    </div>
+
     <div id="pin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
@@ -440,31 +450,12 @@
         </div>
     </div>
 
-    <div id="gallery-modal" class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl hidden flex-col justify-start items-center p-4 md:p-10 overflow-y-auto hide-scrollbar w-full h-full">
-        <div class="w-full max-w-5xl">
-            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 mt-6">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-[#111] rounded-2xl flex justify-center items-center text-white text-2xl border border-white/20">🏆</div>
-                    <div>
-                        <h2 class="text-white font-extrabold text-3xl tracking-tight">Badge Collection</h2>
-                        <p class="text-blue-400 font-mono text-xs uppercase tracking-widest" id="gallery-owner-name">Player's Arsenal</p>
-                    </div>
-                </div>
-                <button onclick="closeGalleryModal()" class="bg-[#111] hover:bg-gray-800 border border-white/10 text-white px-6 py-2 rounded-xl font-bold transition-colors">Close</button>
-            </div>
-            <div class="flex gap-4 mb-6">
-                <div class="bg-[#111] px-4 py-2 rounded-lg border border-white/5"><span class="text-gray-500 font-mono text-xs uppercase">Unlocked:</span> <span id="gallery-unlocked-count" class="text-white font-bold">0</span><span class="text-gray-500">/50</span></div>
-            </div>
-            <div id="gallery-grid" class="space-y-8 pb-20"></div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-        // THE FULL 50+ DYNAMIC BADGE DATABASE RESTORED!
+        // THE FULL 50+ DYNAMIC BADGE DATABASE RESTORED
         const BADGE_DB = [
             { id: 'xp_1', name: 'Initiate', desc: 'Earn 250 XP', icon: 'zap', tier: 'bronze', check: (u) => u.xp >= 250, cat: 'Experience' },
             { id: 'xp_2', name: 'Adept', desc: 'Earn 1,000 XP', icon: 'zap-fast', tier: 'silver', check: (u) => u.xp >= 1000, cat: 'Experience' },
@@ -476,7 +467,6 @@
             { id: 'xp_8', name: 'Domain Expanded', desc: 'Earn 250,000 XP', icon: 'skull', tier: 'mythic', check: (u) => u.xp >= 250000, cat: 'Experience' },
             { id: 'xp_9', name: 'Demi-God', desc: 'Earn 500,000 XP', icon: 'ghost', tier: 'mythic', check: (u) => u.xp >= 500000, cat: 'Experience' },
             { id: 'xp_10', name: 'Server Deity', desc: 'Earn 1,000,000 XP', icon: 'sun', tier: 'mythic', check: (u) => u.xp >= 1000000, cat: 'Experience' },
-            
             { id: 'lvl_1', name: 'Level 5', desc: 'Reach Level 5', icon: 'chevron-up', tier: 'bronze', check: (u) => u.level >= 5, cat: 'Progression' },
             { id: 'lvl_2', name: 'Level 10', desc: 'Reach Level 10', icon: 'chevrons-up', tier: 'silver', check: (u) => u.level >= 10, cat: 'Progression' },
             { id: 'lvl_3', name: 'Level 20', desc: 'Reach Level 20', icon: 'trending-up', tier: 'silver', check: (u) => u.level >= 20, cat: 'Progression' },
@@ -487,7 +477,6 @@
             { id: 'lvl_8', name: 'Level 70', desc: 'Reach Level 70', icon: 'crosshair', tier: 'diamond', check: (u) => u.level >= 70, cat: 'Progression' },
             { id: 'lvl_9', name: 'Level 80', desc: 'Reach Level 80', icon: 'swords', tier: 'mythic', check: (u) => u.level >= 80, cat: 'Progression' },
             { id: 'lvl_10', name: 'Level 100', desc: 'Reach Level 100 MAX', icon: 'infinity', tier: 'mythic', check: (u) => u.level >= 100, cat: 'Progression' },
-            
             { id: 'soc_1', name: 'Social', desc: 'Add 1 Friend', icon: 'user-plus', tier: 'bronze', check: (u) => u.friends >= 1, cat: 'Social' },
             { id: 'soc_2', name: 'Crew', desc: 'Add 5 Friends', icon: 'users', tier: 'silver', check: (u) => u.friends >= 5, cat: 'Social' },
             { id: 'soc_3', name: 'Popular', desc: 'Add 10 Friends', icon: 'heart', tier: 'gold', check: (u) => u.friends >= 10, cat: 'Social' },
@@ -498,7 +487,6 @@
             { id: 'soc_8', name: 'Challenger', desc: 'Track 1 Rival', icon: 'target', tier: 'silver', check: (u) => u.rivals >= 1, cat: 'Social' }, 
             { id: 'soc_9', name: 'Nemesis', desc: 'Track 5 Rivals', icon: 'crosshair', tier: 'gold', check: (u) => u.rivals >= 5, cat: 'Social' },
             { id: 'soc_10', name: 'Warlord', desc: 'Track 10 Rivals', icon: 'sword', tier: 'diamond', check: (u) => u.rivals >= 10, cat: 'Social' },
-            
             { id: 'rnk_1', name: 'Ranked', desc: 'Reach Top 100', icon: 'list-ordered', tier: 'bronze', check: (u) => u.rank <= 100, cat: 'Ranked' },
             { id: 'rnk_2', name: 'Top 50', desc: 'Reach Top 50', icon: 'trending-up', tier: 'silver', check: (u) => u.rank <= 50, cat: 'Ranked' },
             { id: 'rnk_3', name: 'Top 25', desc: 'Reach Top 25', icon: 'bar-chart', tier: 'gold', check: (u) => u.rank <= 25, cat: 'Ranked' },
@@ -509,7 +497,6 @@
             { id: 'rnk_8', name: 'The King', desc: 'Reach #1 (x3)', icon: 'flame', tier: 'mythic', check: (u) => u.rank === 1 && u.xp >= 500000, cat: 'Ranked' },
             { id: 'rnk_9', name: 'The Emperor', desc: 'Reach #1 (x10)', icon: 'zap', tier: 'mythic', check: (u) => false, cat: 'Ranked' }, 
             { id: 'rnk_10', name: 'Legend', desc: 'Hold #1 for a month', icon: 'infinity', tier: 'mythic', check: (u) => false, cat: 'Ranked' },
-            
             { id: 'gm_1', name: 'Serpent Master', desc: 'Play Serpent X', icon: 'git-commit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
             { id: 'gm_2', name: 'Memory Guru', desc: 'Play SEQ-X', icon: 'brain-circuit', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
             { id: 'gm_3', name: 'Aim Bot', desc: 'Play REFLEX-X', icon: 'crosshair', tier: 'silver', check: (u) => u.xp > 0, cat: 'Games' },
@@ -618,9 +605,79 @@
                 localXP = 0; localLevel = 1; window.lastClaimed = null; userFriends = []; userRequests = []; userRivals = [];
                 await setDoc(docRef, { displayName: name, photoURL: photo, totalScore: 0, level: 1, lastClaimed: null, friends: [], requests: [], rivals: [] });
             }
-            updateProfileUI(uid);
+            updateProfileUI();
         }
 
+        // --- FRIENDS ENGINE RESTORED ---
+        async function renderFriendRequests() {
+            const reqContainer = document.getElementById('friend-requests-container');
+            const reqList = document.getElementById('friend-requests-list');
+            
+            if (!userRequests || userRequests.length === 0) { reqContainer.classList.add('hidden'); return; }
+            
+            reqContainer.classList.remove('hidden');
+            reqList.innerHTML = '<div class="text-center text-xs text-gray-500 py-2">Loading requests...</div>';
+
+            let htmlString = '';
+            for (const reqUid of userRequests) {
+                const uSnap = await getDoc(doc(db, "users", reqUid));
+                if (uSnap.exists()) {
+                    const uData = uSnap.data();
+                    htmlString += `
+                        <div class="flex justify-between items-center bg-[#111] p-3 rounded-xl border border-white/10 shadow-lg">
+                            <div class="flex items-center gap-3">
+                                <img src="${uData.photoURL || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
+                                <span class="text-white text-xs font-bold truncate max-w-[100px]">${uData.displayName}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="acceptFriend('${reqUid}')" class="bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black border border-emerald-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition shadow-[0_0_10px_rgba(16,185,129,0.2)]">Accept</button>
+                                <button onclick="rejectFriend('${reqUid}')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/50 px-3 py-1.5 rounded-lg text-[10px] font-bold transition">Decline</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            reqList.innerHTML = htmlString;
+        }
+
+        window.sendFriendRequest = async function() {
+            if(!currentUser) return;
+            const targetUid = window.currentViewedUser;
+            if(!targetUid || targetUid === currentUser.uid) return;
+
+            const btn = document.getElementById('add-friend-btn');
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>`;
+
+            try {
+                await updateDoc(doc(db, "users", targetUid), { requests: arrayUnion(currentUser.uid) });
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Request Sent`;
+                btn.className = "flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2";
+                lucide.createIcons();
+                window.showToast("Friend request sent.");
+            } catch(e) { console.error(e); btn.innerHTML = `Error`; }
+        }
+
+        window.acceptFriend = async function(reqUid) {
+            if(!currentUser || !db) return;
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqUid), requests: arrayRemove(reqUid) });
+                await updateDoc(doc(db, "users", reqUid), { friends: arrayUnion(currentUser.uid) });
+                userFriends.push(reqUid); userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI(); 
+                window.showToast("Friend added to your network!");
+            } catch(e) { console.error(e); }
+        }
+
+        window.rejectFriend = async function(reqUid) {
+            if(!currentUser || !db) return;
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { requests: arrayRemove(reqUid) });
+                userRequests = userRequests.filter(id => id !== reqUid);
+                updateProfileUI();
+            } catch(e) { console.error(e); }
+        }
+
+        // --- GLOBAL BOSS RAID ENGINE ---
         function loadBossRaid() {
             if(!db) return;
             const bossRef = doc(db, "server", "boss");
@@ -653,10 +710,14 @@
                 const dmg = Math.floor(Math.random() * 400) + 100;
                 await updateDoc(bossRef, { currentHp: increment(-dmg) });
                 window.showToast(`Dealt ${dmg} Damage!`);
+                
                 localXP += 10;
                 await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
-                updateProfileUI(currentUser.uid);
-            } catch(e) { console.error(e); }
+                updateProfileUI();
+            } catch(e) {
+                console.error(e);
+                window.showToast("Attack Failed. Check Database Rules.", true);
+            }
         }
 
         window.claimDailyXP = async function() {
@@ -668,7 +729,7 @@
             localXP += 250; localLevel = Math.floor(localXP / 500) + 1; window.lastClaimed = today; 
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel, lastClaimed: today });
-                updateProfileUI(currentUser.uid); fetchGlobalLeaderboard();
+                updateProfileUI(); fetchGlobalLeaderboard();
                 window.showToast("+250 XP Daily Claimed!");
             } catch (err) { window.showToast("Database write blocked.", true); }
         }
@@ -698,7 +759,7 @@
                         localLevel = Math.floor(localXP / 500) + 1;
                         
                         await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP, level: localLevel });
-                        updateProfileUI(currentUser.uid); fetchGlobalLeaderboard();
+                        updateProfileUI(); fetchGlobalLeaderboard();
                         window.showToast(`+${data.rewardXp} XP Redeemed!`);
                     }
                 }
@@ -722,7 +783,7 @@
             return unlocked;
         }
 
-        function updateProfileUI(uid) {
+        function updateProfileUI() {
             document.getElementById('total-points').innerText = localXP.toLocaleString();
             document.getElementById('user-level').innerText = `LVL ${localLevel}`;
 
@@ -732,16 +793,19 @@
             if(localXP >= 1000000) title = "Server Deity";
             document.getElementById('user-title').innerText = title;
 
-            const unlocked = getUserBadges(currentUser.uid);
+            const unlocked = getUserBadges(currentUser?.uid);
             const badgeContainer = document.getElementById('badge-container');
-            badgeContainer.innerHTML = '';
-            
-            if(unlocked.length === 0) {
-                badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet. Grind games!</p>`;
-            } else {
-                const top8 = unlocked.slice(0, 8);
-                top8.forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
+            if(badgeContainer) {
+                badgeContainer.innerHTML = '';
+                if(unlocked.length === 0) {
+                    badgeContainer.innerHTML = `<p class="text-gray-600 text-[10px] w-full text-center">No badges yet. Grind games!</p>`;
+                } else {
+                    const top8 = unlocked.slice(0, 8);
+                    top8.forEach(b => badgeContainer.innerHTML += renderBadgeHTML(b, true));
+                }
             }
+
+            renderFriendRequests();
             lucide.createIcons();
         }
 
@@ -793,7 +857,7 @@
             } catch (error) { list.innerHTML = `<p class="text-red-500 font-mono text-[10px] text-center mt-6">DB Error: ${error.message}</p>`; }
         }
 
-        // --- RIVAL WAGER SYSTEM ---
+        // --- RIVAL WAGER SYSTEM RESTORED ---
         window.openProfileModal = async function(uid) {
             if(!uid) return;
             if(uid === 'self') { if(!currentUser) return; uid = currentUser.uid; }
@@ -824,9 +888,19 @@
             if(unlocked.length === 0) { pBadge.innerHTML = `<p class="text-gray-600 text-[10px]">No badges.</p>`; } 
             else { unlocked.slice(0, 6).forEach(b => pBadge.innerHTML += renderBadgeHTML(b, true)); }
 
+            const fBtn = document.getElementById('add-friend-btn');
             const rBtn = document.getElementById('add-rival-btn');
             
-            // WAGER UI UPGRADE
+            if(userFriends.includes(uid)) {
+                fBtn.innerHTML = `<i data-lucide="users" class="w-4 h-4"></i> Friends`;
+                fBtn.className = "flex-1 bg-gray-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-default";
+                fBtn.onclick = null;
+            } else {
+                fBtn.innerHTML = `<i data-lucide="user-plus" class="w-4 h-4"></i> Add Friend`;
+                fBtn.className = "flex-1 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2";
+                fBtn.onclick = window.sendFriendRequest;
+            }
+
             if(userRivals.includes(uid)) {
                 rBtn.innerHTML = `<i data-lucide="swords" class="w-4 h-4"></i> Wager 500 XP`;
                 rBtn.className = "flex-1 bg-red-600 text-white font-black py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(239,68,68,0.5)] uppercase tracking-widest";
@@ -844,7 +918,12 @@
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
         }
-        window.closeProfileModal = function() { document.getElementById('profile-modal').classList.add('hidden'); document.getElementById('profile-modal').classList.remove('flex'); window.currentViewedUser = null; }
+        
+        window.closeProfileModal = function() { 
+            document.getElementById('profile-modal').classList.add('hidden'); 
+            document.getElementById('profile-modal').classList.remove('flex'); 
+            window.currentViewedUser = null; 
+        }
 
         window.markRival = async function(uid) {
             if(!currentUser) return;
@@ -859,11 +938,10 @@
             
             localXP -= 500;
             await updateDoc(doc(db, "users", currentUser.uid), { totalScore: localXP });
-            updateProfileUI(currentUser.uid);
-            window.showToast("WAGER PLACED! 500 XP Deducted.");
+            updateProfileUI();
+            window.showToast("WAGER PLACED! 500 XP Deducted. Defeat them in Neon Dash.");
         }
 
-        // --- ADMIN CODES & GALLERY MODAL ---
         window.openGalleryModal = function(uid) {
             const targetUid = uid || (currentUser ? currentUser.uid : null);
             if(!targetUid) return;
@@ -906,13 +984,14 @@
             else window.openProfileModal('self');
         }
 
+        // --- ADMIN CODES ---
         window.openPinModal = function() { document.getElementById('pin-modal').classList.remove('hidden'); document.getElementById('pin-modal').classList.add('flex'); document.getElementById('pin-input').value = ''; document.getElementById('pin-error').classList.add('hidden'); }
         window.closePinModal = function() { document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('pin-modal').classList.remove('flex'); }
         window.verifyPin = function() { if(document.getElementById('pin-input').value === "23455432") { closePinModal(); document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-modal').classList.add('flex'); } else { document.getElementById('pin-error').classList.remove('hidden'); } }
         window.closeAdminModal = function() { document.getElementById('admin-modal').classList.add('hidden'); document.getElementById('admin-modal').classList.remove('flex'); }
 
         window.generateCode = async function() {
-            if(!db || !currentUser) return alert("Admin not verified in DB.");
+            if(!db || !currentUser) return;
             const name = document.getElementById('new-code-name').value.trim().toUpperCase();
             const xp = parseInt(document.getElementById('new-code-xp').value);
             const limitVal = document.getElementById('new-code-limit').value;
