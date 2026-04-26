@@ -392,7 +392,7 @@
             if (theme === 'bronze' && rank === 3) return "text-copper-grad";
             if (theme === 'default') return "text-white-solid";
 
-            // If "Auto" or if their explicit choice is no longer valid, fallback to best unlocked
+            // Fallback
             if (isRainbowUnlocked) return "text-opal-grad";
             if (rank === 1) return "text-gold-grad";
             if (rank === 2) return "text-silver-grad";
@@ -616,11 +616,12 @@
                 await updateDoc(doc(db, "clubs", currentClubId), { name: n, image: i, description: d, frameColor: c, type: t, nameTheme: theme });
                 window.showToast("Syndicate Updated!");
                 closeEditModal();
-                loadClubLeaderboard(); // refresh themes
+                loadClubLeaderboard(); 
             } catch(err) { window.showToast("Failed to save.", true); }
             btn.innerText = "SAVE CHANGES"; btn.disabled = false;
         });
 
+        // --- TRUE LIVE XP ENGINE: CLUB PANEL ---
         async function loadClubInterface(clubId) {
             document.getElementById('no-club-panel').style.display = 'none';
             document.getElementById('my-club-panel').style.display = 'block';
@@ -652,18 +653,13 @@
                     typeBadge.innerText = 'OPEN'; typeBadge.classList.replace('text-red-400', 'text-white'); typeBadge.classList.replace('border-red-500/50', 'border-white/20');
                 }
 
-                // UI CHANGED TO SHOW MEMBER STAT INSTEAD OF WEEKLY XP
                 document.getElementById('club-member-stat').innerText = `${clubData.members.length} / 50`;
-                document.getElementById('club-xp').innerText = (clubData.totalXp || 0).toLocaleString();
+                document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
 
                 const fColor = clubData.frameColor || "#9333ea";
                 document.getElementById('club-frame').style.backgroundColor = fColor;
                 document.getElementById('club-img').style.borderColor = fColor;
                 document.getElementById('club-img').style.boxShadow = `0 10px 25px ${fColor}40`;
-
-                updateClubNameColors();
-
-                document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
 
                 const isOwner = clubData.ownerUid === currentUser.uid;
                 const isMod = clubData.mods && clubData.mods.includes(currentUser.uid);
@@ -674,10 +670,17 @@
                 const roster = document.getElementById('roster-list');
                 roster.innerHTML = '';
                 
+                // LIVE XP CALCULATOR 
+                let liveClubXp = 0;
+
                 for (const memberUid of clubData.members) {
                     const uSnap = await getDoc(doc(db, "users", memberUid));
                     if(uSnap.exists()) {
                         const uData = uSnap.data();
+                        
+                        // Sum up the live XP
+                        liveClubXp += (Number(uData.totalScore) || 0);
+
                         const memberIsOwner = memberUid === clubData.ownerUid;
                         const memberIsMod = clubData.mods && clubData.mods.includes(memberUid);
                         const memberIsMe = memberUid === currentUser.uid;
@@ -714,6 +717,13 @@
                         `;
                     }
                 }
+
+                // Display Live XP
+                document.getElementById('club-xp').innerText = liveClubXp.toLocaleString();
+                updateClubNameColors();
+
+                // Silently sync to database to keep it healthy
+                updateDoc(doc(db, "clubs", clubId), { totalXp: liveClubXp }).catch(e => console.log("Silent sync blocked/ignored"));
             });
 
             startChatListener(clubId);
@@ -804,16 +814,29 @@
             } catch(err) { console.error(err); }
         });
 
-        // --- LEADERBOARD LOGIC UPDATED FOR LIVE XP ---
+        // --- TRUE LIVE XP ENGINE: GLOBAL LEADERBOARD ---
         async function loadClubLeaderboard() {
             if(!db) return;
             try {
+                // 1. Fetch all users to calculate true live XP per club
+                const usersSnap = await getDocs(collection(db, "users"));
+                const liveXpMap = {};
+                usersSnap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    if(u.clubId) {
+                        liveXpMap[u.clubId] = (liveXpMap[u.clubId] || 0) + (Number(u.totalScore) || 0);
+                    }
+                });
+
+                // 2. Fetch clubs and map live XP
                 const snapshot = await getDocs(collection(db, "clubs"));
                 let allClubs = [];
                 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    data.id = doc.id;
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    data.id = docSnap.id;
+                    // Override database XP with TRUE LIVE XP
+                    data.totalXp = liveXpMap[data.id] || 0;
                     allClubs.push(data);
                 });
 
@@ -893,7 +916,11 @@
             }
 
             document.getElementById('cp-members').innerText = `${cData.members.length}/50`;
-            document.getElementById('cp-xp').innerText = (cData.totalXp || 0).toLocaleString();
+            
+            // Read Live XP from Cached Leaderboard instead of database directly
+            const cachedClub = window.clubsData.find(c => c.id === clubId);
+            const liveXpToDisplay = cachedClub ? cachedClub.totalXp : (cData.totalXp || 0);
+            document.getElementById('cp-xp').innerText = liveXpToDisplay.toLocaleString();
 
             const btn = document.getElementById('cp-join-btn');
             
