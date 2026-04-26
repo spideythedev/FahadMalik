@@ -50,11 +50,11 @@
         }
         .badge-container:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
 
-        /* THE SERVER DEITY GRADIENTS */
+        /* THE NAME THEME GRADIENTS */
         .text-gold-grad { background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 10px rgba(252, 246, 186, 0.3); }
         .text-silver-grad { background: linear-gradient(to right, #8e9eab, #eef2f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-copper-grad { background: linear-gradient(to right, #b87333, #ffcc99, #b87333); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-opal-grad { background: linear-gradient(to right, #e2e2e2, #c9d6ff, #e2e2e2, #fbc2eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(201, 214, 255, 0.6)); }
+        .text-opal-grad { background: linear-gradient(to right, #ff7eb3, #ff758c, #ff7eb3, #8e44ad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(255, 126, 179, 0.6)); }
         .text-white-solid { color: #ffffff; }
 
         /* SOLID FILL SVGS FOR CLUBS */
@@ -113,19 +113,19 @@
                 <div class="flex flex-col items-center text-center relative z-10 pt-2">
                     <img id="club-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover transition-colors">
                     
-                    <h2 id="club-name" class="font-extrabold text-2xl tracking-tight text-white-solid flex items-center gap-2 transition-all">Loading...</h2>
+                    <h2 id="club-name" class="font-extrabold text-2xl tracking-tight text-white-solid flex items-center justify-center gap-2 transition-all w-full truncate">Loading...</h2>
                     
                     <span id="club-type-badge" class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-widest mt-1 mb-2 border border-white/20">TYPE</span>
                     <p id="club-desc" class="text-gray-400 text-xs mb-3 h-8 overflow-hidden">Forging the ultimate syndicate.</p>
                     
                     <div class="flex gap-2 w-full mb-4">
-                        <div class="flex-1 bg-[#111] px-2 py-1.5 rounded-lg border border-white/5">
-                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Weekly</p>
-                            <p id="club-weekly-xp" class="text-white font-bold text-sm">0</p>
+                        <div class="flex-1 bg-[#111] px-2 py-2 rounded-xl border border-white/5 shadow-inner">
+                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Operatives</p>
+                            <p id="club-member-stat" class="text-white font-bold text-lg">0</p>
                         </div>
-                        <div class="flex-1 bg-[#111] px-2 py-1.5 rounded-lg border border-white/5">
-                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Total</p>
-                            <p id="club-xp" class="text-purple-400 font-bold text-sm">0</p>
+                        <div class="flex-1 bg-[#111] px-2 py-2 rounded-xl border border-white/5 shadow-inner">
+                            <p class="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Live XP</p>
+                            <p id="club-xp" class="text-purple-400 font-bold text-lg">0</p>
                         </div>
                     </div>
                     
@@ -233,7 +233,7 @@
                     <h3 class="text-white font-bold text-sm tracking-tight flex items-center gap-2">
                         <i class="bi bi-trophy-fill text-yellow-500"></i> Top Syndicates
                     </h3>
-                    <p class="text-gray-500 text-[9px] font-mono uppercase">Weekly Reset</p>
+                    <p class="text-gray-500 text-[9px] font-mono uppercase">Live XP</p>
                 </div>
                 
                 <div id="club-leaderboard" class="flex-grow overflow-y-auto space-y-2 pr-2 hide-scrollbar">
@@ -282,8 +282,15 @@
                     <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Syndicate Name</label>
                     <input type="text" id="edit-name" required class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 font-bold">
                 </div>
+                
                 <div>
-                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Profile Image URL</label>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Name Theme (Equip)</label>
+                    <select id="edit-theme" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs font-mono appearance-none cursor-pointer">
+                        </select>
+                </div>
+
+                <div>
+                    <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Public Image URL (Must end in .png/.jpg)</label>
                     <input type="url" id="edit-img" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs font-mono">
                 </div>
                 <div>
@@ -293,7 +300,7 @@
                 <div class="flex gap-4">
                     <div class="flex-1">
                         <label class="text-gray-500 text-[10px] uppercase font-mono tracking-widest mb-1 block">Access</label>
-                        <select id="edit-type" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs font-mono appearance-none">
+                        <select id="edit-type" class="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-xs font-mono appearance-none cursor-pointer">
                             <option value="open">Open</option>
                             <option value="private">Private</option>
                         </select>
@@ -322,18 +329,18 @@
             <div class="flex flex-col items-center mt-4">
                 <img id="cp-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover">
                 
-                <h3 class="font-black text-2xl mb-1 text-center text-white-solid transition-all" id="cp-name">Club Name</h3>
+                <h3 class="font-black text-2xl mb-1 text-center text-white-solid transition-all w-full truncate px-4" id="cp-name">Club Name</h3>
                 
                 <span id="cp-type" class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-widest mb-2 border border-white/20">TYPE</span>
                 <p class="text-gray-400 text-sm text-center mb-6 px-4" id="cp-desc">Club Description</p>
                 
                 <div class="flex gap-4 w-full justify-center mb-6">
                     <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl flex-1">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Members</p>
+                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Operatives</p>
                         <p class="text-white font-bold text-xl" id="cp-members">0/50</p>
                     </div>
                     <div class="text-center bg-[#111] border border-white/5 px-6 py-2 rounded-xl flex-1">
-                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Weekly XP</p>
+                        <p class="text-gray-500 text-[10px] uppercase font-mono mb-1">Live XP</p>
                         <p class="text-purple-400 font-bold text-xl" id="cp-xp">0</p>
                     </div>
                 </div>
@@ -350,7 +357,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -370,27 +377,38 @@
         window.clubsData = []; 
         window.currentViewedClubId = null;
 
+        // --- NEW THEME ENGINE ---
         function getClubGradientClass(clubId) {
             const rankIndex = window.clubsData.findIndex(c => c.id === clubId);
-            if (rankIndex === -1) return "text-white-solid";
+            const rank = rankIndex !== -1 ? rankIndex + 1 : 999;
+            const club = window.clubsData[rankIndex] || {};
             
-            const rank = rankIndex + 1;
-            const club = window.clubsData[rankIndex];
-            
-            if (rank === 1) return (club.topOneCount >= 3) ? "text-opal-grad" : "text-gold-grad";
+            const theme = club.nameTheme || 'auto';
+            const isRainbowUnlocked = (club.totalXp || 0) >= 100000000;
+
+            if (theme === 'rainbow' && isRainbowUnlocked) return "text-opal-grad";
+            if (theme === 'golden' && rank === 1) return "text-gold-grad";
+            if (theme === 'silver' && rank === 2) return "text-silver-grad";
+            if (theme === 'bronze' && rank === 3) return "text-copper-grad";
+            if (theme === 'default') return "text-white-solid";
+
+            // If "Auto" or if their explicit choice is no longer valid, fallback to best unlocked
+            if (isRainbowUnlocked) return "text-opal-grad";
+            if (rank === 1) return "text-gold-grad";
             if (rank === 2) return "text-silver-grad";
             if (rank === 3) return "text-copper-grad";
+            
             return "text-white-solid";
         }
 
         function updateClubNameColors() {
             if (currentClubId) {
                 const myClubEl = document.getElementById('club-name');
-                if (myClubEl) myClubEl.className = "font-extrabold text-2xl tracking-tight flex items-center gap-2 transition-all " + getClubGradientClass(currentClubId);
+                if (myClubEl) myClubEl.className = "font-extrabold text-2xl tracking-tight flex items-center justify-center gap-2 transition-all w-full truncate " + getClubGradientClass(currentClubId);
             }
             if (window.currentViewedClubId) {
                 const modalClubEl = document.getElementById('cp-name');
-                if (modalClubEl) modalClubEl.className = "font-black text-2xl mb-1 text-center transition-all " + getClubGradientClass(window.currentViewedClubId);
+                if (modalClubEl) modalClubEl.className = "font-black text-2xl mb-1 text-center transition-all w-full truncate px-4 " + getClubGradientClass(window.currentViewedClubId);
             }
         }
 
@@ -412,16 +430,6 @@
             }
             toast.classList.remove('opacity-0');
             setTimeout(() => toast.classList.add('opacity-0'), 3000);
-        }
-
-        function getCurrentWeekStr() {
-            const d = new Date();
-            const dte = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            const dayNum = dte.getUTCDay() || 7;
-            dte.setUTCDate(dte.getUTCDate() + 4 - dayNum);
-            const yearStart = new Date(Date.UTC(dte.getUTCFullYear(),0,1));
-            const weekNo = Math.ceil((((dte - yearStart) / 86400000) + 1)/7);
-            return `${dte.getUTCFullYear()}-W${weekNo}`;
         }
 
         function generateToken() { return Math.random().toString(36).substring(2, 10) + Date.now().toString(36); }
@@ -450,22 +458,6 @@
             }
         });
 
-        async function syncClubXP(amount) {
-            if(!currentClubId || !db) return;
-            try {
-                const clubRef = doc(db, "clubs", currentClubId);
-                const cSnap = await getDoc(clubRef);
-                if(cSnap.exists()) {
-                    const cData = cSnap.data();
-                    const currentWeek = getCurrentWeekStr();
-                    let newWeekly = (cData.currentWeek === currentWeek) ? (cData.weeklyXp || 0) + amount : amount;
-                    let newTotal = (cData.totalXp || 0) + amount;
-                    
-                    await updateDoc(clubRef, { totalXp: newTotal, weeklyXp: newWeekly, currentWeek: currentWeek });
-                }
-            } catch(e) { console.error("Club XP Sync Error", e); }
-        }
-
         async function fetchUserAndClub(uid) {
             const userRef = doc(db, "users", uid);
             const userSnap = await getDoc(userRef);
@@ -474,6 +466,18 @@
                 userData = userSnap.data();
                 userData.uid = uid;
                 const localXP = Number(userData.totalScore) || 0;
+
+                // --- AUTO REPAIR DESYNC BUG ---
+                if(!userData.clubId) {
+                    const q = query(collection(db, "clubs"), where("members", "array-contains", uid));
+                    const clubSnaps = await getDocs(q);
+                    if(!clubSnaps.empty) {
+                        const foundClubId = clubSnaps.docs[0].id;
+                        await updateDoc(userRef, { clubId: foundClubId });
+                        userData.clubId = foundClubId; 
+                        window.showToast("Database desync auto-repaired.");
+                    }
+                }
 
                 if(userData.clubId) {
                     currentClubId = userData.clubId;
@@ -537,11 +541,10 @@
             const type = document.getElementById('club-type-input').value;
 
             try {
-                const currentWeek = getCurrentWeekStr();
                 const clubRef = await addDoc(collection(db, "clubs"), {
                     name: name, image: img, ownerUid: currentUser.uid, members: [currentUser.uid], mods: [],
-                    weeklyXp: 0, totalXp: 0, currentWeek: currentWeek, topOneCount: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
-                    type: type, oneTimeTokens: [], createdAt: serverTimestamp()
+                    totalXp: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
+                    type: type, oneTimeTokens: [], nameTheme: "auto", createdAt: serverTimestamp()
                 });
 
                 await updateDoc(doc(db, "users", currentUser.uid), { clubId: clubRef.id });
@@ -555,6 +558,7 @@
             btn.innerText = "INITIALIZE DATABASE"; btn.disabled = false;
         });
 
+        // --- THEME EQUIPPING LOGIC IN EDIT MODAL ---
         window.openEditClubModal = async function() {
             if(!currentClubId) return;
             const cSnap = await getDoc(doc(db, "clubs", currentClubId));
@@ -569,6 +573,21 @@
             const color = cData.frameColor || "#9333ea";
             document.getElementById('edit-color-picker').value = color;
             document.getElementById('edit-color-text').value = color.toUpperCase();
+
+            // Populate Theme Dropdown based on Live XP & Rank
+            const themeSelect = document.getElementById('edit-theme');
+            themeSelect.innerHTML = `<option value="auto">Auto (Highest Unlocked)</option>
+                                     <option value="default">Default (White)</option>`;
+            
+            const rankIndex = window.clubsData.findIndex(c => c.id === currentClubId);
+            const rank = rankIndex !== -1 ? rankIndex + 1 : 999;
+            
+            if (rank === 1) themeSelect.innerHTML += `<option value="golden">👑 Golden (Rank #1)</option>`;
+            if (rank <= 2) themeSelect.innerHTML += `<option value="silver">🥈 Silver (Rank #2+)</option>`;
+            if (rank <= 3) themeSelect.innerHTML += `<option value="bronze">🥉 Bronze (Rank #3+)</option>`;
+            if ((cData.totalXp || 0) >= 100000000) themeSelect.innerHTML += `<option value="rainbow">🌈 Rainbow (100M+ XP)</option>`;
+            
+            themeSelect.value = cData.nameTheme || "auto";
 
             document.getElementById('edit-modal').classList.remove('hidden');
             document.getElementById('edit-modal').classList.add('flex');
@@ -591,11 +610,13 @@
             const d = document.getElementById('edit-desc').value.trim();
             const c = document.getElementById('edit-color-picker').value;
             const t = document.getElementById('edit-type').value;
+            const theme = document.getElementById('edit-theme').value;
 
             try {
-                await updateDoc(doc(db, "clubs", currentClubId), { name: n, image: i, description: d, frameColor: c, type: t });
+                await updateDoc(doc(db, "clubs", currentClubId), { name: n, image: i, description: d, frameColor: c, type: t, nameTheme: theme });
                 window.showToast("Syndicate Updated!");
                 closeEditModal();
+                loadClubLeaderboard(); // refresh themes
             } catch(err) { window.showToast("Failed to save.", true); }
             btn.innerText = "SAVE CHANGES"; btn.disabled = false;
         });
@@ -631,9 +652,8 @@
                     typeBadge.innerText = 'OPEN'; typeBadge.classList.replace('text-red-400', 'text-white'); typeBadge.classList.replace('border-red-500/50', 'border-white/20');
                 }
 
-                const currentWeek = getCurrentWeekStr();
-                const displayXp = clubData.currentWeek === currentWeek ? (clubData.weeklyXp || 0) : 0;
-                document.getElementById('club-weekly-xp').innerText = displayXp.toLocaleString();
+                // UI CHANGED TO SHOW MEMBER STAT INSTEAD OF WEEKLY XP
+                document.getElementById('club-member-stat').innerText = `${clubData.members.length} / 50`;
                 document.getElementById('club-xp').innerText = (clubData.totalXp || 0).toLocaleString();
 
                 const fColor = clubData.frameColor || "#9333ea";
@@ -679,7 +699,10 @@
                             <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group transition">
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs">${icon}</div>
-                                    <span class="text-white text-xs font-bold">${uData.displayName} ${memberIsMe ? '(You)' : ''}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-white text-xs font-bold">${uData.displayName} ${memberIsMe ? '(You)' : ''}</span>
+                                        <span class="text-gray-600 text-[9px] font-mono">${uData.gameTag || ''}</span>
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     ${tag}
@@ -781,22 +804,21 @@
             } catch(err) { console.error(err); }
         });
 
-        // --- WEEKLY CLUB LEADERBOARD WITH GLOBALLY STORED RANKINGS ---
+        // --- LEADERBOARD LOGIC UPDATED FOR LIVE XP ---
         async function loadClubLeaderboard() {
             if(!db) return;
             try {
                 const snapshot = await getDocs(collection(db, "clubs"));
                 let allClubs = [];
-                const currentWeek = getCurrentWeekStr();
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
-                    data.displayWeeklyXp = data.currentWeek === currentWeek ? (data.weeklyXp || 0) : 0;
                     allClubs.push(data);
                 });
 
-                allClubs.sort((a, b) => b.displayWeeklyXp - a.displayWeeklyXp);
+                // SORT STRICTLY BY TOTAL LIVE XP
+                allClubs.sort((a, b) => (b.totalXp || 0) - (a.totalXp || 0));
                 
                 window.clubsData = allClubs; 
 
@@ -830,12 +852,12 @@
                                 <div class="flex items-center gap-3">
                                     <img src="${data.image || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="w-8 h-8 rounded-lg object-cover border border-white/20 shadow-sm" style="border-color: ${data.frameColor || '#444'}">
                                     <div>
-                                        <p class="${nameClass} text-sm tracking-tight transition-all">${data.name}</p>
+                                        <p class="${nameClass} text-sm tracking-tight transition-all w-[120px] truncate block">${data.name}</p>
                                         <p class="text-gray-500 font-mono text-[9px]">${data.members ? data.members.length : 1} Members</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${data.displayWeeklyXp.toLocaleString()} <span class="text-[9px] text-gray-600 font-mono">XP</span></div>
+                            <div class="${rank === 1 ? 'text-yellow-500' : 'text-white'} font-black text-sm">${(data.totalXp || 0).toLocaleString()} <span class="text-[9px] text-gray-600 font-mono">XP</span></div>
                         </div>
                     `;
                     rank++;
@@ -871,8 +893,7 @@
             }
 
             document.getElementById('cp-members').innerText = `${cData.members.length}/50`;
-            const currentWeek = getCurrentWeekStr();
-            document.getElementById('cp-xp').innerText = (cData.currentWeek === currentWeek ? (cData.weeklyXp || 0) : 0).toLocaleString();
+            document.getElementById('cp-xp').innerText = (cData.totalXp || 0).toLocaleString();
 
             const btn = document.getElementById('cp-join-btn');
             
@@ -913,7 +934,7 @@
                 await fetchUserAndClub(currentUser.uid);
             } catch(e) {
                 window.showToast("Failed to join.", true);
-                document.getElementById('cp-join-btn').innerText = "JOIN SYNDICATE";
+                document.getElementById('cp-join-btn').innerHTML = `<i class="bi bi-lightning-charge-fill text-lg"></i> JOIN SYNDICATE`;
             }
         }
     </script>
