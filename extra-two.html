@@ -6,7 +6,7 @@
     <title>Syndicate Clubs | SpydeY Network</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     
     <script>
@@ -49,30 +49,18 @@
             transition: 0.2s; pointer-events: none; text-align: center;
         }
         .badge-container:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
-        
-        /* Clean UI Dynamic Badge Tiers */
-        .tier-bronze { border-color: rgba(217, 119, 6, 0.5); color: #fbbf24; background: rgba(217, 119, 6, 0.1); box-shadow: 0 0 10px rgba(217, 119, 6, 0.2); }
-        .tier-silver { border-color: rgba(156, 163, 175, 0.5); color: #f3f4f6; background: rgba(156, 163, 175, 0.1); box-shadow: 0 0 10px rgba(156, 163, 175, 0.2); }
-        .tier-gold { border-color: rgba(234, 179, 8, 0.8); color: #fef08a; background: rgba(234, 179, 8, 0.15); box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
-        .tier-diamond { border-color: rgba(34, 211, 238, 0.8); color: #67e8f9; background: rgba(34, 211, 238, 0.15); box-shadow: 0 0 20px rgba(34, 211, 238, 0.5); }
-        .tier-mythic { border-color: rgba(239, 68, 68, 1); color: #fca5a5; background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 25px rgba(239, 68, 68, 0.8); }
-        .tier-locked { border-color: #333; color: #555; background: #111; filter: grayscale(100%); opacity: 0.5; }
 
-        .badge-box { position: relative; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; border-width: 2px; border-style: solid; }
-        .badge-box:hover { transform: scale(1.1); z-index: 10; }
-        .badge-box:hover .badge-tooltip { visibility: visible; opacity: 1; bottom: 130%; }
-
-        /* SOLID FILL SVGS FOR CLUBS */
-        .svg-gold { fill: url(#gold-grad); filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.8)); }
-        .svg-silver { fill: url(#silver-grad); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.6)); }
-        .svg-copper { fill: url(#copper-grad); filter: drop-shadow(0 0 10px rgba(184, 115, 51, 0.6)); }
-
-        /* THE SERVER DEITY GRADIENTS (Now reusable as global classes) */
+        /* THE SERVER DEITY GRADIENTS */
         .text-gold-grad { background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 10px rgba(252, 246, 186, 0.3); }
         .text-silver-grad { background: linear-gradient(to right, #8e9eab, #eef2f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-copper-grad { background: linear-gradient(to right, #b87333, #ffcc99, #b87333); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-opal-grad { background: linear-gradient(to right, #e2e2e2, #c9d6ff, #e2e2e2, #fbc2eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(201, 214, 255, 0.6)); }
         .text-white-solid { color: #ffffff; }
+
+        /* SOLID FILL SVGS FOR CLUBS */
+        .svg-gold { fill: url(#gold-grad); filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.8)); }
+        .svg-silver { fill: url(#silver-grad); filter: drop-shadow(0 0 10px rgba(156, 163, 175, 0.6)); }
+        .svg-copper { fill: url(#copper-grad); filter: drop-shadow(0 0 10px rgba(184, 115, 51, 0.6)); }
 
         #toast-notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
@@ -87,7 +75,7 @@
 <body class="bg-grid-purple flex flex-col min-h-screen">
 
     <div id="toast-notification" class="flex items-center gap-3">
-        <i id="toast-icon" data-lucide="bell" class="w-5 h-5 text-black"></i>
+        <i id="toast-icon" class="bi bi-bell-fill text-black"></i>
         <span id="toast-message">Notification</span>
     </div>
 
@@ -105,7 +93,7 @@
     <nav class="bg-[#030303]/90 backdrop-blur-2xl px-6 py-4 sticky top-0 z-40 border-b border-brand-border flex-none">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="extra.html" class="font-bold text-xl tracking-tight text-white flex items-center gap-3 hover:text-purple-400 transition">
-                &larr; <span class="font-mono text-sm tracking-widest uppercase">Arcade Hub</span>
+                <i class="bi bi-arrow-left"></i> <span class="font-mono text-sm tracking-widest uppercase">Arcade Hub</span>
             </a>
             
             <div class="flex items-center gap-4 bg-[#0a0a0a] px-4 py-2 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.1)]">
@@ -142,9 +130,9 @@
                     </div>
                     
                     <div class="w-full flex flex-wrap gap-2 mb-4">
-                        <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg flex items-center justify-center gap-1"><i data-lucide="user-plus" class="w-4 h-4"></i> Invite</button>
-                        <button id="edit-club-btn" onclick="openEditClubModal()" class="hidden flex-1 bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1"><i data-lucide="settings" class="w-4 h-4"></i> Edit</button>
-                        <button id="leave-club-btn" onclick="leaveClub()" class="bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white px-3 py-2.5 rounded-lg text-xs font-bold transition"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                        <button onclick="copyInviteLink()" class="flex-1 bg-white text-black hover:bg-gray-200 text-xs font-bold py-2.5 rounded-lg transition shadow-lg flex items-center justify-center gap-1"><i class="bi bi-person-plus-fill"></i> Invite</button>
+                        <button id="edit-club-btn" onclick="openEditClubModal()" class="hidden flex-1 bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1"><i class="bi bi-gear-fill"></i> Edit</button>
+                        <button id="leave-club-btn" onclick="leaveClub()" class="bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white px-3 py-2.5 rounded-lg text-xs font-bold transition"><i class="bi bi-box-arrow-right"></i></button>
                     </div>
 
                     <div class="w-full text-left">
@@ -161,7 +149,7 @@
 
             <div id="no-club-panel" class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden text-center block">
                 <div class="w-16 h-16 mx-auto bg-[#111] rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-[0_0_15px_rgba(147,51,234,0.2)]">
-                    <i data-lucide="shield-alert" class="text-purple-500 w-8 h-8"></i>
+                    <i class="bi bi-shield-exclamation text-purple-500 text-3xl"></i>
                 </div>
                 <h3 class="text-white font-bold text-lg mb-2">No Club Found</h3>
                 <p class="text-gray-400 text-xs mb-6" id="auth-status-text">Please sign in to view your club status.</p>
@@ -182,7 +170,7 @@
                 
                 <div class="bg-[#050505] p-4 border-b border-white/10 flex justify-between items-center relative z-10">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="message-square" class="text-purple-500 w-5 h-5"></i>
+                        <i class="bi bi-chat-square-text-fill text-purple-500 text-xl"></i>
                         <div>
                             <h3 class="text-white font-bold">Syndicate Encrypted Comms</h3>
                             <p class="text-gray-500 font-mono text-[10px] uppercase">Private Group Channel</p>
@@ -190,7 +178,7 @@
                     </div>
                 </div>
 
-                <div id="chat-box" class="flex-grow p-6 overflow-y-auto space-y-4 flex flex-col relative z-10">
+                <div id="chat-box" class="flex-grow p-6 overflow-y-auto space-y-4 flex flex-col relative z-10 hide-scrollbar">
                     <div class="text-center mt-10">
                         <p class="text-gray-500 text-sm font-mono">Join a club to start chatting.</p>
                     </div>
@@ -200,13 +188,13 @@
                     <form id="chat-form" class="flex gap-2">
                         <input type="text" id="chat-input" placeholder="Transmit message to Syndicate..." class="flex-grow bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 font-mono" autocomplete="off">
                         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold transition shadow-[0_0_15px_rgba(147,51,234,0.3)]">
-                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <i class="bi bi-send-fill"></i>
                         </button>
                     </form>
                 </div>
                 
                 <div id="chat-lock" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
-                    <i data-lucide="lock" class="text-purple-500 w-12 h-12 mb-4"></i>
+                    <i class="bi bi-lock-fill text-purple-500 text-5xl mb-4"></i>
                     <p class="text-white font-bold">Comms Locked</p>
                     <p class="text-gray-400 text-xs font-mono">Join or Forge a Syndicate to access the database.</p>
                 </div>
@@ -216,7 +204,7 @@
         <div class="lg:col-span-3 space-y-6">
             <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl">
                 <h3 class="text-white font-bold text-sm tracking-tight mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
-                    <i data-lucide="crosshair" class="text-blue-500 w-4 h-4"></i> Team Missions
+                    <i class="bi bi-crosshair text-blue-500"></i> Team Missions
                 </h3>
                 
                 <div class="space-y-4">
@@ -232,7 +220,7 @@
                     <div class="bg-gradient-to-r from-purple-900/30 to-[#111] p-3 rounded-xl border border-purple-500/50 relative overflow-hidden shadow-[0_0_15px_rgba(147,51,234,0.1)]">
                         <div class="absolute left-0 top-0 h-full w-1 bg-purple-500"></div>
                         <div class="flex justify-between items-start mb-1 pl-2">
-                            <span class="text-white font-black text-xs uppercase flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3 text-purple-500"></i> Hardcore</span>
+                            <span class="text-white font-black text-xs uppercase flex items-center gap-1"><i class="bi bi-fire text-purple-500"></i> Hardcore</span>
                             <span class="text-purple-400 font-mono text-[9px] font-bold">RARE BADGE</span>
                         </div>
                         <p class="text-gray-300 text-[10px] pl-2">Bypass 50,000 Firewalls collectively.</p>
@@ -243,7 +231,7 @@
             <div class="bg-[#0a0a0a] border border-brand-border rounded-3xl p-5 shadow-2xl flex flex-col h-[400px]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                     <h3 class="text-white font-bold text-sm tracking-tight flex items-center gap-2">
-                        <i data-lucide="trophy" class="text-yellow-500 w-4 h-4"></i> Top Syndicates
+                        <i class="bi bi-trophy-fill text-yellow-500"></i> Top Syndicates
                     </h3>
                     <p class="text-gray-500 text-[9px] font-mono uppercase">Weekly Reset</p>
                 </div>
@@ -257,7 +245,7 @@
 
     <div id="create-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-purple-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(147,51,234,0.2)] w-full max-w-md relative animate-pop-in">
-            <button onclick="closeCreateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <button onclick="closeCreateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i class="bi bi-x-lg"></i></button>
             <h2 class="text-white font-extrabold text-3xl mb-2 text-center">Forge Syndicate</h2>
             <p class="text-gray-400 text-xs text-center font-mono mb-8">Establish your core architecture.</p>
 
@@ -286,7 +274,7 @@
 
     <div id="edit-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-brand-border p-8 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in">
-            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i class="bi bi-x-lg"></i></button>
             <h2 class="text-white font-extrabold text-2xl mb-2 text-center">Edit Syndicate</h2>
             
             <form id="edit-form" class="space-y-4 mt-6">
@@ -329,7 +317,7 @@
     <div id="club-profile-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md hidden flex-col justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-3xl shadow-2xl w-full max-w-md relative animate-pop-in overflow-hidden">
             <div id="cp-frame" class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
-            <button onclick="closeClubProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white z-20"><i data-lucide="x"></i></button>
+            <button onclick="closeClubProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white z-20"><i class="bi bi-x-lg"></i></button>
             
             <div class="flex flex-col items-center mt-4">
                 <img id="cp-img" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-24 h-24 rounded-2xl border-4 border-gray-800 shadow-xl mb-3 object-cover">
@@ -352,7 +340,7 @@
 
                 <div class="w-full" id="cp-action-container">
                     <button id="cp-join-btn" onclick="joinFromProfile()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(147,51,234,0.4)] flex items-center justify-center gap-2">
-                        <i data-lucide="zap" class="w-4 h-4"></i> JOIN SYNDICATE
+                        <i class="bi bi-lightning-charge-fill"></i> JOIN SYNDICATE
                     </button>
                 </div>
             </div>
@@ -375,17 +363,13 @@
             measurementId: "G-Z5W90V686F"
         };
 
-        lucide.createIcons();
-
         let db, auth, currentUser = null;
         let userData = null; let currentClubId = null; 
         let unsubscribeChat = null; let unsubscribeClub = null;
         
-        // GLOBAL CLUBS DATA CACHE FOR GRADIENTS
         window.clubsData = []; 
         window.currentViewedClubId = null;
 
-        // GLOBAL GRADIENT ENGINE
         function getClubGradientClass(clubId) {
             const rankIndex = window.clubsData.findIndex(c => c.id === clubId);
             if (rankIndex === -1) return "text-white-solid";
@@ -400,19 +384,13 @@
         }
 
         function updateClubNameColors() {
-            // Update My Club Panel (if rendered)
             if (currentClubId) {
                 const myClubEl = document.getElementById('club-name');
-                if (myClubEl) {
-                    myClubEl.className = "font-extrabold text-2xl tracking-tight flex items-center gap-2 transition-all " + getClubGradientClass(currentClubId);
-                }
+                if (myClubEl) myClubEl.className = "font-extrabold text-2xl tracking-tight flex items-center gap-2 transition-all " + getClubGradientClass(currentClubId);
             }
-            // Update Modal Profile (if open)
             if (window.currentViewedClubId) {
                 const modalClubEl = document.getElementById('cp-name');
-                if (modalClubEl) {
-                    modalClubEl.className = "font-black text-2xl mb-1 text-center transition-all " + getClubGradientClass(window.currentViewedClubId);
-                }
+                if (modalClubEl) modalClubEl.className = "font-black text-2xl mb-1 text-center transition-all " + getClubGradientClass(window.currentViewedClubId);
             }
         }
 
@@ -422,13 +400,16 @@
             if(isError) {
                 toast.classList.replace('bg-[#10b981]', 'bg-[#ef4444]');
                 toast.classList.replace('shadow-[0_10px_30px_rgba(16,185,129,0.4)]', 'shadow-[0_10px_30px_rgba(239,68,68,0.4)]');
-                document.getElementById('toast-icon').setAttribute('data-lucide', 'x-circle');
+                document.getElementById('toast-icon').className = 'bi bi-x-circle-fill text-white text-lg';
+                document.getElementById('toast-message').classList.add('text-white');
+                document.getElementById('toast-message').classList.remove('text-black');
             } else {
                 toast.classList.replace('bg-[#ef4444]', 'bg-[#10b981]');
                 toast.classList.replace('shadow-[0_10px_30px_rgba(239,68,68,0.4)]', 'shadow-[0_10px_30px_rgba(16,185,129,0.4)]');
-                document.getElementById('toast-icon').setAttribute('data-lucide', 'bell');
+                document.getElementById('toast-icon').className = 'bi bi-bell-fill text-black text-lg';
+                document.getElementById('toast-message').classList.add('text-black');
+                document.getElementById('toast-message').classList.remove('text-white');
             }
-            lucide.createIcons();
             toast.classList.remove('opacity-0');
             setTimeout(() => toast.classList.add('opacity-0'), 3000);
         }
@@ -443,18 +424,14 @@
             return `${dte.getUTCFullYear()}-W${weekNo}`;
         }
 
-        function generateToken() {
-            return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-        }
+        function generateToken() { return Math.random().toString(36).substring(2, 10) + Date.now().toString(36); }
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
             loadClubLeaderboard();
-        } catch (error) { 
-            console.error("Firebase Error:", error); 
-        }
+        } catch (error) { console.error("Firebase Error:", error); }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -484,11 +461,7 @@
                     let newWeekly = (cData.currentWeek === currentWeek) ? (cData.weeklyXp || 0) + amount : amount;
                     let newTotal = (cData.totalXp || 0) + amount;
                     
-                    await updateDoc(clubRef, { 
-                        totalXp: newTotal, 
-                        weeklyXp: newWeekly, 
-                        currentWeek: currentWeek 
-                    });
+                    await updateDoc(clubRef, { totalXp: newTotal, weeklyXp: newWeekly, currentWeek: currentWeek });
                 }
             } catch(e) { console.error("Club XP Sync Error", e); }
         }
@@ -516,13 +489,12 @@
 
                     if(localXP >= 2500) {
                         createBtn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all text-sm mb-2 shadow-[0_0_15px_rgba(147,51,234,0.3)] pointer-events-auto";
-                        createBtn.innerHTML = "Forge Syndicate <i data-lucide='zap' class='w-4 h-4 inline ml-1'></i>";
+                        createBtn.innerHTML = "Forge Syndicate <i class='bi bi-lightning-charge-fill inline ml-1'></i>";
                         statusText.innerText = "(Unlocked)";
                         statusText.className = "text-emerald-500 font-bold ml-1";
                     } else {
                         statusText.innerText = `(Need ${2500 - localXP} more XP)`;
                     }
-                    lucide.createIcons();
                 }
             }
         }
@@ -535,9 +507,7 @@
                 const cData = cSnap.data();
 
                 if (cData.type === 'private') {
-                    if (!token || !(cData.oneTimeTokens || []).includes(token)) {
-                        throw new Error("Invalid or expired one-time invite token.");
-                    }
+                    if (!token || !(cData.oneTimeTokens || []).includes(token)) throw new Error("Invalid or expired one-time invite token.");
                     await updateDoc(doc(db, "clubs", joinId), { oneTimeTokens: arrayRemove(token) });
                 }
 
@@ -554,14 +524,8 @@
             }
         }
 
-        window.openCreateModal = function() {
-            document.getElementById('create-modal').classList.remove('hidden');
-            document.getElementById('create-modal').classList.add('flex');
-        }
-        window.closeCreateModal = function() {
-            document.getElementById('create-modal').classList.add('hidden');
-            document.getElementById('create-modal').classList.remove('flex');
-        }
+        window.openCreateModal = function() { document.getElementById('create-modal').classList.remove('hidden'); document.getElementById('create-modal').classList.add('flex'); }
+        window.closeCreateModal = function() { document.getElementById('create-modal').classList.add('hidden'); document.getElementById('create-modal').classList.remove('flex'); }
 
         document.getElementById('forge-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -577,8 +541,7 @@
                 const clubRef = await addDoc(collection(db, "clubs"), {
                     name: name, image: img, ownerUid: currentUser.uid, members: [currentUser.uid], mods: [],
                     weeklyXp: 0, totalXp: 0, currentWeek: currentWeek, topOneCount: 0, description: "Forging the ultimate syndicate.", frameColor: "#9333ea",
-                    type: type, oneTimeTokens: [],
-                    createdAt: serverTimestamp()
+                    type: type, oneTimeTokens: [], createdAt: serverTimestamp()
                 });
 
                 await updateDoc(doc(db, "users", currentUser.uid), { clubId: clubRef.id });
@@ -588,9 +551,7 @@
                 window.showToast("Syndicate Forged!");
                 await loadClubInterface(currentClubId);
                 loadClubLeaderboard();
-            } catch(err) {
-                console.error(err); window.showToast("Failed to forge.", true);
-            }
+            } catch(err) { console.error(err); window.showToast("Failed to forge.", true); }
             btn.innerText = "INITIALIZE DATABASE"; btn.disabled = false;
         });
 
@@ -613,10 +574,7 @@
             document.getElementById('edit-modal').classList.add('flex');
         }
         
-        window.closeEditModal = function() {
-            document.getElementById('edit-modal').classList.add('hidden');
-            document.getElementById('edit-modal').classList.remove('flex');
-        }
+        window.closeEditModal = function() { document.getElementById('edit-modal').classList.add('hidden'); document.getElementById('edit-modal').classList.remove('flex'); }
 
         document.getElementById('edit-color-picker').addEventListener('input', (e) => { document.getElementById('edit-color-text').value = e.target.value.toUpperCase(); });
         document.getElementById('edit-color-text').addEventListener('input', (e) => { 
@@ -683,7 +641,6 @@
                 document.getElementById('club-img').style.borderColor = fColor;
                 document.getElementById('club-img').style.boxShadow = `0 10px 25px ${fColor}40`;
 
-                // APPLY GRADIENTS GLOBALLY
                 updateClubNameColors();
 
                 document.getElementById('member-count').innerText = `${clubData.members.length}/50`;
@@ -718,7 +675,6 @@
                             actionBtns += `<button onclick="kickMember('${memberUid}')" class="text-red-500 hover:text-white bg-red-500/10 px-2 py-1 rounded text-[9px] font-bold ml-1">KICK</button>`;
                         }
 
-                        // Removed openProfileModal from here to avoid missing user profiles in cache for clubs
                         roster.innerHTML += `
                             <div class="flex justify-between items-center bg-[#111] p-2 rounded-lg border ${border} group transition">
                                 <div class="flex items-center gap-2">
@@ -842,7 +798,6 @@
 
                 allClubs.sort((a, b) => b.displayWeeklyXp - a.displayWeeklyXp);
                 
-                // STORE GLOBALLY FOR THE GRADIENT ENGINE
                 window.clubsData = allClubs; 
 
                 const list = document.getElementById('club-leaderboard');
@@ -852,7 +807,7 @@
                 allClubs.slice(0, 25).forEach(data => {
                     let borderClass = "border-white/10"; let bgClass = "bg-[#111]";
                     let badgeSvg = `<div class="text-gray-500 font-bold text-sm w-6 text-center">#${rank}</div>`;
-                    let nameClass = getClubGradientClass(data.id); // Re-use the gradient engine here!
+                    let nameClass = getClubGradientClass(data.id); 
 
                     if(rank === 1) { 
                         badgeSvg = `<svg viewBox="0 0 24 24" class="w-6 h-6 svg-gold"><use href="#solid-crown" /></svg>`;
@@ -888,7 +843,6 @@
 
                 if(allClubs.length === 0) list.innerHTML = '<p class="text-gray-500 text-xs text-center py-4 font-mono">No syndicates forged.</p>';
 
-                // Force gradient updates if panels are already loaded
                 updateClubNameColors();
 
             } catch (err) { console.error(err); }
@@ -923,25 +877,23 @@
             const btn = document.getElementById('cp-join-btn');
             
             if(userData && userData.clubId) {
-                btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> ALREADY IN A SYNDICATE`;
+                btn.innerHTML = `<i class="bi bi-shield-check-fill text-lg"></i> ALREADY IN A SYNDICATE`;
                 btn.className = "w-full bg-gray-800 text-gray-500 font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2";
                 btn.onclick = null;
             } else if(cData.type === 'private') {
-                btn.innerHTML = `<i data-lucide="lock" class="w-4 h-4"></i> INVITE ONLY`;
+                btn.innerHTML = `<i class="bi bi-lock-fill text-lg"></i> INVITE ONLY`;
                 btn.className = "w-full bg-red-900/40 border border-red-500/30 text-red-500 font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2";
                 btn.onclick = null;
             } else {
-                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> JOIN SYNDICATE`;
+                btn.innerHTML = `<i class="bi bi-lightning-charge-fill text-lg"></i> JOIN SYNDICATE`;
                 btn.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(147,51,234,0.4)] flex items-center justify-center gap-2 cursor-pointer";
                 btn.onclick = () => window.joinFromProfile(clubId);
             }
 
-            // TRIGGER GRADIENT APPLICATION ON THE MODAL
             updateClubNameColors();
 
             document.getElementById('club-profile-modal').classList.remove('hidden');
             document.getElementById('club-profile-modal').classList.add('flex');
-            lucide.createIcons();
         }
 
         window.closeClubProfileModal = function() {
